@@ -67,12 +67,18 @@ namespace X86ISA;
 
 //This file brings in the microcode, microop classes, macroop classes,
 //and supporting components and assembles everything into macroops.
+// TODO: uncomment: just testing where error in `formats.isa` is
+// (with `microopClasses` not found when uncommenting `def format RowOp`
 ##include "microasm.isa"
 
 //Include code to specialize an instruction template to operate on
 //a particular set of operands. This is specific to x86 and the x86
 //microcode ISA.
+// TODO: uncomment: just testing where error in `formats.isa` is
+// (with `microopClasses` not found when uncommenting `def format RowOp`
 ##include "specialize.isa"
 
 //Include the decoder definition
+// TODO: uncomment: just testing where error in `formats.isa` is
+// (with `microopClasses` not found when uncommenting `def format RowOp`
 ##include "decoder/decoder.isa"

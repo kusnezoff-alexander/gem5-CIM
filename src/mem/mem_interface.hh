@@ -87,14 +87,63 @@ class MemInterface : public AbstractMemory
     {
 
       public:
-        static const uint32_t NO_ROW = -1;
+        // static const uint32_t NO_ROW = -1;
 
+        // uint32_t openRow;
+        // uint8_t bank;
+        // uint8_t bankgr;
+        //
+        // Tick rdAllowedAt;
+        // Tick wrAllowedAt;
+        // Tick preAllowedAt;
+        // Tick actAllowedAt;
+        //
+        // uint32_t rowAccesses;
+        // uint32_t bytesAccessed;
+        //
+        // Bank() :
+        //     openRow(NO_ROW), bank(0), bankgr(0),
+        //     rdAllowedAt(0), wrAllowedAt(0), preAllowedAt(0),
+        //     actAllowedAt(0),
+        //     rowAccesses(0), bytesAccessed(0)
+        // { }
+
+        // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+        // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+        // dram_ctrl.hh#L165)
+        static const uint32_t NO_ROW = -1;
+        static const uint32_t DOUBLE_ROW = -2;
+
+        static const uint32_t B_T0         =  -3;
+        static const uint32_t B_T1         =  -4;
+        static const uint32_t B_T2         =  -5;
+        static const uint32_t B_T3         =  -6;
+        static const uint32_t B_DCC0       =  -7;
+        static const uint32_t B_DCC0N      =  -8;
+        static const uint32_t B_DCC1       =  -9;
+        static const uint32_t B_DCC1N      = -10;
+        static const uint32_t B_DCC0N_T0   = -11;
+        static const uint32_t B_DCC1N_T1   = -12;
+        static const uint32_t B_T2_T3      = -13;
+        static const uint32_t B_T0_T3      = -14;
+        static const uint32_t B_T0_T1_T2   = -15;
+        static const uint32_t B_T1_T2_T3   = -16;
+        static const uint32_t B_DCC0_T1_T2 = -17;
+        static const uint32_t B_DCC1_T0_T3 = -18;
+        static const uint32_t C_0          = -19;
+        static const uint32_t C_1          = -20;
+
+        // TODO: support storing several open rows
+        // (for Multiple-Row Activation in PIM)
         uint32_t openRow;
         uint8_t bank;
         uint8_t bankgr;
 
+        // === added
         Tick rdAllowedAt;
         Tick wrAllowedAt;
+        // ===
+        Tick colAllowedAt;
         Tick preAllowedAt;
         Tick actAllowedAt;
 
@@ -103,7 +152,7 @@ class MemInterface : public AbstractMemory
 
         Bank() :
             openRow(NO_ROW), bank(0), bankgr(0),
-            rdAllowedAt(0), wrAllowedAt(0), preAllowedAt(0), actAllowedAt(0),
+            colAllowedAt(0), preAllowedAt(0), actAllowedAt(0),
             rowAccesses(0), bytesAccessed(0)
         { }
     };

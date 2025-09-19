@@ -42,14 +42,22 @@ import re
 import sys
 import traceback
 
+sys.path.append(
+    os.path.dirname(__file__)
+)  # HACK for running `isa_parser.py` standalone (REMOVE IN PRODUCTION)
+
 # get type names
 from types import *
 
 from grammar import Grammar
 
-from .operand_list import *
-from .operand_types import *
-from .util import *
+from .operand_list import *  # TODO: quickfix for running `isa_parser.py` standalone
+from .operand_types import *  # TODO: quickfix for running `isa_parser.py` standalone
+from .util import *  # TODO: quickfix for running `isa_parser.py` standalone
+
+# from operand_list import *
+# from operand_types import *
+# from util import *
 
 debug = False
 
@@ -1078,6 +1086,7 @@ del wrap
         # next split's #define from the parser and add it to the current
         # emission-in-progress.
         try:
+            # print("t:", t[2])
             exec(split_setup + fixPythonIndentation(t[2]), self.exportContext)
         except Exception as exc:
             traceback.print_exc(file=sys.stdout)

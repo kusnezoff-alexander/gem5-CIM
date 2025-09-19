@@ -251,6 +251,18 @@ class Request : public Extensible<Request>
             remote TLB Sync request has completed */
         TLBI_EXT_SYNC_COMP          = 0x0000800000000000,
 
+
+        /** The request is a bulk bitwise operation (taken from
+         *  [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+         *  23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+         *  request.hh#L173))
+         *  */
+        // this value chosen in MIMDRAM is already reserved
+        // for `ATOMIC_RETURN_OP`
+        // ROWOP                       = 0x40000000,
+        // arbitrarily chosen next free value (2^32)
+        ROWOP = 0x100000000,
+
         /**
          * These flags are *not* cleared when a Request object is
          * reused (assigned a new address).
@@ -344,6 +356,28 @@ class Request : public Extensible<Request>
 
     using LocalAccessor =
         std::function<Cycles(ThreadContext *tc, Packet *pkt)>;
+
+
+    // taken from [MIMDRAM mem/request.hh](https://github.com/CMU-SAFARI/
+    // MIMDRAM/blob/23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/
+    // mem/request.hh#L202)
+    enum RowOp
+    {
+        ROWAND,
+        ROWOR,
+        ROWNOT,
+        ROWXOR,
+        ROWAP,
+        ROWAAP
+    };
+
+    struct RowOpPayload
+    {
+        Request::RowOp op;
+        Addr dest;
+        Addr src1;
+        Addr src2;
+    };
 
   private:
     typedef uint16_t PrivateFlagsType;
@@ -630,6 +664,37 @@ class Request : public Extensible<Request>
         req2->_byteEnable = std::vector<bool>(
             _byteEnable.begin() + req1->_size,
             _byteEnable.end());
+    }
+
+
+    // based on [MIMDRAM[(https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/request.hh#L449)
+    void splitRowOp(Request::RowOpPayload* addrs, RequestPtr &req_dest,
+            RequestPtr &req_src1, RequestPtr &req_src2)
+    {
+        assert(privateFlags.isSet(VALID_VADDR));
+        assert(privateFlags.noneSet(VALID_PADDR));
+        // req_dest = new Request(*this);
+        req_dest = std::make_shared<Request>(*this);
+        req_dest->_vaddr = addrs->dest;
+
+        if (addrs->op == ROWAP) {
+            // AP operations have no second operand
+            req_src1 = NULL;
+        } else {
+            // req_src1 = new Request(*this);
+            req_src1 = std::make_shared<Request>(*this);
+            req_src1->_vaddr = addrs->src1;
+        }
+
+        if (addrs->op == ROWNOT || addrs->op == ROWAP || addrs->op == ROWAAP) {
+            // NOT, AAP and AP operations have no third operand
+            req_src2 = NULL;
+        } else {
+            // req_src2 = new Request(*this);
+            req_src2 = std::make_shared<Request>(*this);
+            req_src2->_vaddr = addrs->src2;
+        }
     }
 
     /**
@@ -1039,6 +1104,11 @@ class Request : public Extensible<Request>
     }
     bool isSecure() const { return _flags.isSet(SECURE); }
     bool isPTWalk() const { return _flags.isSet(PT_WALK); }
+
+    // taken from [MIMDRAM[(https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/request.hh#L705)
+    bool isRowOp() const { return _flags.isSet(ROWOP); }
+
     bool isRelease() const { return _flags.isSet(RELEASE); }
     bool isKernel() const { return _flags.isSet(KERNEL); }
     bool isAtomicReturn() const { return _flags.isSet(ATOMIC_RETURN_OP); }

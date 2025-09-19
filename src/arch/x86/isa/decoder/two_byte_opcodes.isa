@@ -714,6 +714,15 @@
             0x3: Inst::BT(Ev,Gv);
             0x4: Inst::SHLD(Ev,Gv,Ib);
             0x5: Inst::SHLD(Ev,Gv);
+
+            // AMBIT Instructions
+            0x6: deineMom::Miau();
+            // 0x6: RowOp::ROWAND();
+            // 0x7: RowOp::ROWOR();
+            // 0x8: RowOp::ROWNOT();
+            // 0x9: RowOp::ROWXOR();
+            // 0xA: RowOp::ROWAP();
+            // 0xB: RowOp::ROWAAP();
             default: Inst::UD2();
         }
         0x15: decode OPCODE_OP_BOTTOM3 {

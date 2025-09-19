@@ -639,13 +639,14 @@ DRAMInterface::DRAMInterface(const DRAMInterfaceParams &_p)
       bankGroupArch(_p.bank_groups_per_rank > 0),
       tRL(_p.tCL),
       tWL(_p.tCWL),
-      tBURST_MIN(_p.tBURST_MIN), tBURST_MAX(_p.tBURST_MAX),
-      tCCD_L_WR(_p.tCCD_L_WR), tCCD_L(_p.tCCD_L),
-      tRCD_RD(_p.tRCD), tRCD_WR(_p.tRCD_WR),
-      tRP(_p.tRP), tRAS(_p.tRAS), tWR(_p.tWR), tRTP(_p.tRTP),
-      tRFC(_p.tRFC), tREFI(_p.tREFI), tRRD(_p.tRRD), tRRD_L(_p.tRRD_L),
-      tPPD(_p.tPPD), tAAD(_p.tAAD),
-      tXAW(_p.tXAW), tXP(_p.tXP), tXS(_p.tXS),
+      tBURST_MIN(_p.tBURST_MIN),
+      tBURST_MAX(_p.tBURST_MAX), tCCD_L_WR(_p.tCCD_L_WR),
+      tCCD_L(_p.tCCD_L), tRCD_RD(_p.tRCD),
+      tRCD_WR(_p.tRCD_WR), tRP(_p.tRP),
+      tRAS(_p.tRAS), tWR(_p.tWR), tRTP(_p.tRTP), tRFC(_p.tRFC),
+      tREFI(_p.tREFI), tRRD(_p.tRRD), tRRD_L(_p.tRRD_L), tPPD(_p.tPPD),
+      tAAD(_p.tAAD), tXAW(_p.tXAW),
+      tXP(_p.tXP), tXS(_p.tXS), tWLOV(_p.tWLOV),
       clkResyncDelay(_p.tBURST_MAX),
       dataClockSync(_p.data_clock_sync),
       burstInterleave(tBURST != tBURST_MIN),
@@ -1113,6 +1114,92 @@ DRAMInterface::minBankPrep(const MemPacketQueue& queue,
     }
 
     return std::make_pair(bank_mask, hidden_bank_prep);
+}
+
+
+/**
+ * @note Taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+ * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/dram_ctrl.cc#L1068)
+ */
+void
+DRAMInterface::apBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick,
+        uint32_t row)
+{
+    activateBank(rank_ref, bank_ref, act_tick, row);
+    prechargeBank(rank_ref, bank_ref, bank_ref.preAllowedAt);
+}
+
+/**
+ * @note Taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+ * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/dram_ctrl.cc#L1075)
+ */
+void
+DRAMInterface::aapBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick,
+         uint32_t row1, uint32_t row2, bool act_overlapped)
+{
+    DPRINTF(DRAM, "Activate-Activate at tick %d\n", act_tick);
+
+    // update the open row
+    assert(bank_ref.openRow == Bank::NO_ROW);
+    bank_ref.openRow = Bank::DOUBLE_ROW;
+
+    // start counting anew, this covers both the case when we
+    // auto-precharged, and when this access is forced to
+    // precharge
+    bank_ref.bytesAccessed = 0;
+    bank_ref.rowAccesses = 0;
+
+    ++rank_ref.numBanksActive;
+    assert(rank_ref.numBanksActive <= banksPerRank);
+
+    DPRINTF(DRAM,
+        "Activate-Activate bank %d, rank %d at tick %lld, now got %d active\n",
+        bank_ref.bank, rank_ref.rank, act_tick,
+        ranks[rank_ref.rank]->numBanksActive);
+
+    // The next access has to respect tRAS plus a bit for this bank
+    if (act_overlapped) {
+        bank_ref.preAllowedAt = act_tick + tRAS + tWLOV;
+    } else {
+        bank_ref.preAllowedAt = act_tick + tRAS + tWL;
+    }
+
+    // enforce tRRD
+    for (int i = 0; i < banksPerRank; i ++) {
+        if (bankGroupArch && (bank_ref.bankgr == rank_ref.banks[i].bankgr)) {
+            rank_ref.banks[i].actAllowedAt = std::max(act_tick + tRRD_L,
+                                            rank_ref.banks[i].actAllowedAt);
+        }
+        else {
+            rank_ref.banks[i].actAllowedAt = std::max(act_tick + tRRD,
+                                            rank_ref.banks[i].actAllowedAt);
+        }
+    }
+
+    // enforce tXAW
+    if (!rank_ref.actTicks.empty()) {
+        rank_ref.actTicks.pop_back();
+        rank_ref.actTicks.push_front(act_tick);
+
+        Tick new_limit = rank_ref.actTicks.back() + tXAW;
+        if (rank_ref.actTicks.back() &&
+            act_tick < new_limit) {
+            for (int j = 0; j < banksPerRank; j ++) {
+                rank_ref.banks[j].actAllowedAt =
+                    std::max(new_limit, rank_ref.banks[j].actAllowedAt);
+            }
+        }
+    }
+
+    // at the point when this activate takes place, make sure we
+    // transition to the active power state
+    if (!rank_ref.activateEvent.scheduled())
+        schedule(rank_ref.activateEvent, act_tick);
+    else if (rank_ref.activateEvent.when() > act_tick)
+        // move it sooner in time
+        reschedule(rank_ref.activateEvent, act_tick);
+
+    prechargeBank(rank_ref, bank_ref, bank_ref.preAllowedAt);
 }
 
 DRAMInterface::Rank::Rank(const DRAMInterfaceParams &_p,

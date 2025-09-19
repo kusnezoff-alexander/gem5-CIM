@@ -63,14 +63,28 @@ class WholeTranslationState
 {
   protected:
     int outstanding;
-    Fault faults[2];
+    // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/
+    // translation.hh#L65)
+    // Fault faults[2];
+    Fault faults[3];
 
   public:
     bool delay;
     bool isSplit;
+    // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/
+    // translation.hh#L70C5-L70C18)
+    bool isRowOp;
     RequestPtr mainReq;
     RequestPtr sreqLow;
     RequestPtr sreqHigh;
+    // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/
+    // translation.hh#L74C1-L76C25)
+    RequestPtr sreqDest;
+    RequestPtr sreqSrc1;
+    RequestPtr sreqSrc2;
     uint8_t *data;
     uint64_t *res;
     BaseMMU::Mode mode;
@@ -102,6 +116,29 @@ class WholeTranslationState
     {
         faults[0] = faults[1] = NoFault;
         assert(mode == BaseMMU::Read || mode == BaseMMU::Write);
+    }
+
+
+    /**
+     * taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+     * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/
+     * translation.hh#L114)
+     * Triple (or double) translation state for row op.
+     */
+    WholeTranslationState(RequestPtr _req, RequestPtr _sreqDest,
+                          RequestPtr _sreqSrc1, RequestPtr _sreqSrc2,
+                          uint8_t *_data, uint64_t *_res,
+                          // BaseTLB::Mode _mode)
+                          BaseMMU::Mode _mode)
+        : outstanding(_sreqSrc1 == NULL? 1 : (_sreqSrc2 == NULL? 2 : 3)),
+          delay(false), isSplit(false),
+          isRowOp(true), mainReq(_req), sreqLow(NULL), sreqHigh(NULL),
+          sreqDest(_sreqDest), sreqSrc1(_sreqSrc1), sreqSrc2(_sreqSrc2),
+          data(_data), res(_res), mode(_mode)
+    {
+        faults[0] = faults[1] = faults[2] = NoFault;
+        // assert(mode == BaseTLB::Write);
+        assert(mode == BaseMMU::Write);
     }
 
     /**

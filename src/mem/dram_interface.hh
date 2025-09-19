@@ -523,6 +523,10 @@ class DRAMInterface : public MemInterface
     const Tick tXAW;
     const Tick tXP;
     const Tick tXS;
+    // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+    // dram_ctrl.hh#L782)
+    const Tick tWLOV;
     const Tick clkResyncDelay;
     const bool dataClockSync;
     const bool burstInterleave;
@@ -626,6 +630,8 @@ class DRAMInterface : public MemInterface
         statistics::Formula busUtilRead;
         statistics::Formula busUtilWrite;
         statistics::Formula pageHitRate;
+
+        // TODO: store stats about RowOps
     };
 
     DRAMStats stats;
@@ -652,6 +658,35 @@ class DRAMInterface : public MemInterface
      */
     std::pair<std::vector<uint32_t>, bool>
     minBankPrep(const MemPacketQueue& queue, Tick min_col_at) const;
+
+
+
+    /**
+     * @note Taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+     * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+     * dram_ctrl.cc#L1068)
+     */
+    void apBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick, uint32_t row);
+
+    /**
+     * Perform an activate-activate-precharge cycle on a given bank. Updates
+     * bank.actAllowedAt for the next operation by setting bank.preAllowedAt
+     * and calling prechargeBank().
+     *
+     * @param rank_ref The rank to AAP
+     * @param bank_ref The bank to AAP
+     * @param act_tick Time when the first activate takes place
+     * @param row1 Index of first row to activate
+     * @param row2 Index of second row to activate
+     * @param act_overlapped Whether to use the shorter timing associated with
+     *                       overlapped activations
+     *
+     * @note Taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+     * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+     * dram_ctrl.cc#L1075)
+     */
+    void aapBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick, uint32_t row1,
+        uint32_t row2, bool act_overlapped);
 
     /*
      * @return time to send a burst of data without gaps

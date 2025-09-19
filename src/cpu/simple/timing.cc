@@ -488,6 +488,47 @@ TimingSimpleCPU::initiateMemRead(Addr addr, unsigned size,
 
         thread->mmu->translateTiming(req1, thread->getTC(), trans1, mode);
         thread->mmu->translateTiming(req2, thread->getTC(), trans2, mode);
+    // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/simple/
+    // timing.cc#L501)
+    } else if (flags & Request::ROWOP) {
+        RequestPtr req_dest, req_src1, req_src2;
+        // req->splitRowOp((Request::RowOpPayload*)newData, req_dest,
+        // req_src1, req_src2);
+        req->splitRowOp((Request::RowOpPayload*)new uint8_t[size], req_dest,
+                req_src1, req_src2);
+
+        WholeTranslationState *state =
+            // new WholeTranslationState(req, req_dest, req_src1, req_src2,
+            //                           newData, res, mode);
+            new WholeTranslationState(req, req_dest, req_src1, req_src2,
+                                      new uint8_t[size], NULL, mode);
+
+        DataTranslation<TimingSimpleCPU *> *trans1 =
+            new DataTranslation<TimingSimpleCPU *>(this, state, 0);
+        // thread->dtb->translateTiming(req_dest, tc, trans1, mode);
+        thread->mmu->translateTiming(req_dest, thread->getTC(), trans1, mode);
+
+        // Only include the third address if it is non-NULL, to account for AP
+        // operations
+        if (req_src1 != NULL) {
+            DataTranslation<TimingSimpleCPU *> *trans2 =
+                new DataTranslation<TimingSimpleCPU *>(this, state, 1);
+            // thread->dtb->translateTiming(req_src1, tc, trans2, mode);
+            thread->mmu->translateTiming(req_src1, thread->getTC(),
+                    trans2, mode);
+        }
+
+        // Only include the third address if it is non-NULL, to account
+        // for NOT, AP and AAP operations
+        if (req_src2 != NULL) {
+            DataTranslation<TimingSimpleCPU *> *trans3 =
+                new DataTranslation<TimingSimpleCPU *>(this, state, 2);
+            // thread->dtb->translateTiming(req_src2, tc, trans3, mode);
+            thread->mmu->translateTiming(req_src2, thread->getTC(), trans3,
+                    mode);
+        }
+
     } else {
         WholeTranslationState *state =
             new WholeTranslationState(req, new uint8_t[size], NULL, mode);

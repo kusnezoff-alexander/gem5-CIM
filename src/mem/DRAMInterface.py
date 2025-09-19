@@ -95,6 +95,9 @@ class DRAMInterface(MemInterface):
     # the time from issuing a write command to seeing the actual data
     tCWL = Param.Latency(Self.tCL, "Write CAS latency")
 
+    # time between two activates in overlapped AAP, taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/DRAMCtrl.py#L231)
+    tWLOV = Param.Latency("Word-line delay (overlapped activate)")
+
     # minimum time between a precharge and subsequent activate
     tRP = Param.Latency("Row precharge time")
 

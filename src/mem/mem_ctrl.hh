@@ -124,6 +124,15 @@ class MemPacket
     const uint8_t bank;
     const uint32_t row;
 
+    /** Used for row ops
+     * @note Taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+     * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/dram_ctrl.hh#L462)
+     * */
+    uint32_t src1_row;
+    uint32_t src2_row;
+    bool is_row_op;
+    Request::RowOp row_op;
+
     /**
      * Bank id is calculated considering banks in all the ranks
      * eg: 2 ranks each with 8 banks, then bankId = 0 --> rank0, bank0 and
@@ -199,6 +208,12 @@ class MemPacket
     inline bool isWrite() const { return !read; }
 
     /**
+     * Return true if the packet issues a CIM-RowOp
+     * @note ADDED (see MIMDRAM)
+     */
+    inline bool isRowOp() const { return is_row_op; }
+
+    /**
      * Return true if its a DRAM access
      */
     inline bool isDram() const { return dram; }
@@ -209,7 +224,12 @@ class MemPacket
         : entryTime(curTick()), readyTime(curTick()), pkt(_pkt),
           _requestorId(pkt->requestorId()),
           read(is_read), dram(is_dram), pseudoChannel(_channel), rank(_rank),
-          bank(_bank), row(_row), bankId(bank_id), addr(_addr), size(_size),
+          bank(_bank), row(_row),
+          // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+          // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+          // dram_ctrl.hh#L502)
+          src1_row(0), src2_row(0), is_row_op(false),
+          bankId(bank_id), addr(_addr), size(_size),
           burstHelper(NULL), _qosValue(_pkt->qosValue())
     { }
 

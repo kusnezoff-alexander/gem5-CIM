@@ -70,6 +70,8 @@ namespace gem5
  * on the particular location, and we do not consider the effect of multi-byte
  * reads or writes. This precludes us from discovering single-copy atomicity
  * violations.
+ *
+ * @TODO verifiy Results of RowOps !
 */
 class MemChecker : public SimObject
 {
@@ -201,6 +203,8 @@ class MemChecker : public SimObject
      * The ByteTracker keeps track of transactions for the *same byte* -- all
      * outstanding reads, the completed reads (and what they observed) and write
      * clusters (see WriteCluster).
+     *
+     * TODO: extend to track bitwise operations
      */
     class ByteTracker : public Named
     {
