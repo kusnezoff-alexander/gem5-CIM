@@ -9,7 +9,10 @@ _start:
     mov rax, 10          ; Set RAX = 10
 
 	; TODO: change this to a CIM-instruction code
-    db 0x0F, 0xAA        ; Our custom instruction: my_add42
+    ; db 0x0F, 0xAA        ; Our custom instruction: my_add42
+    ; db 0x0F, 0xAB, 0xD8         ; BT RAX, RCX
+	; db 0x0F, 0xA4, 0xD8, 0x01   ; SHLD EAX, EBX, 1
+	db 0x0F, 0xA6, 0xC3           ; Miau instruction
 
     mov rbx, rax         ; Copy RAX to RBX (should be 52)
 

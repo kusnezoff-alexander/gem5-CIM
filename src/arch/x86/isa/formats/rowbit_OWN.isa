@@ -1,0 +1,58 @@
+output header {{
+    /**
+     * Static instruction class for unimplemented instructions that
+     * cause simulator termination.  Note that these are recognized
+     * (legal) instructions that the simulator does not support; the
+     * 'Unknown' class is used for unrecognized/illegal instructions.
+     * This is a leaf class.
+     *
+     * @TODO: remove (just playing around with .isa language
+     */
+    class RowOp: public X86ISA::X86StaticInst
+    {
+      public:
+        /// Constructor
+        RowOp(const char *_mnemonic, ExtMachInst _machInst)
+            : X86ISA::X86StaticInst(_mnemonic, _machInst, No_OpClass)
+        {
+            // don't call execute() (which panics) if we're on a
+            // speculative path
+            flags[IsNonSpeculative] = true;
+            flags[IsInvalid] = true;
+        }
+
+        Fault execute(ExecContext *, trace::InstRecord *) const override;
+
+        std::string
+        generateDisassembly(Addr pc,
+                            const loader::SymbolTable *symtab) const override;
+    };
+}};
+
+output decoder {{
+    std::string
+    RowOp::generateDisassembly(
+            Addr pc, const loader::SymbolTable *symtab) const
+    {
+        return csprintf("%-10s (unimplemented: RowOp)", mnemonic);
+    }
+}};
+
+output exec {{
+    Fault
+    RowOp::execute(ExecContext *xc,
+                               trace::InstRecord *traceData) const
+    {
+        panic("attempt to execute (RowOp) instruction '%s' %s",
+                mnemonic, machInst);
+        return NoFault;
+    }
+}};
+
+
+
+// @TODO: remove (just playing around with .isa language
+def format RowOp() {{
+    iop = InstObjParams(name, 'deineMom')
+    decode_block = BasicDecodeWithMnemonic.subst(iop)
+}};

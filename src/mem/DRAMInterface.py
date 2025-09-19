@@ -333,6 +333,10 @@ class DDR3_1600_8x8(DRAMInterface):
     # Greater of 4 CK or 7.5 ns
     tRTP = "7.5ns"
 
+    # see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    # 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/DRAMCtrl.py#L375
+    tWLOV = "4ns"
+
     # Default same rank rd-to-wr bus turnaround to 2 CK, @800 MHz = 2.5 ns
     tRTW = "2.5ns"
 
@@ -596,6 +600,10 @@ class DDR4_2400_16x4(DRAMInterface):
     # exit delay to ACT, PRE, PREALL, REF, SREF Enter, and PD Enter is:
     # tRFC + 10ns = 340ns
     tXS = "340ns"
+
+    # see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    # 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/DRAMCtrl.py#L588)
+    tWLOV = "4ns"
 
     # Current values from datasheet
     IDD0 = "43mA"
