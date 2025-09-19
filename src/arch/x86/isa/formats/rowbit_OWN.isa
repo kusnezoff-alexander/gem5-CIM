@@ -50,9 +50,18 @@ output exec {{
 }};
 
 
+def template RowOpDecode {{
+    return new %(class_name)s(machInst);
+}};
+
+
+// Basic decode template, passing mnemonic in as string arg to constructor.
+def template RowOpDecodeWithMnemonic {{
+    return new %(class_name)s("%(mnemonic)s", machInst);
+}};
 
 // @TODO: remove (just playing around with .isa language
 def format RowOp() {{
-    iop = InstObjParams(name, 'deineMom')
-    decode_block = BasicDecodeWithMnemonic.subst(iop)
+    iop = InstObjParams(name, 'RowOp')
+    decode_block = RowOpDecodeWithMnemonic.subst(iop)
 }};
