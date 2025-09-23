@@ -69,35 +69,6 @@ output header {{
     };
 
     /**
-     * Static instruction class for unimplemented instructions that
-     * cause simulator termination.  Note that these are recognized
-     * (legal) instructions that the simulator does not support; the
-     * 'Unknown' class is used for unrecognized/illegal instructions.
-     * This is a leaf class.
-     *
-     * @TODO: remove (just playing around with .isa language
-     */
-    class deineMom : public X86ISA::X86StaticInst
-    {
-      public:
-        /// Constructor
-        deineMom(const char *_mnemonic, ExtMachInst _machInst)
-            : X86ISA::X86StaticInst(_mnemonic, _machInst, No_OpClass)
-        {
-            // don't call execute() (which panics) if we're on a
-            // speculative path
-            flags[IsNonSpeculative] = true;
-            flags[IsInvalid] = true;
-        }
-
-        Fault execute(ExecContext *, trace::InstRecord *) const override;
-
-        std::string
-        generateDisassembly(Addr pc,
-                            const loader::SymbolTable *symtab) const override;
-    };
-
-    /**
      * Base class for unimplemented instructions that cause a warning
      * to be printed (but do not terminate simulation).  This
      * implementation is a little screwy in that it will print a
@@ -140,13 +111,6 @@ output decoder {{
     }
 
     std::string
-    deineMom::generateDisassembly(
-            Addr pc, const loader::SymbolTable *symtab) const
-    {
-        return csprintf("%-10s (unimplemented: deineMom)", mnemonic);
-    }
-
-    std::string
     WarnUnimplemented::generateDisassembly(
             Addr pc, const loader::SymbolTable *symtab) const
     {
@@ -161,15 +125,6 @@ output exec {{
                                trace::InstRecord *traceData) const
     {
         panic("attempt to execute unimplemented instruction '%s' %s",
-                mnemonic, machInst);
-        return NoFault;
-    }
-
-    Fault
-    deineMom::execute(ExecContext *xc,
-                               trace::InstRecord *traceData) const
-    {
-        panic("attempt to execute (deineMom) instruction '%s' %s",
                 mnemonic, machInst);
         return NoFault;
     }
@@ -190,13 +145,6 @@ output exec {{
 
 def format FailUnimpl() {{
     iop = InstObjParams(name, 'FailUnimplemented')
-    decode_block = BasicDecodeWithMnemonic.subst(iop)
-}};
-
-
-// @TODO: remove (just playing around with .isa language
-def format deineMom() {{
-    iop = InstObjParams(name, 'deineMom')
     decode_block = BasicDecodeWithMnemonic.subst(iop)
 }};
 

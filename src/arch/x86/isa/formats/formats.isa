@@ -76,5 +76,5 @@
 ##include "cond.isa"
 
 //Microops for bulk bitwise in-DRAM operations
-//##include "rowbit_FIXME.isa"
-##include "rowbit_OWN.isa"
+##include "rowbit_FIXME.isa"
+//##include "rowbit_OWN.isa"

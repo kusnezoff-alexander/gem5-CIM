@@ -107,7 +107,10 @@ def format RowOp() {{
     // sizeof(data), 0, %(mem_flags)s, NULL)'%params
 
     // iop = InstObjParams(name, Name, 'X86ISA::X86StaticInst', params)
-    iop = InstObjParams(name, Name, 'X86ISA::X86MicroInst', params)
+    // iop = InstObjParams(name, Name, 'X86ISA::X86MicroInst', params)
+    // base = 'X86ISA::RegOpT<X86ISA::FoldedDestOp, X86ISA::FoldedSrc1Op,
+    // X86ISA::FoldedSrc2Op>'
+    iop = InstObjParams(name, Name, base)
     header_output = RowOpDeclare.subst(iop)
     decoder_output = RowOpConstructor.subst(iop)
     decode_block = RowOpDecode.subst(iop)

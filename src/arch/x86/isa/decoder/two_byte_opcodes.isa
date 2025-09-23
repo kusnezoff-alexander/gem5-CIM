@@ -716,7 +716,8 @@
             0x5: Inst::SHLD(Ev,Gv);
 
             // AMBIT Instructions
-            // 0x6: deineMom::Miau();
+            // take NO register arguments (row-addresses are expected to be
+            // placed in %rdi (dst), %rsi (src1), %rdx (src2)
             0x6: RowOp::ROWAND();
             0x7: RowOp::ROWOR();
             // TODO: `BOTTOM3`=only 3 bits !!

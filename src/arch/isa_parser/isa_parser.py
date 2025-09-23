@@ -41,6 +41,7 @@ import os
 import re
 import sys
 import traceback
+from pprint import pprint
 
 sys.path.append(
     os.path.dirname(__file__)
@@ -51,15 +52,12 @@ from types import *
 
 from grammar import Grammar
 
-from .operand_list import *  # TODO: quickfix for running `isa_parser.py` standalone
-from .operand_types import *  # TODO: quickfix for running `isa_parser.py` standalone
-from .util import *  # TODO: quickfix for running `isa_parser.py` standalone
-
-# from operand_list import *
-# from operand_types import *
-# from util import *
+from .operand_list import *
+from .operand_types import *
+from .util import *
 
 debug = False
+# debug = True
 
 ####################
 # Template objects.
@@ -76,6 +74,10 @@ class Template:
         self.template = t
 
     def subst(self, d):
+        """
+        if `d` is an `InstObjParams`: sets `reg_idx_arr_decl`,`set_reg_idx_arr`,`op_decl`,`op_src_decl`,`op_dest_decl`,`ob_rd`,`ob_wb`
+        if `d` is a dict: updates internal dict-values based on that given dict
+        """
         myDict = None
 
         # Protect non-Python-dict substitutions (e.g. if there's a printf
@@ -220,6 +222,7 @@ class Format:
                 return my_locals
 """
         c = compile(f, label + " wrapper", "exec")
+        print(c)
         scope = {}
         exec(c, scope)
         try:
@@ -1064,6 +1067,9 @@ class ISAParser(Grammar):
     # from polluting this script's namespace.
     def p_global_let(self, t):
         "global_let : LET CODELIT SEMI"
+        print(
+            f"[ENTER: p_global_exit]: {t[2]}",
+        )
         self.updateExportContext()
         self.exportContext["header_output"] = ""
         self.exportContext["decoder_output"] = ""
@@ -1086,7 +1092,9 @@ del wrap
         # next split's #define from the parser and add it to the current
         # emission-in-progress.
         try:
-            # print("t:", t[2])
+            print("t:", t[2])
+            print("Split setup:", split_setup)
+            pprint(self.exportContext)
             exec(split_setup + fixPythonIndentation(t[2]), self.exportContext)
         except Exception as exc:
             traceback.print_exc(file=sys.stdout)
@@ -1100,6 +1108,8 @@ del wrap
             exec_output=self.exportContext["exec_output"],
             decode_block=self.exportContext["decode_block"],
         ).emit()
+
+        print("[LEAVE: p_global_exit]")
 
     # Define the mapping from operand type extensions to C++ types and
     # bit widths (stored in operandTypeMap).

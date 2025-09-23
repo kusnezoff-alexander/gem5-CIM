@@ -35,6 +35,7 @@
 
 categories = [
     "romutil",
+    # "cim", # TODO: circular import ??
     "general_purpose",
     "simd128",
     "simd64",
