@@ -733,6 +733,26 @@ let {{
             }
         '''
 
+    # TODO (currently inspired by `class Mov`)
+    class RowOp(BasicRegOp):
+        code = 'DestReg = merge(SrcReg1, dest, op2, dataSize)'
+        else_code = 'DestReg = DestReg;'
+        invalidate_srcs = '''
+            // 4-byte and 8-byte register moves completely overwrites
+            // the destination register. Therefore, we can safely
+            // eliminate the destination register's original contents
+            // as a source dependency.
+            // Note: Source index 1 is actual architectural source register.
+            // Note: Because there are other variants of the 'mov' micro-op,
+            // we need to check the number of source registers to ensure
+            // we're operating on the register-register version, not the
+            // register-immediate version, 'movi', say.
+            if (numSrcRegs() == 3 && (dataSize == 4 || dataSize == 8)) {
+                setSrcRegIdx(0, RegId());
+                setSrcRegIdx(2, RegId());
+            }
+        '''
+
     # Shift instructions
 
     class Sll(BasicRegOp):

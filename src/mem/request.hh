@@ -667,8 +667,13 @@ class Request : public Extensible<Request>
     }
 
 
-    // based on [MIMDRAM[(https://github.com/CMU-SAFARI/MIMDRAM/blob/
-    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/request.hh#L449)
+    /**
+     * @brief Sets row-operands `req_dest`,`req_src1`,`req_src2` based
+     * on executed Row-Operation (and supplied addresses)
+     *
+     * based on [MIMDRAM[(https://github.com/CMU-SAFARI/MIMDRAM/blob/
+     * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/request.hh#L449)
+     */
     void splitRowOp(Request::RowOpPayload* addrs, RequestPtr &req_dest,
             RequestPtr &req_src1, RequestPtr &req_src2)
     {
@@ -691,7 +696,6 @@ class Request : public Extensible<Request>
             // NOT, AAP and AP operations have no third operand
             req_src2 = NULL;
         } else {
-            // req_src2 = new Request(*this);
             req_src2 = std::make_shared<Request>(*this);
             req_src2->_vaddr = addrs->src2;
         }

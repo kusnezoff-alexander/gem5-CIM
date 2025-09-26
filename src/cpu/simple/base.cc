@@ -467,6 +467,11 @@ BaseSimpleCPU::postExecute()
     if (curStaticInst->isStore() || curStaticInst->isAtomic()){
         commitStats[t_info.thread->threadId()]->numStoreInsts++;
     }
+
+    if (curStaticInst->isRowOp()){
+        commitStats[t_info.thread->threadId()]->numRowOpInsts++;
+    }
+
     /* End power model statistics */
 
     commitStats[t_info.thread->threadId()]

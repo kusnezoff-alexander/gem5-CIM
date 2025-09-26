@@ -132,12 +132,11 @@ class WholeTranslationState
                           BaseMMU::Mode _mode)
         : outstanding(_sreqSrc1 == NULL? 1 : (_sreqSrc2 == NULL? 2 : 3)),
           delay(false), isSplit(false),
-          isRowOp(true), mainReq(_req), sreqLow(NULL), sreqHigh(NULL),
+          isRowOp(false), mainReq(_req), sreqLow(NULL), sreqHigh(NULL),
           sreqDest(_sreqDest), sreqSrc1(_sreqSrc1), sreqSrc2(_sreqSrc2),
           data(_data), res(_res), mode(_mode)
     {
         faults[0] = faults[1] = faults[2] = NoFault;
-        // assert(mode == BaseTLB::Write);
         assert(mode == BaseMMU::Write);
     }
 
@@ -163,6 +162,29 @@ class WholeTranslationState
             mainReq->setFlags(sreqLow->getFlags());
             mainReq->setFlags(sreqHigh->getFlags());
         }
+        // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+        // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/
+        // translation.hh#L149)
+        if (isRowOp && outstanding == 0) {
+            Request::RowOpPayload* addrs = (Request::RowOpPayload*) data;
+            if (faults[0] == NoFault) {
+                addrs->dest = sreqDest->getPaddr();
+            }
+            mainReq->setFlags(sreqDest->getFlags());
+            if (sreqSrc1 != NULL) {
+                if (faults[1] == NoFault) {
+                    addrs->src1 = sreqSrc1->getPaddr();
+                }
+                mainReq->setFlags(sreqSrc1->getFlags());
+            }
+            if (sreqSrc2 != NULL) {
+                if (faults[2] == NoFault) {
+                    addrs->src2 = sreqSrc2->getPaddr();
+                }
+                mainReq->setFlags(sreqSrc2->getFlags());
+            }
+            mainReq->setPaddr(0);
+        }
         return outstanding == 0;
     }
 
@@ -179,6 +201,8 @@ class WholeTranslationState
             return faults[0];
         else if (faults[1] != NoFault)
             return faults[1];
+        else if (faults[2] != NoFault)
+            return faults[2];
         else
             return NoFault;
     }
@@ -187,7 +211,7 @@ class WholeTranslationState
     void
     setNoFault()
     {
-        faults[0] = faults[1] = NoFault;
+        faults[0] = faults[1] = faults[2] = NoFault;
     }
 
     /**

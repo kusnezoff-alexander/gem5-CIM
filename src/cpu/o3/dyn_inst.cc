@@ -433,6 +433,7 @@ DynInst::writeMem(uint8_t *data, unsigned size, Addr addr,
                         Request::Flags flags, uint64_t *res,
                         const std::vector<bool> &byte_enable)
 {
+    // TODO: add support for CIM
     assert(byte_enable.size() == size);
     return cpu->pushRequest(
         dynamic_cast<DynInstPtr::PtrType>(this),

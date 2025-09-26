@@ -203,6 +203,9 @@ class StaticInst : public RefCounted, public StaticInstFlags
     {
         return isHtmStart() || isHtmStop() || isHtmCancel();
     }
+
+
+    bool isRowOp() const { return flags[IsRowOp]; }
     //@}
 
     void setFirstMicroop() { flags[IsFirstMicroop] = true; }

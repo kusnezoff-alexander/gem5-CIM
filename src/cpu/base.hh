@@ -831,6 +831,9 @@ class BaseCPU : public ClockedObject
         /* Number of store instructions */
         statistics::Scalar numStoreInsts;
 
+        /* Number of store instructions */
+        statistics::Scalar numRowOpInsts;
+
         /* Number of vector instructions */
         statistics::Scalar numVecInsts;
 

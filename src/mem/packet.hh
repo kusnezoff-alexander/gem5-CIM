@@ -622,6 +622,9 @@ class Packet : public Printable, public Extensible<Packet>
     bool isError() const             { return cmd.isError(); }
     bool isPrint() const             { return cmd.isPrint(); }
     bool isFlush() const             { return cmd.isFlush(); }
+    // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/packet.hh#L499)
+    bool isRowOp() const             { return req->isRowOp(); }
 
     bool isWholeLineWrite(unsigned blk_size)
     {

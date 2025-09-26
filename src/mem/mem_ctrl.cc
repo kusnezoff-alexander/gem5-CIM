@@ -61,6 +61,7 @@ MemCtrl::MemCtrl(const MemCtrlParams &p) :
     qos::MemCtrl(p),
     port(name() + ".port", *this), isTimingMode(false),
     retryRdReq(false), retryWrReq(false),
+    pendingRowOps(0),
     nextReqEvent([this] {processNextReqEvent(dram, respQueue,
                          respondEvent, nextReqEvent, retryWrReq);}, name()),
     respondEvent([this] {processRespondEvent(dram, respQueue,
@@ -308,66 +309,111 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
     // eventually done, set the readyTime, and call schedule()
     assert(pkt->isWrite());
 
-    // if the request size is larger than burst size, the pkt is split into
-    // multiple packets
-    const Addr base_addr = pkt->getAddr();
-    Addr addr = base_addr;
-    uint32_t burst_size = mem_intr->bytesPerBurst();
+    // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/dram_ctrl.cc#L517)
+    if (pkt->isRowOp()) {
 
-    for (int cnt = 0; cnt < pkt_count; ++cnt) {
-        unsigned size = std::min((addr | (burst_size - 1)) + 1,
-                        base_addr + pkt->getSize()) - addr;
-        stats.writePktSize[ceilLog2(size)]++;
-        stats.writeBursts++;
-        stats.requestorWriteAccesses[pkt->requestorId()]++;
+        Request::RowOpPayload* addrs = pkt->getPtr<Request::RowOpPayload>();
+        MemPacket* dram_pkt  = mem_intr->decodePacket(pkt, addrs->dest, 0,
+                false);
+        MemPacket* dram_pkt1 = mem_intr->decodePacket(pkt, addrs->src1, 0,
+                false);
+        MemPacket* dram_pkt2 = mem_intr->decodePacket(pkt, addrs->src2, 0,
+                false);
+        dram_pkt->is_row_op = true;
+        dram_pkt->row_op = addrs->op;
 
-        // see if we can merge with an existing item in the write
-        // queue and keep track of whether we have merged or not
-        bool merged = isInWriteQueue.find(burstAlign(addr, mem_intr)) !=
-            isInWriteQueue.end();
-
-        // if the item was not merged we need to create a new write
-        // and enqueue it
-        if (!merged) {
-            MemPacket* mem_pkt;
-            mem_pkt = mem_intr->decodePacket(pkt, addr, size, false,
-                                                    mem_intr->pseudoChannel);
-            // Default readyTime to Max if nvm interface;
-            //will be reset once read is issued
-            mem_pkt->readyTime = MaxTick;
-
-            mem_intr->setupRank(mem_pkt->rank, false);
-
-            assert(totalWriteQueueSize < writeBufferSize);
-            stats.wrQLenPdf[totalWriteQueueSize]++;
-
-            DPRINTF(MemCtrl, "Adding to write queue\n");
-
-            writeQueue[mem_pkt->qosValue()].push_back(mem_pkt);
-            isInWriteQueue.insert(burstAlign(addr, mem_intr));
-
-            // log packet
-            logRequest(MemCtrl::WRITE, pkt->requestorId(),
-                       pkt->qosValue(), mem_pkt->addr, 1);
-
-            mem_intr->writeQueueSize++;
-
-            assert(totalWriteQueueSize == isInWriteQueue.size());
-
-            // Update stats
-            stats.avgWrQLen = totalWriteQueueSize;
-
-        } else {
-            DPRINTF(MemCtrl,
-                    "Merging write burst with existing queue entry\n");
-
-            // keep track of the fact that this burst effectively
-            // disappeared as it was merged with an existing one
-            stats.mergedWrBursts++;
+        // Only care about dram_pkt1 if the operation is not in place
+        if (addrs->op != Request::ROWAP) {
+            assert(dram_pkt->rank == dram_pkt1->rank);
+            assert(dram_pkt->bank == dram_pkt1->bank);
         }
+        // Only care about dram_pkt2 if it's a binary op
+        if (addrs->op != Request::ROWNOT && addrs->op != Request::ROWAAP &&
+                addrs->op != Request::ROWAP) {
+          assert(dram_pkt->rank == dram_pkt2->rank);
+          assert(dram_pkt->bank == dram_pkt2->bank);
+        }
+        dram_pkt->src1_row = dram_pkt1->row;
+        dram_pkt->src2_row = dram_pkt2->row;
+        delete dram_pkt1;
+        delete dram_pkt2;
 
-        // Starting address of next memory pkt (aligned to burst_size boundary)
-        addr = (addr | (burst_size - 1)) + 1;
+        DPRINTF(DRAM,
+                "Adding to write queue: RowOp in rank %d bank %d, rows \
+                %d <-- %d (*) %d\n",
+                dram_pkt->rank, dram_pkt->bank, dram_pkt->row,
+                dram_pkt->src1_row, dram_pkt->src2_row);
+
+        // Add to write queue, and set rowop counter to signal that we must
+        // flush the write queue
+
+        writeQueue[dram_pkt->qosValue()].push_back(dram_pkt);
+        pendingRowOps++;
+
+    } else {
+        // if the request size is larger than burst size, the pkt is split into
+        // multiple packets
+        const Addr base_addr = pkt->getAddr();
+        Addr addr = base_addr;
+        uint32_t burst_size = mem_intr->bytesPerBurst();
+
+        for (int cnt = 0; cnt < pkt_count; ++cnt) {
+            unsigned size = std::min((addr | (burst_size - 1)) + 1,
+                            base_addr + pkt->getSize()) - addr;
+            stats.writePktSize[ceilLog2(size)]++;
+            stats.writeBursts++;
+            stats.requestorWriteAccesses[pkt->requestorId()]++;
+
+            // see if we can merge with an existing item in the write
+            // queue and keep track of whether we have merged or not
+            bool merged = isInWriteQueue.find(burstAlign(addr, mem_intr)) !=
+                isInWriteQueue.end();
+
+            // if the item was not merged we need to create a new write
+            // and enqueue it
+            if (!merged) {
+                MemPacket* mem_pkt;
+                mem_pkt = mem_intr->decodePacket(pkt, addr, size, false,
+                                                    mem_intr->pseudoChannel);
+                // Default readyTime to Max if nvm interface;
+                //will be reset once read is issued
+                mem_pkt->readyTime = MaxTick;
+
+                mem_intr->setupRank(mem_pkt->rank, false);
+
+                assert(totalWriteQueueSize < writeBufferSize);
+                stats.wrQLenPdf[totalWriteQueueSize]++;
+
+                DPRINTF(MemCtrl, "Adding to write queue\n");
+
+                writeQueue[mem_pkt->qosValue()].push_back(mem_pkt);
+                isInWriteQueue.insert(burstAlign(addr, mem_intr));
+
+                // log packet
+                logRequest(MemCtrl::WRITE, pkt->requestorId(),
+                           pkt->qosValue(), mem_pkt->addr, 1);
+
+                mem_intr->writeQueueSize++;
+
+                assert(totalWriteQueueSize == isInWriteQueue.size());
+
+                // Update stats
+                stats.avgWrQLen = totalWriteQueueSize;
+
+            } else {
+                DPRINTF(MemCtrl,
+                        "Merging write burst with existing queue entry\n");
+
+                // keep track of the fact that this burst effectively
+                // disappeared as it was merged with an existing one
+                stats.mergedWrBursts++;
+            }
+
+            // Starting address of next memory pkt
+            // (aligned to burst_size boundary)
+            addr = (addr | (burst_size - 1)) + 1;
+        }
     }
 
     // we do not wait for the writes to be send to the actual memory,

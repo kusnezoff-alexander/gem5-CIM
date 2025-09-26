@@ -314,6 +314,12 @@ class MemCtrl : public qos::MemCtrl
     bool retryWrReq;
 
     /**
+     * see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+     * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/dram_ctrl.hh#L149)
+     */
+    int pendingRowOps;
+
+    /**
      * Bunch of things requires to setup "events" in gem5
      * When event "respondEvent" occurs for example, the method
      * processRespondEvent is called; no parameters are allowed
