@@ -7,16 +7,16 @@ GLOBAL _start
 SECTION .text
 _start:
 
-    ;; Call mmap_alloc to map memory at 0x123000
-    ;call mmap_alloc
+    ; Call mmap_alloc to map memory at 0x123000
+    call mmap_alloc
 
-    ;; After mmap, the mapped address is in RAX
-    ;; We'll use RAX + 0x456 = 0x123456
-    ;mov rdi, rax
-    ;mov qword [rdi + 0x456], 42
+    ; After mmap, the mapped address is in RAX
+    ; We'll use RAX + 0x456 = 0x123456
+    mov rdi, rax
+    mov qword [rdi + 0x456], 42
 
  	; mov rax, 10          ; Set RAX = 10
-	mov rdi, 0x123456		; dst
+	; mov rdi, 0x123456		; dst
 	; mov rsi, 0x123457		; src1
 	; mov rdx, 0x123458		; src2
 	;

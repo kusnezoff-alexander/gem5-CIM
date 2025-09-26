@@ -95,7 +95,8 @@ class WholeTranslationState
      */
     WholeTranslationState(const RequestPtr &_req, uint8_t *_data,
                           uint64_t *_res, BaseMMU::Mode _mode)
-        : outstanding(1), delay(false), isSplit(false), mainReq(_req),
+        : outstanding(1), delay(false), isSplit(false),
+          isRowOp(false), mainReq(_req),
           sreqLow(NULL), sreqHigh(NULL), data(_data), res(_res), mode(_mode)
     {
         faults[0] = faults[1] = NoFault;
@@ -110,7 +111,8 @@ class WholeTranslationState
     WholeTranslationState(const RequestPtr &_req, const RequestPtr &_sreqLow,
                           const RequestPtr &_sreqHigh, uint8_t *_data,
                           uint64_t *_res, BaseMMU::Mode _mode)
-        : outstanding(2), delay(false), isSplit(true), mainReq(_req),
+        : outstanding(2), delay(false), isSplit(true),
+          isRowOp(false), mainReq(_req),
           sreqLow(_sreqLow), sreqHigh(_sreqHigh), data(_data), res(_res),
           mode(_mode)
     {
@@ -128,11 +130,10 @@ class WholeTranslationState
     WholeTranslationState(RequestPtr _req, RequestPtr _sreqDest,
                           RequestPtr _sreqSrc1, RequestPtr _sreqSrc2,
                           uint8_t *_data, uint64_t *_res,
-                          // BaseTLB::Mode _mode)
                           BaseMMU::Mode _mode)
         : outstanding(_sreqSrc1 == NULL? 1 : (_sreqSrc2 == NULL? 2 : 3)),
           delay(false), isSplit(false),
-          isRowOp(false), mainReq(_req), sreqLow(NULL), sreqHigh(NULL),
+          isRowOp(true), mainReq(_req), sreqLow(NULL), sreqHigh(NULL),
           sreqDest(_sreqDest), sreqSrc1(_sreqSrc1), sreqSrc2(_sreqSrc2),
           data(_data), res(_res), mode(_mode)
     {
@@ -262,6 +263,15 @@ class WholeTranslationState
         if (isSplit) {
             sreqLow.reset();
             sreqHigh.reset();
+        }
+
+        // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+        // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/
+        // translation.hh#L247
+        if (isRowOp) {
+            sreqDest.reset();
+            sreqSrc1.reset();
+            sreqSrc2.reset();
         }
     }
 };
