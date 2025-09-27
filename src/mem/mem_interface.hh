@@ -143,7 +143,6 @@ class MemInterface : public AbstractMemory
         Tick rdAllowedAt;
         Tick wrAllowedAt;
         // ===
-        Tick colAllowedAt;
         Tick preAllowedAt;
         Tick actAllowedAt;
 
@@ -152,7 +151,9 @@ class MemInterface : public AbstractMemory
 
         Bank() :
             openRow(NO_ROW), bank(0), bankgr(0),
-            colAllowedAt(0), preAllowedAt(0), actAllowedAt(0),
+            // `colAllowedAt` is split in rd/wr in newer gem5 versions:
+            rdAllowedAt(0), wrAllowedAt(0),
+            preAllowedAt(0), actAllowedAt(0),
             rowAccesses(0), bytesAccessed(0)
         { }
     };

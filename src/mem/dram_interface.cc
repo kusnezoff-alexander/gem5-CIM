@@ -378,7 +378,14 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
 
     // we need to wait until the bus is available before we can issue
     // the command; need to ensure minimum bus delay requirement is met
-    Tick cmd_at = std::max({bank_ref.colAllowedAt, next_burst_at, curTick()});
+
+    // respect any constraints on the command (e.g. tRCD or tCCD)
+    const Tick col_allowed_at = mem_pkt->isRead() ?
+                                bank_ref.rdAllowedAt : bank_ref.wrAllowedAt;
+
+    // we need to wait until the bus is available before we can issue
+    // the command; need to ensure minimum bus delay requirement is met
+    Tick cmd_at = std::max({col_allowed_at, next_burst_at, curTick()});
     if (mem_pkt->is_row_op) {
 
         // If there is a page open, precharge it.
@@ -442,17 +449,18 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
                 cmd_at = bank_ref.actAllowedAt;
                 break;
             case Request::ROWAP:
-        //[comment from MIMDRAM]: TODO replace Bank::B_T0_T1_T2
-        //with correct bank_ref
-        apBank (rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2);
-        cmd_at = bank_ref.actAllowedAt;
-        break;
-        case Request::ROWAAP:
-        //[comment from MIMDRAM]: TODO replace NULLs with correct bank_refs
-        aapBank(rank_ref, bank_ref, cmd_at, 0,
-                0, true);
-        cmd_at = bank_ref.actAllowedAt;
-        break;
+                //[comment from MIMDRAM]: TODO replace Bank::B_T0_T1_T2
+                //with correct bank_ref
+                apBank (rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
+            case Request::ROWAAP:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
             default:
                 assert(false);
                 break;
@@ -468,6 +476,7 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         nextReqTime = mem_pkt->readyTime - (tRP + tRCD_WR + tWL);
         // pendingRowOps--; // moved into `MemCtrl`
 
+        DPRINTF(DRAM, "[RowOp] NextReqTime set to %d", nextReqTime);
         return std::make_pair(issue_tick, nextReqTime);
     }
 
@@ -490,14 +499,6 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         // constraints caused be a new activation (tRRD and tXAW)
         activateBank(rank_ref, bank_ref, act_tick, mem_pkt->row);
     }
-
-    // respect any constraints on the command (e.g. tRCD or tCCD)
-    const Tick col_allowed_at = mem_pkt->isRead() ?
-                                bank_ref.rdAllowedAt : bank_ref.wrAllowedAt;
-
-    // we need to wait until the bus is available before we can issue
-    // the command; need to ensure minimum bus delay requirement is met
-    cmd_at = std::max({col_allowed_at, next_burst_at, curTick()});
 
     // verify that we have command bandwidth to issue the burst
     // if not, shift to next burst window
@@ -688,7 +689,7 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         stats.totMemAccLat += mem_pkt->readyTime - mem_pkt->entryTime;
         stats.totQLat += cmd_at - mem_pkt->entryTime;
         stats.totBusLat += tBURST;
-    } else {
+    } else if (mem_pkt->isWrite()) {
         // Schedule write done event to decrement event count
         // after the readyTime has been reached
         // Only schedule latest write event to minimize events
@@ -713,6 +714,8 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         stats.dramBytesWritten += burstSize;
         stats.perBankWrBursts[mem_pkt->bankId]++;
 
+    } else {
+        DPRINTF(DRAM, "TODO: update stats for RowOp !!");
     }
     // Update bus state to reflect when previous command was issued
     return std::make_pair(cmd_at, cmd_at + burst_gap);
@@ -1670,6 +1673,10 @@ DRAMInterface::Rank::processRefreshEvent()
         // refresh STM and therefore can always schedule next event.
         // Compensate for the delay in actually performing the refresh
         // when scheduling the next one
+        // TODO: why no `+tREFI` like in [MIMDRAM](https://github.com/
+        // CMU-SAFARI/
+        // MIMDRAM/blob/23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+        // dram_ctrl.cc#L1901)
         schedule(refreshEvent, refreshDueAt - dram.tRP);
 
         DPRINTF(DRAMState, "Refresh done at %llu and next refresh"

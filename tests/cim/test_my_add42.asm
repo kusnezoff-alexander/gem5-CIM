@@ -27,7 +27,7 @@ _start:
     ; db 0x0F, 0xAB, 0xD8         ; BT RAX, RCX
 	; db 0x0F, 0xA4, 0xD8, 0x01   ; SHLD EAX, EBX, 1
 	;db 0x0F, 0xA6, 0x00           ; ROWAND instruction
-	db 0x0F, 0xA6 		          ; ROWAND instruction (without 0x00: no syscall Error??)
+	;db 0x0F, 0xA6 		          ; ROWAND instruction (without 0x00: no syscall Error??)
 
     ; Exit syscall
     mov rax, 60          ; syscall number for exit

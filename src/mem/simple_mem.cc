@@ -121,6 +121,7 @@ SimpleMemory::recvTimingReq(PacketPtr pkt)
     panic_if(pkt->cacheResponding(), "Should not see packets where cache "
              "is responding");
 
+    // TODO: don't panic on `pkt->isRowOp()`
     panic_if(!(pkt->isRead() || pkt->isWrite()),
              "Should only see read and writes at memory controller, "
              "saw %s to %#llx\n", pkt->cmdString(), pkt->getAddr());

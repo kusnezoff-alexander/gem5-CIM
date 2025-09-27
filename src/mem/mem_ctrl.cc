@@ -323,11 +323,13 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
         dram_pkt->is_row_op = true;
         dram_pkt->row_op = addrs->op;
 
+        // Make sure `dest`&`src1` address the same bank&rank
         // Only care about dram_pkt1 if the operation is not in place
         if (addrs->op != Request::ROWAP) {
             assert(dram_pkt->rank == dram_pkt1->rank);
             assert(dram_pkt->bank == dram_pkt1->bank);
         }
+        // Make sure `dest`&`src2` address the same bank&rank
         // Only care about dram_pkt2 if it's a binary op
         if (addrs->op != Request::ROWNOT && addrs->op != Request::ROWAAP &&
                 addrs->op != Request::ROWAP) {
@@ -504,8 +506,7 @@ MemCtrl::recvTimingReq(PacketPtr pkt)
             stats.writeReqs++;
             stats.bytesWrittenSys += size;
         }
-    } else {
-        assert(pkt->isRead());
+    } else if (pkt->isRead()) {
         assert(size != 0);
         if (readQueueFull(pkt_count)) {
             DPRINTF(MemCtrl, "Read queue full, not accepting\n");
@@ -525,8 +526,34 @@ MemCtrl::recvTimingReq(PacketPtr pkt)
             stats.readReqs++;
             stats.bytesReadSys += size;
         }
+    } else if (pkt->isRowOp()) {
+        assert(size != 0);
+        // Row-Ops are inserted in WriteQueue:
+        if (writeQueueFull(pkt_count)) {
+            DPRINTF(MemCtrl, "Write queue full, not accepting\n");
+            // remember that we have to retry this port
+            retryWrReq = true; // TODO: separate field for RowOps
+            stats.numWrRetry++; // TODO: separate field for RowOps
+            return false;
+        } else {
+            addToWriteQueue(pkt, pkt_count, dram);
+            // If we are not already scheduled to get a request out of the
+            // queue, do so now
+            if (!nextReqEvent.scheduled()) {
+                DPRINTF(MemCtrl, "Request scheduled immediately\n");
+                schedule(nextReqEvent, curTick());
+            }
+            stats.writeReqs++; // TODO: separate field for RowOps
+            stats.bytesWrittenSys += size; // TODO: separate field for RowOps
+        }
     }
-
+    // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/dram_ctrl.cc#L687)
+ //    } else {
+ //        DPRINTF(DRAM,"Neither read nor write, ignore timing\n");
+ //        stats.neitherReadNorWriteReqs++;
+ //        accessAndRespond(pkt, 1);
+    // }
     return true;
 }
 
@@ -870,13 +897,16 @@ MemCtrl::doBurstAccess(MemPacket* mem_pkt, MemInterface* mem_intr)
         stats.requestorReadTotalLat[mem_pkt->requestorId()] +=
             mem_pkt->readyTime - mem_pkt->entryTime;
         stats.requestorReadBytes[mem_pkt->requestorId()] += mem_pkt->size;
-    } else if (mem_pkt->isRowOp()) {
-        pendingRowOps--;
     } else {
         ++(mem_intr->writesThisTime);
         stats.requestorWriteBytes[mem_pkt->requestorId()] += mem_pkt->size;
         stats.requestorWriteTotalLat[mem_pkt->requestorId()] +=
             mem_pkt->readyTime - mem_pkt->entryTime;
+
+        // TODO: put this into separate branch
+        if (mem_pkt->isRowOp()) {
+            pendingRowOps--;
+        }
     }
 
     return cmd_at;
@@ -990,7 +1020,11 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
             // if we are draining)
             if (!(mem_intr->writeQueueSize == 0) &&
                 (drainState() == DrainState::Draining ||
-                 mem_intr->writeQueueSize > writeLowThreshold)) {
+                 mem_intr->writeQueueSize > writeLowThreshold ||
+                 // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+                 // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+                 // dram_ctrl.cc#L1468)
+                 pendingRowOps > 0)) {
 
                 DPRINTF(MemCtrl,
                         "Switching to writes due to read queue empty\n");
@@ -1084,7 +1118,11 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
             // there are no other writes that can issue
             // Also ensure that we've issued a minimum defined number
             // of reads before switching, or have emptied the readQ
-            if ((mem_intr->writeQueueSize > writeHighThreshold) &&
+            if ((mem_intr->writeQueueSize > writeHighThreshold ||
+            // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+            // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+            // dram_ctrl.cc#L1536)
+                    pendingRowOps > 0) &&
                (mem_intr->readsThisTime >= minReadsPerSwitch ||
                mem_intr->readQueueSize == 0)
                && !(nvmWriteBlock(mem_intr))) {
