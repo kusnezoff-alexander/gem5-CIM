@@ -48,11 +48,11 @@ def template RowOpExecute {{
 
         // uint64_t rsi_val = xc->getRegOperand(this, X86ISA::int_reg::Rsi);
         uint64_t dst = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
-        DPRINTF(X86, "Value of Rsi: %d\n", dst);
+        DPRINTF(X86, "Value of Rdi: %d\n", dst);
         uint64_t src1 = xc->tcBase()->getReg(X86ISA::int_reg::Rsi);
         DPRINTF(X86, "Value of Rsi: %d\n", src1);
-        uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
-        DPRINTF(X86, "Value of Rsi: %d\n", src2);
+        uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
+        DPRINTF(X86, "Value of Rdx: %d\n", src2);
 
         // previously `<PERCENT>(rowop_data)s;`
         Request::RowOpPayload data =
@@ -66,6 +66,8 @@ def template RowOpExecute {{
         std::vector<bool> byteEnable(sizeof(data));
         std::fill(byteEnable.begin(), byteEnable.end(), true);
         // perform actual memory operation
+        // NOTE: addr=0 (as placeholder) since for Row-Op extract addr
+        // from `data`
         fault = xc->writeMem((uint8_t*)&data, sizeof(data), 0,
                 Request::UNCACHEABLE | Request::ROWOP, nullptr, byteEnable);
 
@@ -83,11 +85,11 @@ def template RowOpInitiateAcc {{
         %(op_decl)s;
 
         uint64_t dst = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
-        DPRINTF(X86, "Value of Rsi: %d\n", dst);
+        DPRINTF(X86, "Value of Rdi: %d\n", dst);
         uint64_t src1 = xc->tcBase()->getReg(X86ISA::int_reg::Rsi);
         DPRINTF(X86, "Value of Rsi: %d\n", src1);
-        uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
-        DPRINTF(X86, "Value of Rsi: %d\n", src2);
+        uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
+        DPRINTF(X86, "Value of Rdx: %d\n", src2);
 
          Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2};
         DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated\n", mnemonic, dst,

@@ -47,6 +47,7 @@
 #define __MEM_CTRL_HH__
 
 #include <deque>
+#include <optional>
 #include <string>
 #include <unordered_set>
 #include <utility>
@@ -131,7 +132,7 @@ class MemPacket
     uint32_t src1_row;
     uint32_t src2_row;
     bool is_row_op;
-    Request::RowOp row_op;
+    std::optional<Request::RowOp> row_op;
 
     /**
      * Bank id is calculated considering banks in all the ranks
@@ -228,7 +229,7 @@ class MemPacket
           // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
           // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
           // dram_ctrl.hh#L502)
-          src1_row(0), src2_row(0), is_row_op(false),
+          src1_row(0), src2_row(0), is_row_op(false), row_op(std::nullopt),
           bankId(bank_id), addr(_addr), size(_size),
           burstHelper(NULL), _qosValue(_pkt->qosValue())
     { }
@@ -316,6 +317,8 @@ class MemCtrl : public qos::MemCtrl
     /**
      * see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
      * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/dram_ctrl.hh#L149)
+     *
+     * TODO: move into `CtlrStats`
      */
     int pendingRowOps;
 

@@ -369,6 +369,108 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
     // for the state we need to track if it is a row hit or not
     bool row_hit = true;
 
+    // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+    // dram_ctrl.cc#L1161)
+    // respect any constraints on the command (e.g. tRCD or tCCD)
+    // NOTE: `busBusyUntil` seems to be deleted in favor of
+    // `next_burst_at`-parameter
+
+    // we need to wait until the bus is available before we can issue
+    // the command; need to ensure minimum bus delay requirement is met
+    Tick cmd_at = std::max({bank_ref.colAllowedAt, next_burst_at, curTick()});
+    if (mem_pkt->is_row_op) {
+
+        // If there is a page open, precharge it.
+        if (bank_ref.openRow != Bank::NO_ROW) {
+            prechargeBank(rank_ref, bank_ref,
+                    std::max(bank_ref.preAllowedAt, curTick()));
+        }
+
+        // Wait for earliest allowed activate
+        cmd_at = std::max(cmd_at, bank_ref.actAllowedAt);
+        Tick issue_tick = cmd_at; // store tick at which pkt has been issued
+
+        // Do sequence of activate-activate-precharge operations
+        assert(mem_pkt->row_op); // ensure `row_op` is set
+        switch (*mem_pkt->row_op) {
+            case Request::ROWAND:
+                aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
+                        Bank::B_T0,    true); cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
+                        Bank::B_T1,    true); cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, Bank::C_0,
+                        Bank::B_T2,    true); cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
+                        mem_pkt->row, true); cmd_at = bank_ref.actAllowedAt;
+                break;
+            case Request::ROWOR:
+                aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
+                        Bank::B_T0,    true); cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
+                        Bank::B_T1,    true); cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, Bank::C_1,
+                        Bank::B_T2,    true); cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
+                        mem_pkt->row, true); cmd_at = bank_ref.actAllowedAt;
+                break;
+            case Request::ROWNOT:
+                aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
+                        Bank::B_DCC0N, true); cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, Bank::B_DCC0,
+                        mem_pkt->row, true); cmd_at = bank_ref.actAllowedAt;
+                break;
+            case Request::ROWXOR:
+                aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
+                        Bank::B_DCC0N_T0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
+                        Bank::B_DCC1N_T1, true);
+                cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, Bank::C_0,
+                        Bank::B_T2_T3,    true);
+                cmd_at = bank_ref.actAllowedAt;
+                apBank (rank_ref, bank_ref, cmd_at, Bank::B_DCC0_T1_T2);
+                cmd_at = bank_ref.actAllowedAt;
+                apBank (rank_ref, bank_ref, cmd_at, Bank::B_DCC1_T0_T3);
+                cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, Bank::C_1,
+                        Bank::B_T2,       true);
+                cmd_at = bank_ref.actAllowedAt;
+                aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
+                        mem_pkt->row,    true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
+            case Request::ROWAP:
+        //[comment from MIMDRAM]: TODO replace Bank::B_T0_T1_T2
+        //with correct bank_ref
+        apBank (rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2);
+        cmd_at = bank_ref.actAllowedAt;
+        break;
+        case Request::ROWAAP:
+        //[comment from MIMDRAM]: TODO replace NULLs with correct bank_refs
+        aapBank(rank_ref, bank_ref, cmd_at, 0,
+                0, true);
+        cmd_at = bank_ref.actAllowedAt;
+        break;
+            default:
+                assert(false);
+                break;
+        }
+
+        // Update times, similar to code below
+        mem_pkt->readyTime = cmd_at + tWL;
+        activeRank = mem_pkt->rank;
+        // ((Comment from MIMDRAM: TODO not sure what this is about))
+        // `tRCD` got split into` tRCD_WR`&`tRCD_RD`
+        // REMINDER: RowOps are issued via `writeMem()`
+        // `tCWL`=`tWL` (equivalent of `tCL` for writes ?)
+        nextReqTime = mem_pkt->readyTime - (tRP + tRCD_WR + tWL);
+        // pendingRowOps--; // moved into `MemCtrl`
+
+        return std::make_pair(issue_tick, nextReqTime);
+    }
+
     // Determine the access latency and update the bank state
     if (bank_ref.openRow == mem_pkt->row) {
         // nothing to do
@@ -395,7 +497,7 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
 
     // we need to wait until the bus is available before we can issue
     // the command; need to ensure minimum bus delay requirement is met
-    Tick cmd_at = std::max({col_allowed_at, next_burst_at, curTick()});
+    cmd_at = std::max({col_allowed_at, next_burst_at, curTick()});
 
     // verify that we have command bandwidth to issue the burst
     // if not, shift to next burst window

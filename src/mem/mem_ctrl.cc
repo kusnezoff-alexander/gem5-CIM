@@ -870,6 +870,8 @@ MemCtrl::doBurstAccess(MemPacket* mem_pkt, MemInterface* mem_intr)
         stats.requestorReadTotalLat[mem_pkt->requestorId()] +=
             mem_pkt->readyTime - mem_pkt->entryTime;
         stats.requestorReadBytes[mem_pkt->requestorId()] += mem_pkt->size;
+    } else if (mem_pkt->isRowOp()) {
+        pendingRowOps--;
     } else {
         ++(mem_intr->writesThisTime);
         stats.requestorWriteBytes[mem_pkt->requestorId()] += mem_pkt->size;
@@ -1176,6 +1178,27 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
 
             // turn the bus back around for reads again
             mem_intr->busStateNext = MemCtrl::READ;
+
+            // note that the we switch back to reads also in the idle
+            // case, which eventually will check for any draining and
+            // also pause any further scheduling if there is really
+            // nothing to do
+        }
+
+        // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+        // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+        // dram_ctrl.cc#L1583)
+        // If we emptied the write queue, or got sufficiently below the
+        // threshold (using the minWritesPerSwitch as the hysteresis) and
+        // are not draining, or we have reads waiting and have done enough
+        // writes, then switch to reads.
+        if (pendingRowOps == 0 && (writeQueue.empty() ||
+            (writeQueue.size() + minWritesPerSwitch < writeLowThreshold &&
+             drainState() != DrainState::Draining) ||
+            (!readQueue.empty() && mem_intr->writesThisTime >=
+             minWritesPerSwitch))) {
+            // turn the bus back around for reads again
+            busState = READ;
 
             // note that the we switch back to reads also in the idle
             // case, which eventually will check for any draining and
