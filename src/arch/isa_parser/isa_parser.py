@@ -427,7 +427,9 @@ def makeFlagConstructor(flag_list):
 instFlagRE = re.compile(r"Is.*")
 
 # OpClass constants end in 'Op' except No_OpClass
-opClassRE = re.compile(r".*Op|No_OpClass")
+opClassRE = re.compile(
+    r".*Op|No_OpClass|RowOpClass"
+)  # TODO: change `RowOpClass` to `CIMOp`
 
 
 class InstObjParams:
@@ -477,7 +479,9 @@ class InstObjParams:
         # Make a basic guess on the operand class if not set.
         # These are good enough for most cases.
         if not self.op_class:
-            if "IsStore" in self.flags:
+            if "IsRowOp" in self.flags:
+                self.op_class = "RowOpClass"
+            elif "IsStore" in self.flags:
                 # The order matters here: 'IsFloating' and 'IsInteger' are
                 # usually set in FP instructions because of the base
                 # register

@@ -98,7 +98,7 @@ class OpClass(Enum):
         "MemWrite",
         "FloatMemRead",
         "FloatMemWrite",
-        "RowOp",  # CIM
+        "RowOpClass",  # CIM
         "IprAccess",
         "InstPrefetch",
         "SimdUnitStrideLoad",

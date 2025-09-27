@@ -260,8 +260,9 @@ class Request : public Extensible<Request>
         // this value chosen in MIMDRAM is already reserved
         // for `ATOMIC_RETURN_OP`
         // ROWOP                       = 0x40000000,
-        // arbitrarily chosen next free value (2^32)
-        ROWOP = 0x100000000,
+        // arbitrarily chosen next free value
+        ROWOP = 0x2000, // seems to be free
+        // ROWOP = 0x0002000000000000, // (1ULL << 49)
 
         /**
          * These flags are *not* cleared when a Request object is

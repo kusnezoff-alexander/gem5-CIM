@@ -173,6 +173,7 @@ class RdWrPort(FUDesc):
         OpDesc(opClass="MemWrite"),
         OpDesc(opClass="FloatMemRead"),
         OpDesc(opClass="FloatMemWrite"),
+        OpDesc(opClass="RowOpClass"),
         OpDesc(opClass="SimdUnitStrideLoad"),
         OpDesc(opClass="SimdUnitStrideStore"),
         OpDesc(opClass="SimdUnitStrideMaskLoad"),

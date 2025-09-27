@@ -8,16 +8,16 @@ def template RowOpDeclare {{
     public:
         // TODO: Constructor
         %(class_name)s(const char *_mnemonic, ExtMachInst _machInst)
-            : %(base_class)s(_mnemonic, _machInst, No_OpClass){
+            : %(base_class)s(_mnemonic, _machInst, RowOpClass){
 
             this->flags[IsRowOp] = true;
         }
 
         Fault execute(ExecContext *, trace::InstRecord *) const override;
-        // Fault initiateAcc(ExecContext *, trace::InstRecord *)
-        //         const override;
-        // Fault completeAcc(Packet *, ExecContext *,
-        //                   trace::InstRecord *) const override;
+        Fault initiateAcc(ExecContext *, trace::InstRecord *)
+                const override;
+        Fault completeAcc(Packet *, ExecContext *,
+                          trace::InstRecord *) const override;
 
         std::string
         generateDisassembly(Addr pc,
@@ -73,6 +73,51 @@ def template RowOpExecute {{
     }
 }};
 
+
+def template RowOpInitiateAcc {{
+    Fault %(class_name)s::initiateAcc(ExecContext * xc,
+            trace::InstRecord * traceData) const
+    {
+        Fault fault = NoFault;
+
+        %(op_decl)s;
+
+        uint64_t dst = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
+        DPRINTF(X86, "Value of Rsi: %d\n", dst);
+        uint64_t src1 = xc->tcBase()->getReg(X86ISA::int_reg::Rsi);
+        DPRINTF(X86, "Value of Rsi: %d\n", src1);
+        uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
+        DPRINTF(X86, "Value of Rsi: %d\n", src2);
+
+         Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2};
+        DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated\n", mnemonic, dst,
+            src1, src2);
+
+        // TODO: check `byteEnable`, sth seems to be wrong here
+        std::vector<bool> byteEnable(sizeof(data));
+        std::fill(byteEnable.begin(), byteEnable.end(), true);
+        // previously `<PERCENT>(rowop_write)s;`
+        fault = xc->writeMem((uint8_t*)&data, sizeof(data), 0,
+                Request::UNCACHEABLE | Request::ROWOP, nullptr, byteEnable);
+
+        return fault;
+    }
+}};
+
+def template RowOpCompleteAcc {{
+    Fault %(class_name)s::completeAcc(PacketPtr pkt,
+            ExecContext * xc, trace::InstRecord * traceData) const
+    {
+        Fault fault = NoFault;
+
+        %(op_decl)s;
+        // DPRINTF(X86, "%s: %x <- %x %(op)s %x complete\n", mnemonic, dst,
+        //     src1, src2);
+
+        return fault;
+    }
+}};
+
 // Basic decode template, passing mnemonic in as string arg to constructor.
 def template RowOpDecodeWithMnemonic {{
     return new %(class_name)s("%(mnemonic)s with op=%(op)s", machInst);
@@ -96,7 +141,10 @@ def format RowOp() {{
     iop = InstObjParams(name, Name, 'X86ISA::X86StaticInst', params,
         ['IsRowOp'])
     header_output = RowOpDeclare.subst(iop)
-    exec_output = RowOpExecute.subst(iop)
+    exec_output = RowOpExecute.subst(iop) \
+                + RowOpInitiateAcc.subst(iop) \
+                + RowOpCompleteAcc.subst(iop)
+
     decoder_output = RowOpDecoder.subst(iop)
     decode_block = RowOpDecodeWithMnemonic.subst(iop)
 }};

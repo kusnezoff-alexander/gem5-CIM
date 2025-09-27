@@ -243,6 +243,7 @@ class MinorDefaultMemFU(MinorFU):
             "MemWrite",
             "FloatMemRead",
             "FloatMemWrite",
+            "RowOpClass",
             "SimdUnitStrideLoad",
             "SimdUnitStrideStore",
             "SimdUnitStrideMaskLoad",

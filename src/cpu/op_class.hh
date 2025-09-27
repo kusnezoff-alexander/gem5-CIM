@@ -108,6 +108,7 @@ static const OpClass MemReadOp = enums::MemRead;
 static const OpClass MemWriteOp = enums::MemWrite;
 static const OpClass FloatMemReadOp = enums::FloatMemRead;
 static const OpClass FloatMemWriteOp = enums::FloatMemWrite;
+static const OpClass RowOpClass = enums::RowOpClass;
 static const OpClass SimdUnitStrideLoadOp = enums::SimdUnitStrideLoad;
 static const OpClass SimdUnitStrideStoreOp = enums::SimdUnitStrideStore;
 static const OpClass SimdUnitStrideMaskLoadOp
