@@ -287,7 +287,7 @@ MemCtrl::addToReadQueue(PacketPtr pkt,
         addr = (addr | (burst_size - 1)) + 1;
     }
 
-    // If all packets are serviced by write queue, we send the repsonse back
+    // If all packets are serviced by write queue, we send the response back
     if (pktsServicedByWrQ == pkt_count) {
         accessAndRespond(pkt, frontendLatency, mem_intr);
         return true;
@@ -314,43 +314,46 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
     if (pkt->isRowOp()) {
 
         Request::RowOpPayload* addrs = pkt->getPtr<Request::RowOpPayload>();
-        MemPacket* dram_pkt  = mem_intr->decodePacket(pkt, addrs->dest, 0,
+        MemPacket* mem_pkt  = mem_intr->decodePacket(pkt, addrs->dest, 0,
                 false);
         MemPacket* dram_pkt1 = mem_intr->decodePacket(pkt, addrs->src1, 0,
                 false);
         MemPacket* dram_pkt2 = mem_intr->decodePacket(pkt, addrs->src2, 0,
                 false);
-        dram_pkt->is_row_op = true;
-        dram_pkt->row_op = addrs->op;
+        mem_pkt->is_row_op = true;
+        mem_pkt->row_op = addrs->op;
 
         // Make sure `dest`&`src1` address the same bank&rank
         // Only care about dram_pkt1 if the operation is not in place
         if (addrs->op != Request::ROWAP) {
-            assert(dram_pkt->rank == dram_pkt1->rank);
-            assert(dram_pkt->bank == dram_pkt1->bank);
+            assert(mem_pkt->rank == dram_pkt1->rank);
+            assert(mem_pkt->bank == dram_pkt1->bank);
         }
         // Make sure `dest`&`src2` address the same bank&rank
         // Only care about dram_pkt2 if it's a binary op
         if (addrs->op != Request::ROWNOT && addrs->op != Request::ROWAAP &&
                 addrs->op != Request::ROWAP) {
-          assert(dram_pkt->rank == dram_pkt2->rank);
-          assert(dram_pkt->bank == dram_pkt2->bank);
+          assert(mem_pkt->rank == dram_pkt2->rank);
+          assert(mem_pkt->bank == dram_pkt2->bank);
         }
-        dram_pkt->src1_row = dram_pkt1->row;
-        dram_pkt->src2_row = dram_pkt2->row;
+        mem_pkt->src1_row = dram_pkt1->row;
+        mem_pkt->src2_row = dram_pkt2->row;
         delete dram_pkt1;
         delete dram_pkt2;
 
         DPRINTF(DRAM,
                 "Adding to write queue: RowOp in rank %d bank %d, rows \
                 %d <-- %d (*) %d\n",
-                dram_pkt->rank, dram_pkt->bank, dram_pkt->row,
-                dram_pkt->src1_row, dram_pkt->src2_row);
+                mem_pkt->rank, mem_pkt->bank, mem_pkt->row,
+                mem_pkt->src1_row, mem_pkt->src2_row);
 
         // Add to write queue, and set rowop counter to signal that we must
         // flush the write queue
 
-        writeQueue[dram_pkt->qosValue()].push_back(dram_pkt);
+        // log packet (TODO: log as RowOp)
+        logRequest(MemCtrl::WRITE, pkt->requestorId(),
+                   pkt->qosValue(), mem_pkt->addr, 1);
+        writeQueue[mem_pkt->qosValue()].push_back(mem_pkt);
         pendingRowOps++;
 
     } else {

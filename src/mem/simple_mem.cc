@@ -150,9 +150,19 @@ SimpleMemory::recvTimingReq(PacketPtr pkt)
     // rather than long term as it is the short term data rate that is
     // limited for any real memory
 
+    // TODO: Do we need this??:
+    // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+    // simple_mem.cc#L138
+    // only look at reads and writes when determining if we are busy,
+    // and for how long, as it is not clear what to regulate for the
+    // other types of commands
+    // if (pkt->isRead() || pkt->isWrite()) {
+
     // calculate an appropriate tick to release to not exceed
     // the bandwidth limit
     Tick duration = pkt->getSize() * bandwidth;
+
 
     // only consider ourselves busy if there is any need to wait
     // to avoid extra events being scheduled for (infinitely) fast
@@ -161,6 +171,8 @@ SimpleMemory::recvTimingReq(PacketPtr pkt)
         schedule(releaseEvent, curTick() + duration);
         isBusy = true;
     }
+
+    // }
 
     // go ahead and deal with the packet and put the response in the
     // queue if there is one
