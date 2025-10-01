@@ -54,6 +54,7 @@ def template RowOpExecute {{
         uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
         DPRINTF(X86, "Value of Rdx: %d\n", src2);
 
+        // store operands inside the Request
         // previously `<PERCENT>(rowop_data)s;`
         Request::RowOpPayload data =
             {Request::%(op)s, dst, src1, src2};
@@ -68,7 +69,7 @@ def template RowOpExecute {{
         // perform actual memory operation
         // NOTE: addr=0 (as placeholder) since for Row-Op extract addr
         // from `data`
-        fault = xc->writeMem((uint8_t*)&data, sizeof(data), 0,
+        fault = xc->writeMem((uint8_t *)&data, sizeof(data), 0,
                 Request::UNCACHEABLE | Request::ROWOP, nullptr, byteEnable);
 
         return fault;
@@ -91,7 +92,7 @@ def template RowOpInitiateAcc {{
         uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
         DPRINTF(X86, "Value of Rdx: %d\n", src2);
 
-         Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2};
+        Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2};
         DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated\n", mnemonic, dst,
             src1, src2);
 

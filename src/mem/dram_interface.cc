@@ -476,7 +476,7 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         nextReqTime = mem_pkt->readyTime - (tRP + tRCD_WR + tWL);
         // pendingRowOps--; // moved into `MemCtrl`
 
-        DPRINTF(DRAM, "[RowOp] NextReqTime set to %d", nextReqTime);
+        DPRINTF(DRAM, "[RowOp] NextReqTime set to %d\n", nextReqTime);
         return std::make_pair(issue_tick, nextReqTime);
     }
 
@@ -1673,10 +1673,6 @@ DRAMInterface::Rank::processRefreshEvent()
         // refresh STM and therefore can always schedule next event.
         // Compensate for the delay in actually performing the refresh
         // when scheduling the next one
-        // TODO: why no `+tREFI` like in [MIMDRAM](https://github.com/
-        // CMU-SAFARI/
-        // MIMDRAM/blob/23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
-        // dram_ctrl.cc#L1901)
         schedule(refreshEvent, refreshDueAt - dram.tRP);
 
         DPRINTF(DRAMState, "Refresh done at %llu and next refresh"

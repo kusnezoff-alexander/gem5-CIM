@@ -172,9 +172,45 @@ Cache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
         DPRINTF(Cache, "%s for %s\n", __func__, pkt->print());
 
         // flush and invalidate any existing block
-        CacheBlk *old_blk(tags->findBlock({pkt->getAddr(), pkt->isSecure()}));
-        if (old_blk && old_blk->isValid()) {
-            BaseCache::evictBlock(old_blk, writebacks);
+        if (pkt->req->isRowOp()) {
+            // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+            // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/cache/
+            // cache.cc#L306
+            Request::RowOpPayload* addrs =
+                pkt->getPtr<Request::RowOpPayload>();
+            for (Addr i = 0; i < ROW_SIZE; i += blkSize) {
+                CacheBlk *old_blk(tags->findBlock({
+                            addrs->dest + i,
+                            pkt->isSecure()
+                }));
+                if (old_blk && old_blk->isValid()) {
+                    BaseCache::evictBlock(old_blk, writebacks);
+                }
+
+                CacheBlk *old_blk_src1(tags->findBlock({
+                            addrs->src1 + i,
+                            pkt->isSecure()
+                }));
+                if (old_blk_src1 && old_blk_src1->isValid()) {
+                    BaseCache::evictBlock(old_blk_src1, writebacks);
+                }
+
+                CacheBlk *old_blk_src2(tags->findBlock({
+                            addrs->src2 + i,
+                            pkt->isSecure()
+                }));
+                if (old_blk_src2 && old_blk_src2->isValid()) {
+                    BaseCache::evictBlock(old_blk_src2, writebacks);
+                }
+            }
+        } else {
+            CacheBlk *old_blk(tags->findBlock({
+                        pkt->getAddr(),
+                        pkt->isSecure()
+            }));
+            if (old_blk && old_blk->isValid()) {
+                BaseCache::evictBlock(old_blk, writebacks);
+            }
         }
 
         blk = nullptr;

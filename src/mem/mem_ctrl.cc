@@ -491,6 +491,8 @@ MemCtrl::recvTimingReq(PacketPtr pkt)
 
     // check local buffers and do not accept if full
     if (pkt->isWrite()) {
+        // NOTE: `isRowOp()` implies `isWriteOp()`
+        // (RowOps are issued as Writes using `writeMem()`)
         assert(size != 0);
         if (writeQueueFull(pkt_count)) {
             DPRINTF(MemCtrl, "Write queue full, not accepting\n");
@@ -528,26 +530,6 @@ MemCtrl::recvTimingReq(PacketPtr pkt)
             }
             stats.readReqs++;
             stats.bytesReadSys += size;
-        }
-    } else if (pkt->isRowOp()) {
-        assert(size != 0);
-        // Row-Ops are inserted in WriteQueue:
-        if (writeQueueFull(pkt_count)) {
-            DPRINTF(MemCtrl, "Write queue full, not accepting\n");
-            // remember that we have to retry this port
-            retryWrReq = true; // TODO: separate field for RowOps
-            stats.numWrRetry++; // TODO: separate field for RowOps
-            return false;
-        } else {
-            addToWriteQueue(pkt, pkt_count, dram);
-            // If we are not already scheduled to get a request out of the
-            // queue, do so now
-            if (!nextReqEvent.scheduled()) {
-                DPRINTF(MemCtrl, "Request scheduled immediately\n");
-                schedule(nextReqEvent, curTick());
-            }
-            stats.writeReqs++; // TODO: separate field for RowOps
-            stats.bytesWrittenSys += size; // TODO: separate field for RowOps
         }
     }
     // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
