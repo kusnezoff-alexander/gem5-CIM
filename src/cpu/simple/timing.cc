@@ -587,7 +587,7 @@ TimingSimpleCPU::writeMem(uint8_t *data, unsigned size,
 
         WholeTranslationState *state =
             new WholeTranslationState(req, req_dest, req_src1, req_src2,
-                                      new uint8_t[size], NULL, mode);
+                                      newData, NULL, mode);
 
         DataTranslation<TimingSimpleCPU *> *trans1 =
             new DataTranslation<TimingSimpleCPU *>(this, state, 0);
