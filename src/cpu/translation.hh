@@ -97,9 +97,10 @@ class WholeTranslationState
                           uint64_t *_res, BaseMMU::Mode _mode)
         : outstanding(1), delay(false), isSplit(false),
           isRowOp(false), mainReq(_req),
-          sreqLow(NULL), sreqHigh(NULL), data(_data), res(_res), mode(_mode)
+          sreqLow(NULL), sreqHigh(NULL), sreqDest(NULL),
+          sreqSrc1(NULL), sreqSrc2(NULL), data(_data), res(_res), mode(_mode)
     {
-        faults[0] = faults[1] = NoFault;
+        faults[0] = faults[1] = faults[2] = NoFault;
         assert(mode == BaseMMU::Read || mode == BaseMMU::Write);
     }
 
@@ -113,10 +114,11 @@ class WholeTranslationState
                           uint64_t *_res, BaseMMU::Mode _mode)
         : outstanding(2), delay(false), isSplit(true),
           isRowOp(false), mainReq(_req),
-          sreqLow(_sreqLow), sreqHigh(_sreqHigh), data(_data), res(_res),
+          sreqLow(_sreqLow), sreqHigh(_sreqHigh), sreqDest(NULL),
+          sreqSrc1(NULL), sreqSrc2(NULL), data(_data), res(_res),
           mode(_mode)
     {
-        faults[0] = faults[1] = NoFault;
+        faults[0] = faults[1] = faults[2] = NoFault;
         assert(mode == BaseMMU::Read || mode == BaseMMU::Write);
     }
 

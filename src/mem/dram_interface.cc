@@ -403,29 +403,39 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         switch (*mem_pkt->row_op) {
             case Request::ROWAND:
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
-                        Bank::B_T0,    true); cmd_at = bank_ref.actAllowedAt;
+                        Bank::B_T0,    true);
+                cmd_at = bank_ref.actAllowedAt;
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
-                        Bank::B_T1,    true); cmd_at = bank_ref.actAllowedAt;
+                        Bank::B_T1,    true);
+                cmd_at = bank_ref.actAllowedAt;
                 aapBank(rank_ref, bank_ref, cmd_at, Bank::C_0,
-                        Bank::B_T2,    true); cmd_at = bank_ref.actAllowedAt;
+                        Bank::B_T2,    true);
+                cmd_at = bank_ref.actAllowedAt;
                 aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
-                        mem_pkt->row, true); cmd_at = bank_ref.actAllowedAt;
+                        mem_pkt->row, true);
+                cmd_at = bank_ref.actAllowedAt;
                 break;
             case Request::ROWOR:
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
-                        Bank::B_T0,    true); cmd_at = bank_ref.actAllowedAt;
+                        Bank::B_T0,    true);
+                cmd_at = bank_ref.actAllowedAt;
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
-                        Bank::B_T1,    true); cmd_at = bank_ref.actAllowedAt;
+                        Bank::B_T1,    true);
+                cmd_at = bank_ref.actAllowedAt;
                 aapBank(rank_ref, bank_ref, cmd_at, Bank::C_1,
-                        Bank::B_T2,    true); cmd_at = bank_ref.actAllowedAt;
+                        Bank::B_T2,    true);
+                cmd_at = bank_ref.actAllowedAt;
                 aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
-                        mem_pkt->row, true); cmd_at = bank_ref.actAllowedAt;
+                        mem_pkt->row, true);
+                cmd_at = bank_ref.actAllowedAt;
                 break;
             case Request::ROWNOT:
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
-                        Bank::B_DCC0N, true); cmd_at = bank_ref.actAllowedAt;
+                        Bank::B_DCC0N, true);
+                cmd_at = bank_ref.actAllowedAt;
                 aapBank(rank_ref, bank_ref, cmd_at, Bank::B_DCC0,
-                        mem_pkt->row, true); cmd_at = bank_ref.actAllowedAt;
+                        mem_pkt->row, true);
+                cmd_at = bank_ref.actAllowedAt;
                 break;
             case Request::ROWXOR:
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,

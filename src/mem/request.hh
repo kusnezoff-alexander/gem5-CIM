@@ -684,8 +684,8 @@ class Request : public Extensible<Request>
     void splitRowOp(Request::RowOpPayload* addrs, RequestPtr &req_dest,
             RequestPtr &req_src1, RequestPtr &req_src2)
     {
-        assert(privateFlags.isSet(VALID_VADDR));
-        assert(privateFlags.noneSet(VALID_PADDR));
+        assert(hasVaddr());
+        assert(!hasPaddr());
         // req_dest = new Request(*this);
         req_dest = std::make_shared<Request>(*this);
         req_dest->_vaddr = addrs->dest;

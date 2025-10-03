@@ -402,6 +402,8 @@ AbstractMemory::access(PacketPtr pkt)
         uint64_t *src2 = (uint64_t*)(pmemAddr + addrs->src2 - range.start());
         DPRINTF(MemoryAccess, "Performing rowop %d on %p (%x) and %p (%x)\n",
             addrs->op, src1, *src1, src2, src2 == NULL? 0 : *src2);
+
+        // perform actual ROWOP in memory
         switch (addrs->op) {
             case Request::ROWAND:
                 for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {

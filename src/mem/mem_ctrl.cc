@@ -316,9 +316,9 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
         Request::RowOpPayload* addrs = pkt->getPtr<Request::RowOpPayload>();
         MemPacket* mem_pkt  = mem_intr->decodePacket(pkt, addrs->dest, 0,
                 false);
-        MemPacket* dram_pkt1 = mem_intr->decodePacket(pkt, addrs->src1, 0,
+        MemPacket* mem_pkt1 = mem_intr->decodePacket(pkt, addrs->src1, 0,
                 false);
-        MemPacket* dram_pkt2 = mem_intr->decodePacket(pkt, addrs->src2, 0,
+        MemPacket* mem_pkt2 = mem_intr->decodePacket(pkt, addrs->src2, 0,
                 false);
         mem_pkt->is_row_op = true;
         mem_pkt->row_op = addrs->op;
@@ -326,20 +326,20 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
         // Make sure `dest`&`src1` address the same bank&rank
         // Only care about dram_pkt1 if the operation is not in place
         if (addrs->op != Request::ROWAP) {
-            assert(mem_pkt->rank == dram_pkt1->rank);
-            assert(mem_pkt->bank == dram_pkt1->bank);
+            assert(mem_pkt->rank == mem_pkt1->rank);
+            assert(mem_pkt->bank == mem_pkt1->bank);
         }
         // Make sure `dest`&`src2` address the same bank&rank
         // Only care about dram_pkt2 if it's a binary op
         if (addrs->op != Request::ROWNOT && addrs->op != Request::ROWAAP &&
                 addrs->op != Request::ROWAP) {
-          assert(mem_pkt->rank == dram_pkt2->rank);
-          assert(mem_pkt->bank == dram_pkt2->bank);
+          assert(mem_pkt->rank == mem_pkt2->rank);
+          assert(mem_pkt->bank == mem_pkt2->bank);
         }
-        mem_pkt->src1_row = dram_pkt1->row;
-        mem_pkt->src2_row = dram_pkt2->row;
-        delete dram_pkt1;
-        delete dram_pkt2;
+        mem_pkt->src1_row = mem_pkt1->row;
+        mem_pkt->src2_row = mem_pkt2->row;
+        delete mem_pkt1;
+        delete mem_pkt2;
 
         DPRINTF(DRAM,
                 "Adding to write queue: RowOp in rank %d bank %d, rows \
