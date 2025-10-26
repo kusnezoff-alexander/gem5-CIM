@@ -46,7 +46,8 @@ exclude: |
       src/systemc/ext/.*|
       src/systemc/tests/.*/.*|
       src/python/m5/ext/pyfdt/.*|
-      tests/.*/ref/.*
+      tests/.*/ref/.*|
+      workloads/.*
     )$
 
 default_stages: [pre-commit]
@@ -92,8 +93,8 @@ repos:
           - id: gem5-style-checker
             name: gem5 style checker
             entry: util/git-pre-commit.py
-            always_run: true
-            exclude: .*
+            # always_run: true
+            exclude: ^(?!workloads/).*  # only run outside workloads
             language: system
             description: The gem5 style checker hook.
           - id: gem5-commit-msg-checker

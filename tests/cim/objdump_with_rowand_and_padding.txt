@@ -1,0 +1,49 @@
+
+test_my_add42.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <_start>:
+   0:	e8 5a 00 00 00       	call   5f <mmap_alloc>
+   5:	48 89 c7             	mov    %rax,%rdi
+   8:	48 c7 87 56 04 00 00 	movq   $0x2a,0x456(%rdi)
+   f:	2a 00 00 00
+  13:	48 bf 00 00 00 00 00 	movabs $0x0,%rdi
+  1a:	00 00 00
+  1d:	be 13 00 00 00       	mov    $0x13,%esi
+  22:	e8 62 00 00 00       	call   89 <print_string>
+  27:	bf 56 34 12 00       	mov    $0x123456,%edi
+  2c:	be 57 34 12 00       	mov    $0x123457,%esi
+  31:	ba 58 34 12 00       	mov    $0x123458,%edx
+  36:	0f a6                	(bad)
+  38:	c0 00 00             	rolb   $0x0,(%rax)
+  3b:	00 00                	add    %al,(%rax)
+  3d:	00 00                	add    %al,(%rax)
+  3f:	00 00                	add    %al,(%rax)
+  41:	48 bf 00 00 00 00 00 	movabs $0x0,%rdi
+  48:	00 00 00
+  4b:	be 13 00 00 00       	mov    $0x13,%esi
+  50:	e8 34 00 00 00       	call   89 <print_string>
+  55:	b8 3c 00 00 00       	mov    $0x3c,%eax
+  5a:	48 31 ff             	xor    %rdi,%rdi
+  5d:	0f 05                	syscall
+
+000000000000005f <mmap_alloc>:
+  5f:	b8 09 00 00 00       	mov    $0x9,%eax
+  64:	bf 00 30 12 00       	mov    $0x123000,%edi
+  69:	be 00 10 00 00       	mov    $0x1000,%esi
+  6e:	ba 03 00 00 00       	mov    $0x3,%edx
+  73:	41 ba 32 00 00 00    	mov    $0x32,%r10d
+  79:	49 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%r8
+  80:	41 b9 00 00 00 00    	mov    $0x0,%r9d
+  86:	0f 05                	syscall
+  88:	c3                   	ret
+
+0000000000000089 <print_string>:
+  89:	b8 01 00 00 00       	mov    $0x1,%eax
+  8e:	48 89 f2             	mov    %rsi,%rdx
+  91:	48 89 fe             	mov    %rdi,%rsi
+  94:	bf 01 00 00 00       	mov    $0x1,%edi
+  99:	0f 05                	syscall
+  9b:	c3                   	ret

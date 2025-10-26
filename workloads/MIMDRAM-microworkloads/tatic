@@ -1,0 +1,263 @@
+[4mGCC[24m(1)                                                                                                                              GNU                                                                                                                              [4mGCC[24m(1)
+
+[1mNAME[0m
+       gcc - GNU project C and C++ compiler
+
+[1mSYNOPSIS[0m
+       gcc [[1m-c[22m|[1m-S[22m|[1m-E[22m] [[1m-std=[4m[22mstandard[24m]
+           [[1m-g[22m] [[1m-pg[22m] [[1m-O[4m[22mlevel[24m]
+           [[1m-W[4m[22mwarn[24m...] [[1m-Wpedantic[22m]
+           [[1m-I[4m[22mdir[24m...] [[1m-L[4m[22mdir[24m...]
+           [[1m-D[4m[22mmacro[24m[=[4mdefn[24m]...] [[1m-U[4m[22mmacro[24m]
+           [[1m-f[4m[22moption[24m...] [[1m-m[4m[22mmachine-option[24m...]
+           [[1m-o [4m[22moutfile[24m] [@[4mfile[24m] [4minfile[24m...
+
+       Only the most useful options are listed here; see below for the remainder.  [1mg++ [22maccepts mostly the same options as [1mgcc[22m.
+
+[1mDESCRIPTION[0m
+       When you invoke GCC, it normally does preprocessing, compilation, assembly and linking.  The "overall options" allow you to stop this process at an intermediate stage.  For example, the [1m-c [22moption says not to run the linker.  Then the output consists of object
+       files output by the assembler.
+
+       Other options are passed on to one or more stages of processing.  Some options control the preprocessor and others the compiler itself.  Yet other options control the assembler and linker; most of these are not documented here, since you rarely need to use any
+       of them.
+
+       Most of the command-line options that you can use with GCC are useful for C programs; when an option is only useful with another language (usually C++), the explanation says so explicitly.  If the description for a particular option does not mention a source
+       language, you can use that option with all supported languages.
+
+       The usual way to run GCC is to run the executable called [1mgcc[22m, or [4mmachine[24m[1m-gcc [22mwhen cross-compiling, or [4mmachine[24m[1m-gcc-[4m[22mversion[24m to run a specific version of GCC.  When you compile C++ programs, you should invoke GCC as [1mg++ [22minstead.
+
+       The [1mgcc [22mprogram accepts options and file names as operands.  Many options have multi-letter names; therefore multiple single-letter options may [4mnot[24m be grouped: [1m-dv [22mis very different from [1m-d -v[22m.
+
+       You can mix options and other arguments.  For the most part, the order you use doesn't matter.  Order does matter when you use several options of the same kind; for example, if you specify [1m-L [22mmore than once, the directories are searched in the order specified.
+       Also, the placement of the [1m-l [22moption is significant.
+
+       Many options have long names starting with [1m-f [22mor with [1m-W[22m---for example, [1m-fmove-loop-invariants[22m, [1m-Wformat [22mand so on.  Most of these have both positive and negative forms; the negative form of [1m-ffoo [22mis [1m-fno-foo[22m.  This manual documents only one of these two
+       forms, whichever one is not the default.
+
+       Some options take one or more arguments typically separated either by a space or by the equals sign ([1m=[22m) from the option name.  Unless documented otherwise, an argument can be either numeric or a string.  Numeric arguments must typically be small unsigned
+       decimal or hexadecimal integers.  Hexadecimal arguments must begin with the [1m0x [22mprefix.  Arguments to options that specify a size threshold of some sort may be arbitrarily large decimal or hexadecimal integers followed by a byte size suffix designating a
+       multiple of bytes such as "kB" and "KiB" for kilobyte and kibibyte, respectively, "MB" and "MiB" for megabyte and mebibyte, "GB" and "GiB" for gigabyte and gigibyte, and so on.  Such arguments are designated by [4mbyte-size[24m in the following text.  Refer to the
+       NIST, IEC, and other relevant national and international standards for the full listing and explanation of the binary and decimal byte size prefixes.
+
+[1mOPTIONS[0m
+   [1mOption Summary[0m
+       Here is a summary of all the options, grouped by type.  Explanations are in the following sections.
+
+       [4mOverall[24m [4mOptions[0m
+           [1m-c  -S  -E  -o [4m[22mfile[24m [1m-dumpbase [4m[22mdumpbase[24m  [1m-dumpbase-ext [4m[22mauxdropsuf[24m [1m-dumpdir [4m[22mdumppfx[24m  [1m-x [4m[22mlanguage[24m [1m-v  -###  --help[22m[[1m=[4m[22mclass[24m[[1m,...[22m]]  [1m--target-help  --version -pass-exit-codes  -pipe  -specs=[4m[22mfile[24m  [1m-wrapper @[4m[22mfile[24m  [1m-ffile-prefix-map=[4m[22mold[24m[1m=[4m[22mnew[24m  [1m-fcanon-prefix-map[0m
+           [1m-fplugin=[4m[22mfile[24m  [1m-fplugin-arg-[4m[22mname[24m[1m=[4m[22marg[24m [1m-fdump-ada-spec[22m[[1m-slim[22m]  [1m-fada-spec-parent=[4m[22munit[24m  [1m-fdump-go-spec=[4m[22mfile[0m
+
+       [4mC[24m [4mLanguage[24m [4mOptions[0m
+           [1m-ansi  -std=[4m[22mstandard[24m  [1m-aux-info [4m[22mfilename[24m [1m-fno-asm -fno-builtin  -fno-builtin-[4m[22mfunction[24m  [1m-fcond-mismatch -ffreestanding  -fgimple  -fgnu-tm  -fgnu89-inline  -fhosted -flax-vector-conversions  -fms-extensions -fpermitted-flt-eval-methods=[4m[22mstandard[0m
+           [1m-fplan9-extensions  -fsigned-bitfields  -funsigned-bitfields -fsigned-char  -funsigned-char  -fstrict-flex-arrays[=[4m[22mn[24m[1m] -fsso-struct=[4m[22mendianness[0m
+
+       [4mC++[24m [4mLanguage[24m [4mOptions[0m
+           [1m-fabi-version=[4m[22mn[24m  [1m-fno-access-control -faligned-new=[4m[22mn[24m  [1m-fno-assume-sane-operators-new-delete -fchar8_t  -fcheck-new -fconcepts  -fconstexpr-depth=[4m[22mn[24m  [1m-fconstexpr-cache-depth=[4m[22mn[24m [1m-fconstexpr-loop-limit=[4m[22mn[24m  [1m-fconstexpr-ops-limit=[4m[22mn[24m [1m-fno-elide-constructors[0m
+           [1m-fno-enforce-eh-specs -fno-gnu-keywords -fno-immediate-escalation -fno-implicit-templates -fno-implicit-inline-templates -fno-implement-inlines -fmodule-header[22m[[1m=[4m[22mkind[24m] [1m-fmodule-only -fmodules -fmodule-implicit-inline -fno-module-lazy[0m
+           [1m-fmodule-mapper=[4m[22mspecification[24m [1m-fmodule-version-ignore -fms-extensions -fnew-inheriting-ctors -fnew-ttp-matching -fno-nonansi-builtins  -fnothrow-opt  -fno-operator-names -fno-optional-diags -fno-pretty-templates  -frange-for-ext-temps -fno-rtti[0m
+           [1m-fsized-deallocation -fstrong-eval-order[22m[[1m=[4m[22mkind[24m] [1m-ftemplate-backtrace-limit=[4m[22mn[24m [1m-ftemplate-depth=[4m[22mn[24m [1m-fno-threadsafe-statics  -fuse-cxa-atexit -fno-weak  -nostdinc++ -fvisibility-inlines-hidden -fvisibility-ms-compat -fext-numeric-literals[0m
+           [1m-flang-info-include-translate[22m[[1m=[4m[22mheader[24m] [1m-flang-info-include-translate-not -flang-info-module-cmi[22m[[1m=[4m[22mmodule[24m] [1m-stdlib=[4m[22mlibstdc++,libc++[24m [1m-Wabi-tag  -Wcatch-value  -Wcatch-value=[4m[22mn[24m [1m-Wno-class-conversion  -Wclass-memaccess -Wcomma-subscript[0m
+           [1m-Wconditionally-supported -Wno-conversion-null  -Wctad-maybe-unsupported -Wctor-dtor-privacy  -Wdangling-reference -Wno-defaulted-function-deleted -Wno-delete-incomplete -Wdelete-non-virtual-dtor  -Wno-deprecated-array-compare -Wdeprecated-copy[0m
+           [1m-Wdeprecated-copy-dtor -Wno-deprecated-enum-enum-conversion -Wno-deprecated-enum-float-conversion -Weffc++ -Wno-elaborated-enum-base -Wno-exceptions -Wextra-semi -Wno-global-module -Wno-inaccessible-base -Wno-inherited-variadic-ctor[0m
+           [1m-Wno-init-list-lifetime -Winvalid-constexpr -Winvalid-imported-macros -Wno-invalid-offsetof  -Wno-literal-suffix -Wmismatched-new-delete -Wmismatched-tags -Wmultiple-inheritance  -Wnamespaces  -Wnarrowing -Wnoexcept  -Wnoexcept-type  -Wnon-virtual-dtor[0m
+           [1m-Wpessimizing-move  -Wno-placement-new  -Wplacement-new=[4m[22mn[24m [1m-Wrange-loop-construct -Wredundant-move -Wredundant-tags -Wreorder  -Wregister -Wstrict-null-sentinel  -Wno-subobject-linkage  -Wtemplates -Wno-non-template-friend  -Wold-style-cast[0m
+           [1m-Woverloaded-virtual  -Wno-pmf-conversions -Wself-move -Wsign-promo -Wsized-deallocation  -Wsuggest-final-methods -Wsuggest-final-types  -Wsuggest-override  -Wno-template-body -Wno-template-id-cdtor  -Wtemplate-names-tu-local -Wno-terminate[0m
+           [1m-Wno-vexing-parse  -Wvirtual-inheritance -Wno-virtual-move-assign  -Wvolatile[0m
+
+       [4mObjective-C[24m [4mand[24m [4mObjective-C++[24m [4mLanguage[24m [4mOptions[0m
+           [1m-fconstant-string-class=[4m[22mclass-name[24m [1m-fgnu-runtime  -fnext-runtime -fno-nil-receivers -fobjc-abi-version=[4m[22mn[24m [1m-fobjc-call-cxx-cdtors -fobjc-direct-dispatch -fobjc-exceptions -fobjc-gc -fobjc-nilcheck -fobjc-std=objc1 -fno-local-ivars[0m
+           [1m-fivar-visibility=[22m[[1mpublic[22m|[1mprotected[22m|[1mprivate[22m|[1mpackage[22m] [1m-freplace-objc-classes -fzero-link -gen-decls -Wassign-intercept  -Wno-property-assign-default -Wno-protocol -Wobjc-root-class -Wselector -Wstrict-selector-match -Wundeclared-selector[0m
+
+       [4mOpenMP[24m [4mand[24m [4mOpenACC[24m [4mOptions[0m
+           [1m-foffload=[4m[22marg[24m  [1m-foffload-options=[4m[22marg[24m [1m-fopenacc  -fopenacc-dim=[4m[22mgeom[24m [1m-fopenmp  -fopenmp-simd  -fopenmp-target-simd-clone[22m[[1m=[4m[22mdevice-type[24m]
+
+       [4mDiagnostic[24m [4mMessage[24m [4mFormatting[24m [4mOptions[0m
+           [1m-fmessage-length=[4m[22mn[24m [1m-fdiagnostics-plain-output -fdiagnostics-show-location=[22m[[1monce[22m|[1mevery-line[22m] [1m-fdiagnostics-color=[22m[[1mauto[22m|[1mnever[22m|[1malways[22m] [1m-fdiagnostics-urls=[22m[[1mauto[22m|[1mnever[22m|[1malways[22m] [1m-fdiagnostics-format=[22m[[1mtext[22m|[1msarif-stderr[22m|[1msarif-file[22m|[1mjson[22m|[1mjson-stderr[22m|[1mjson-file[22m]
+           [1m-fdiagnostics-add-output=[4m[22mDIAGNOSTICS-OUTPUT-SPEC[24m [1m-fdiagnostics-set-output=[4m[22mDIAGNOSTICS-OUTPUT-SPEC[24m [1m-fno-diagnostics-json-formatting -fno-diagnostics-show-option  -fno-diagnostics-show-caret -fno-diagnostics-show-event-links -fno-diagnostics-show-labels[0m
+           [1m-fno-diagnostics-show-line-numbers -fno-diagnostics-show-cwe -fno-diagnostics-show-rules -fno-diagnostics-show-highlight-colors -fdiagnostics-minimum-margin-width=[4m[22mwidth[24m [1m-fdiagnostics-parseable-fixits  -fdiagnostics-generate-patch[0m
+           [1m-fdiagnostics-show-template-tree  -fno-elide-type -fdiagnostics-path-format=[22m[[1mnone[22m|[1mseparate-events[22m|[1minline-events[22m] [1m-fdiagnostics-show-path-depths -fno-show-column -fdiagnostics-column-unit=[22m[[1mdisplay[22m|[1mbyte[22m] [1m-fdiagnostics-column-origin=[4m[22morigin[0m
+           [1m-fdiagnostics-escape-format=[22m[[1municode[22m|[1mbytes[22m] [1m-fdiagnostics-text-art-charset=[22m[[1mnone[22m|[1mascii[22m|[1municode[22m|[1memoji[22m]
+
+       [4mWarning[24m [4mOptions[0m
+           [1m-fsyntax-only  -fmax-errors=[4m[22mn[24m  [1m-Wpedantic -pedantic-errors -fpermissive -w  -Wextra  -Wall  -Wabi=[4m[22mn[24m [1m-Waddress  -Wno-address-of-packed-member  -Waggregate-return -Walloc-size  -Walloc-size-larger-than=[4m[22mbyte-size[24m  [1m-Walloc-zero -Walloca[0m
+           [1m-Walloca-larger-than=[4m[22mbyte-size[24m [1m-Wno-aggressive-loop-optimizations -Warith-conversion -Warray-bounds  -Warray-bounds=[4m[22mn[24m  [1m-Warray-compare -Warray-parameter  -Warray-parameter=[4m[22mn[24m [1m-Wno-attributes  -Wattribute-alias=[4m[22mn[24m [1m-Wno-attribute-alias -Wno-attribute-warning[0m
+           [1m-Wbidi-chars=[22m[[1mnone[22m|[1munpaired[22m|[1many[22m|[1mucn[22m] [1m-Wbool-compare  -Wbool-operation -Wno-builtin-declaration-mismatch -Wno-builtin-macro-redefined  -Wc90-c99-compat  -Wc99-c11-compat -Wc11-c23-compat  -Wc23-c2y-compat -Wc++-compat  -Wc++11-compat  -Wc++14-compat[0m
+           [1m-Wc++17-compat -Wc++20-compat -Wno-c++11-extensions  -Wno-c++14-extensions -Wno-c++17-extensions -Wno-c++20-extensions  -Wno-c++23-extensions -Wcalloc-transposed-args -Wcast-align  -Wcast-align=strict  -Wcast-function-type  -Wcast-qual -Wchar-subscripts[0m
+           [1m-Wclobbered  -Wcomment -Wcompare-distinct-pointer-types -Wno-complain-wrong-lang -Wconversion  -Wno-coverage-mismatch  -Wno-cpp -Wdangling-else  -Wdangling-pointer  -Wdangling-pointer=[4m[22mn[24m [1m-Wdate-time -Wno-deprecated  -Wno-deprecated-declarations[0m
+           [1m-Wno-designated-init -Wdisabled-optimization -Wno-discarded-array-qualifiers  -Wno-discarded-qualifiers -Wno-div-by-zero  -Wdouble-promotion -Wduplicated-branches  -Wduplicated-cond -Wempty-body  -Wno-endif-labels  -Wenum-compare  -Wenum-conversion[0m
+           [1m-Wenum-int-mismatch -Werror  -Werror=*  -Wexpansion-to-defined  -Wfatal-errors -Wflex-array-member-not-at-end -Wfloat-conversion  -Wfloat-equal  -Wformat  -Wformat=2 -Wno-format-contains-nul  -Wno-format-extra-args -Wformat-nonliteral  -Wformat-overflow=[4m[22mn[0m
+           [1m-Wformat-security  -Wformat-signedness  -Wformat-truncation=[4m[22mn[24m [1m-Wformat-y2k  -Wframe-address -Wframe-larger-than=[4m[22mbyte-size[24m  [1m-Wno-free-nonheap-object -Wheader-guard  -Wno-if-not-aligned  -Wno-ignored-attributes -Wignored-qualifiers[0m
+           [1m-Wno-incompatible-pointer-types  -Whardened -Wimplicit  -Wimplicit-fallthrough  -Wimplicit-fallthrough=[4m[22mn[24m [1m-Wno-implicit-function-declaration  -Wno-implicit-int -Winfinite-recursion -Winit-self  -Winline  -Wno-int-conversion  -Wint-in-bool-context[0m
+           [1m-Wno-int-to-pointer-cast  -Wno-invalid-memory-model -Winvalid-pch  -Winvalid-utf8  -Wno-unicode  -Wjump-misses-init -Wlarger-than=[4m[22mbyte-size[24m  [1m-Wleading-whitespace=[4m[22mkind[24m [1m-Wlogical-not-parentheses  -Wlogical-op -Wlong-long  -Wno-lto-type-mismatch -Wmain[0m
+           [1m-Wmaybe-uninitialized -Wmemset-elt-size  -Wmemset-transposed-args -Wmisleading-indentation  -Wmissing-attributes  -Wmissing-braces -Wmissing-field-initializers  -Wmissing-format-attribute -Wmissing-include-dirs  -Wmissing-noreturn  -Wmusttail-local-addr[0m
+           [1m-Wmaybe-musttail-local-addr  -Wno-missing-profile -Wno-multichar  -Wmultistatement-macros  -Wnonnull  -Wnonnull-compare -Wnormalized=[22m[[1mnone[22m|[1mid[22m|[1mnfc[22m|[1mnfkc[22m] [1m-Wnull-dereference  -Wno-odr -Wopenacc-parallelism -Wopenmp -Wopenmp-simd -Wno-overflow[0m
+           [1m-Woverlength-strings  -Wno-override-init-side-effects -Wpacked  -Wno-packed-bitfield-compat  -Wpacked-not-aligned  -Wpadded -Wparentheses  -Wno-pedantic-ms-format -Wpointer-arith  -Wno-pointer-compare  -Wno-pointer-to-int-cast -Wno-pragmas[0m
+           [1m-Wno-pragma-once-outside-header  -Wno-prio-ctor-dtor -Wno-psabi -Wredundant-decls  -Wrestrict -Wno-return-local-addr  -Wreturn-type -Wno-scalar-storage-order  -Wsequence-point -Wshadow  -Wshadow=global  -Wshadow=local  -Wshadow=compatible-local[0m
+           [1m-Wno-shadow-ivar -Wno-shift-count-negative  -Wno-shift-count-overflow  -Wshift-negative-value -Wno-shift-overflow  -Wshift-overflow=[4m[22mn[24m [1m-Wsign-compare  -Wsign-conversion -Wno-sizeof-array-argument -Wsizeof-array-div -Wsizeof-pointer-div[0m
+           [1m-Wsizeof-pointer-memaccess -Wstack-protector  -Wstack-usage=[4m[22mbyte-size[24m  [1m-Wstrict-aliasing -Wstrict-aliasing=n  -Wstrict-overflow  -Wstrict-overflow=[4m[22mn[24m [1m-Wstring-compare -Wno-stringop-overflow -Wno-stringop-overread -Wno-stringop-truncation[0m
+           [1m-Wstrict-flex-arrays -Wsuggest-attribute=[4m[22mattribute-name[24m [1m-Wswitch  -Wno-switch-bool  -Wswitch-default  -Wswitch-enum -Wno-switch-outside-range  -Wno-switch-unreachable  -Wsync-nand -Wsystem-headers  -Wtautological-compare  -Wtrailing-whitespace[0m
+           [1m-Wtrailing-whitespace=[4m[22mkind[24m  [1m-Wtrampolines  -Wtrigraphs -Wtrivial-auto-var-init  -Wno-tsan  -Wtype-limits  -Wundef -Wuninitialized  -Wunknown-pragmas -Wunsuffixed-float-constants -Wunterminated-string-initialization -Wunused -Wunused-but-set-parameter[0m
+           [1m-Wunused-but-set-variable -Wunused-const-variable  -Wunused-const-variable=[4m[22mn[24m [1m-Wunused-function  -Wunused-label  -Wunused-local-typedefs -Wunused-macros -Wunused-parameter  -Wno-unused-result -Wunused-value  -Wunused-variable -Wuse-after-free[0m
+           [1m-Wuse-after-free=[4m[22mn[24m  [1m-Wuseless-cast -Wno-varargs  -Wvariadic-macros -Wvector-operation-performance -Wvla  -Wvla-larger-than=[4m[22mbyte-size[24m  [1m-Wno-vla-larger-than -Wvolatile-register-var  -Wwrite-strings -Wno-xor-used-as-pow -Wzero-as-null-pointer-constant[0m
+           [1m-Wzero-length-bounds[0m
+
+       [4mStatic[24m [4mAnalyzer[24m [4mOptions[0m
+           [1m-fanalyzer -fanalyzer-call-summaries -fanalyzer-checker=[4m[22mname[24m [1m-fno-analyzer-feasibility -fanalyzer-fine-grained -fanalyzer-show-events-in-system-headers -fno-analyzer-state-merge -fno-analyzer-state-purge -fno-analyzer-suppress-followups[0m
+           [1m-fanalyzer-transitivity -fno-analyzer-undo-inlining -fanalyzer-verbose-edges -fanalyzer-verbose-state-changes -fanalyzer-verbosity=[4m[22mlevel[24m [1m-fdump-analyzer -fdump-analyzer-callgraph -fdump-analyzer-exploded-graph -fdump-analyzer-exploded-nodes[0m
+           [1m-fdump-analyzer-exploded-nodes-2 -fdump-analyzer-exploded-nodes-3 -fdump-analyzer-exploded-paths -fdump-analyzer-feasibility -fdump-analyzer-infinite-loop -fdump-analyzer-json -fdump-analyzer-state-purge -fdump-analyzer-stderr -fdump-analyzer-supergraph[0m
+           [1m-fdump-analyzer-untracked -Wno-analyzer-double-fclose -Wno-analyzer-double-free -Wno-analyzer-exposure-through-output-file -Wno-analyzer-exposure-through-uninit-copy -Wno-analyzer-fd-access-mode-mismatch -Wno-analyzer-fd-double-close -Wno-analyzer-fd-leak[0m
+           [1m-Wno-analyzer-fd-phase-mismatch -Wno-analyzer-fd-type-mismatch -Wno-analyzer-fd-use-after-close -Wno-analyzer-fd-use-without-check -Wno-analyzer-file-leak -Wno-analyzer-free-of-non-heap -Wno-analyzer-imprecise-fp-arithmetic -Wno-analyzer-infinite-loop[0m
+           [1m-Wno-analyzer-infinite-recursion -Wno-analyzer-jump-through-null -Wno-analyzer-malloc-leak -Wno-analyzer-mismatching-deallocation -Wno-analyzer-null-argument -Wno-analyzer-null-dereference -Wno-analyzer-out-of-bounds -Wno-analyzer-overlapping-buffers[0m
+           [1m-Wno-analyzer-possible-null-argument -Wno-analyzer-possible-null-dereference -Wno-analyzer-putenv-of-auto-var -Wno-analyzer-shift-count-negative -Wno-analyzer-shift-count-overflow -Wno-analyzer-stale-setjmp-buffer -Wno-analyzer-tainted-allocation-size[0m
+           [1m-Wno-analyzer-tainted-assertion -Wno-analyzer-tainted-array-index -Wno-analyzer-tainted-divisor -Wno-analyzer-tainted-offset -Wno-analyzer-tainted-size -Wanalyzer-symbol-too-complex -Wanalyzer-too-complex -Wno-analyzer-undefined-behavior-ptrdiff[0m
+           [1m-Wno-analyzer-undefined-behavior-strtok -Wno-analyzer-unsafe-call-within-signal-handler -Wno-analyzer-use-after-free -Wno-analyzer-use-of-pointer-in-stale-stack-frame -Wno-analyzer-use-of-uninitialized-value -Wno-analyzer-va-arg-type-mismatch[0m
+           [1m-Wno-analyzer-va-list-exhausted -Wno-analyzer-va-list-leak -Wno-analyzer-va-list-use-after-va-end -Wno-analyzer-write-to-const -Wno-analyzer-write-to-string-literal[0m
+
+       [4mC[24m [4mand[24m [4mObjective-C-only[24m [4mWarning[24m [4mOptions[0m
+           [1m-Wbad-function-cast -Wdeprecated-non-prototype -Wfree-labels -Wmissing-declarations -Wmissing-parameter-name -Wmissing-parameter-type -Wdeclaration-missing-parameter-type -Wmissing-prototypes -Wmissing-variable-declarations -Wnested-externs[0m
+           [1m-Wold-style-declaration -Wold-style-definition -Wstrict-prototypes -Wtraditional -Wtraditional-conversion -Wdeclaration-after-statement -Wpointer-sign[0m
+
+       [4mDebugging[24m [4mOptions[0m
+           [1m-g  -g[4m[22mlevel[24m  [1m-gdwarf  -gdwarf-[4m[22mversion[24m [1m-gbtf -gctf  -gctf[4m[22mlevel[24m [1m-gprune-btf -gno-prune-btf -ggdb  -grecord-gcc-switches  -gno-record-gcc-switches -gstrict-dwarf  -gno-strict-dwarf -gas-loc-support  -gno-as-loc-support -gas-locview-support[0m
+           [1m-gno-as-locview-support -gcodeview -gcolumn-info  -gno-column-info  -gdwarf32  -gdwarf64 -gstatement-frontiers  -gno-statement-frontiers -gvariable-location-views  -gno-variable-location-views -ginternal-reset-location-views[0m
+           [1m-gno-internal-reset-location-views -ginline-points  -gno-inline-points -gvms -gz[22m[[1m=[4m[22mtype[24m] [1m-gsplit-dwarf  -gdescribe-dies  -gno-describe-dies -fdebug-prefix-map=[4m[22mold[24m[1m=[4m[22mnew[24m  [1m-fdebug-types-section -fno-eliminate-unused-debug-types -femit-struct-debug-baseonly[0m
+           [1m-femit-struct-debug-reduced -femit-struct-debug-detailed[22m[[1m=[4m[22mspec-list[24m] [1m-fno-eliminate-unused-debug-symbols  -femit-class-debug-always -fno-merge-debug-strings  -fno-dwarf2-cfi-asm -fvar-tracking  -fvar-tracking-assignments[0m
+
+       [4mOptimization[24m [4mOptions[0m
+           [1m-faggressive-loop-optimizations -falign-functions[=[4m[22mn[24m[1m[:[4m[22mm[24m[1m:[[4m[22mn2[24m[1m[:[4m[22mm2[24m[1m]]]] -falign-jumps[=[4m[22mn[24m[1m[:[4m[22mm[24m[1m:[[4m[22mn2[24m[1m[:[4m[22mm2[24m[1m]]]] -falign-labels[=[4m[22mn[24m[1m[:[4m[22mm[24m[1m:[[4m[22mn2[24m[1m[:[4m[22mm2[24m[1m]]]] -falign-loops[=[4m[22mn[24m[1m[:[4m[22mm[24m[1m:[[4m[22mn2[24m[1m[:[4m[22mm2[24m[1m]]]] -fmin-function-alignment=[[4m[22mn[24m[1m] -fno-allocation-dce -fallow-store-data-races[0m
+           [1m-fassociative-math  -fauto-profile  -fauto-profile[=[4m[22mpath[24m[1m] -fauto-inc-dec  -fbranch-probabilities -fcaller-saves -fcombine-stack-adjustments  -fconserve-stack -ffold-mem-offsets -fcompare-elim  -fcprop-registers  -fcrossjumping -fcse-follow-jumps[0m
+           [1m-fcse-skip-blocks  -fcx-fortran-rules -fcx-limited-range -fdata-sections  -fdce  -fdelayed-branch -fdelete-null-pointer-checks  -fdevirtualize  -fdevirtualize-speculatively -fdevirtualize-at-ltrans  -fdse -fearly-inlining  -fipa-sra[0m
+           [1m-fexpensive-optimizations  -ffat-lto-objects -ffast-math  -ffinite-math-only  -ffloat-store  -fexcess-precision=[4m[22mstyle[24m [1m-ffinite-loops -fforward-propagate  -ffp-contract=[4m[22mstyle[24m  [1m-ffunction-sections -fgcse  -fgcse-after-reload  -fgcse-las  -fgcse-lm[0m
+           [1m-fgraphite-identity -fgcse-sm  -fhoist-adjacent-loads  -fif-conversion -fif-conversion2  -findirect-inlining -finline-stringops[=[4m[22mfn[24m[1m] -finline-functions  -finline-functions-called-once  -finline-limit=[4m[22mn[24m [1m-finline-small-functions -fipa-modref -fipa-cp[0m
+           [1m-fipa-cp-clone -fipa-bit-cp  -fipa-vrp  -fipa-pta  -fipa-profile  -fipa-pure-const -fipa-reference  -fipa-reference-addressable -fipa-reorder-for-locality -fipa-stack-alignment  -fipa-icf  -fira-algorithm=[4m[22malgorithm[24m [1m-flate-combine-instructions[0m
+           [1m-flifetime-dse -flive-patching=[4m[22mlevel[24m [1m-fira-region=[4m[22mregion[24m  [1m-fira-hoist-pressure -fira-loop-pressure  -fno-ira-share-save-slots -fno-ira-share-spill-slots -fisolate-erroneous-paths-dereference  -fisolate-erroneous-paths-attribute -fivopts[0m
+           [1m-fkeep-inline-functions  -fkeep-static-functions -fkeep-static-consts  -flimit-function-alignment  -flive-range-shrinkage -floop-block  -floop-interchange  -floop-strip-mine -floop-unroll-and-jam  -floop-nest-optimize -floop-parallelize-all  -flra-remat[0m
+           [1m-flto  -flto-compression-level -flto-partition=[4m[22malg[24m [1m-flto-incremental=[4m[22mpath[24m [1m-flto-incremental-cache-size=[4m[22mn[24m [1m-fmalloc-dce -fmerge-all-constants -fmerge-constants  -fmodulo-sched  -fmodulo-sched-allow-regmoves -fmove-loop-invariants  -fmove-loop-stores[0m
+           [1m-fno-branch-count-reg -fno-defer-pop  -fno-fp-int-builtin-inexact  -fno-function-cse -fno-guess-branch-probability  -fno-inline  -fno-math-errno  -fno-peephole -fno-peephole2  -fno-printf-return-value  -fno-sched-interblock -fno-sched-spec[0m
+           [1m-fno-signed-zeros -fno-toplevel-reorder  -fno-trapping-math  -fno-zero-initialized-in-bss -fomit-frame-pointer  -foptimize-crc  -foptimize-sibling-calls -fpartial-inlining  -fpeel-loops  -fpredictive-commoning -fprefetch-loop-arrays -fprofile-correction[0m
+           [1m-fprofile-use  -fprofile-use=[4m[22mpath[24m [1m-fprofile-partial-training -fprofile-values -fprofile-reorder-functions -freciprocal-math  -free  -frename-registers  -freorder-blocks -freorder-blocks-algorithm=[4m[22malgorithm[24m [1m-freorder-blocks-and-partition[0m
+           [1m-freorder-functions -frerun-cse-after-loop  -freschedule-modulo-scheduled-loops -frounding-math  -fsave-optimization-record -fsched2-use-superblocks  -fsched-pressure -fsched-spec-load  -fsched-spec-load-dangerous -fsched-stalled-insns-dep[=[4m[22mn[24m[1m][0m
+           [1m-fsched-stalled-insns[=[4m[22mn[24m[1m] -fsched-group-heuristic  -fsched-critical-path-heuristic -fsched-spec-insn-heuristic  -fsched-rank-heuristic -fsched-last-insn-heuristic  -fsched-dep-count-heuristic -fschedule-fusion -fschedule-insns  -fschedule-insns2[0m
+           [1m-fsection-anchors -fselective-scheduling  -fselective-scheduling2 -fsel-sched-pipelining  -fsel-sched-pipelining-outer-loops -fsemantic-interposition  -fshrink-wrap  -fshrink-wrap-separate -fsignaling-nans -fsingle-precision-constant[0m
+           [1m-fsplit-ivs-in-unroller  -fsplit-loops -fsplit-paths -fsplit-wide-types  -fsplit-wide-types-early  -fssa-backprop  -fssa-phiopt -fstdarg-opt  -fstore-merging  -fstrict-aliasing -fipa-strict-aliasing -fthread-jumps  -ftracer  -ftree-bit-ccp[0m
+           [1m-ftree-builtin-call-dce  -ftree-ccp  -ftree-ch  -ftree-coalesce-vars -ftree-copy-prop  -ftree-cselim  -ftree-dce  -ftree-dominator-opts -ftree-dse  -ftree-forwprop  -ftree-fre  -fcode-hoisting -ftree-loop-if-convert  -ftree-loop-im -ftree-phiprop[0m
+           [1m-ftree-loop-distribution  -ftree-loop-distribute-patterns -ftree-loop-ivcanon  -ftree-loop-linear  -ftree-loop-optimize -ftree-loop-vectorize -ftree-parallelize-loops=[4m[22mn[24m  [1m-ftree-pre  -ftree-partial-pre  -ftree-pta -ftree-reassoc  -ftree-scev-cprop[0m
+           [1m-ftree-sink  -ftree-slsr  -ftree-sra -ftree-switch-conversion  -ftree-tail-merge -ftree-ter  -ftree-vectorize  -ftree-vrp  -ftrivial-auto-var-init -funconstrained-commons -funit-at-a-time  -funroll-all-loops -funroll-loops -funsafe-math-optimizations[0m
+           [1m-funswitch-loops -fipa-ra  -fvariable-expansion-in-unroller  -fvect-cost-model  -fvpt -fweb  -fwhole-program  -fwpa  -fuse-linker-plugin -fzero-call-used-regs --param [4m[22mname[24m[1m=[4m[22mvalue[24m [1m-O  -O0  -O1  -O2  -O3  -Os  -Ofast  -Og  -Oz[0m
+
+       [4mProgram[24m [4mInstrumentation[24m [4mOptions[0m
+           [1m-p  -pg  -fprofile-arcs  --coverage  -ftest-coverage -fcondition-coverage -fpath-coverage -fprofile-abs-path -fprofile-dir=[4m[22mpath[24m  [1m-fprofile-generate  -fprofile-generate=[4m[22mpath[24m [1m-fprofile-info-section  -fprofile-info-section=[4m[22mname[24m [1m-fprofile-note=[4m[22mpath[0m
+           [1m-fprofile-prefix-path=[4m[22mpath[24m [1m-fprofile-update=[4m[22mmethod[24m [1m-fprofile-filter-files=[4m[22mregex[24m [1m-fprofile-exclude-files=[4m[22mregex[24m [1m-fprofile-reproducible=[22m[[1mmultithreaded[22m|[1mparallel-runs[22m|[1mserial[22m] [1m-fsanitize=[4m[22mstyle[24m  [1m-fsanitize-recover  -fsanitize-recover=[4m[22mstyle[24m [1m-fsanitize-trap[0m
+           [1m-fsanitize-trap=[4m[22mstyle[24m [1m-fasan-shadow-offset=[4m[22mnumber[24m  [1m-fsanitize-sections=[4m[22ms1[24m[1m,[4m[22ms2[24m[1m,...  -fsanitize-undefined-trap-on-error  -fbounds-check  -fcf-protection -fcf-protection=[22m[[1mfull[22m|[1mbranch[22m|[1mreturn[22m|[1mnone[22m|[1mcheck[22m] [1m-fharden-compares -fharden-conditional-branches[0m
+           [1m-fhardened -fharden-control-flow-redundancy  -fhardcfr-skip-leaf -fhardcfr-check-exceptions  -fhardcfr-check-returning-calls -fhardcfr-check-noreturn-calls=[22m[[1malways[22m|[1mno-xthrow[22m|[1mnothrow[22m|[1mnever[22m] [1m-fstack-protector  -fstack-protector-all  -fstack-protector-strong[0m
+           [1m-fstack-protector-explicit  -fstack-check -fstack-limit-register=[4m[22mreg[24m  [1m-fstack-limit-symbol=[4m[22msym[24m [1m-fno-stack-limit  -fsplit-stack -fstrub=disable  -fstrub=strict  -fstrub=relaxed -fstrub=all  -fstrub=at-calls  -fstrub=internal[0m
+           [1m-fvtable-verify=[22m[[1mstd[22m|[1mpreinit[22m|[1mnone[22m] [1m-fvtv-counts  -fvtv-debug -finstrument-functions  -finstrument-functions-once -finstrument-functions-exclude-function-list=[4m[22msym[24m[1m,[4m[22msym[24m[1m,...  -finstrument-functions-exclude-file-list=[4m[22mfile[24m[1m,[4m[22mfile[24m[1m,...  -fprofile-prefix-map=[4m[22mold[24m[1m=[4m[22mnew[0m
+           [1m-fpatchable-function-entry=[4m[22mN[24m[[1m,[4m[22mM[24m]
+
+       [4mPreprocessor[24m [4mOptions[0m
+           [1m-A[4m[22mquestion[24m[1m=[4m[22manswer[24m [1m-A-[4m[22mquestion[24m[[1m=[4m[22manswer[24m] [1m-C  -CC  -D[4m[22mmacro[24m[[1m=[4m[22mdefn[24m] [1m-dD  -dI  -dM  -dN  -dU -fdebug-cpp  -fdirectives-only  -fdollars-in-identifiers -fexec-charset=[4m[22mcharset[24m  [1m-fextended-identifiers -finput-charset=[4m[22mcharset[24m [1m-fmacro-prefix-map=[4m[22mold[24m[1m=[4m[22mnew[0m
+           [1m-fmax-include-depth=[4m[22mdepth[24m [1m-fno-canonical-system-headers  -fpch-deps  -fpch-preprocess -fpreprocessed  -ftabstop=[4m[22mwidth[24m  [1m-ftrack-macro-expansion -fwide-exec-charset=[4m[22mcharset[24m  [1m-fworking-directory -H  -imacros [4m[22mfile[24m  [1m-include [4m[22mfile[24m [1m-M  -MD  -MF  -MG  -MM  -MMD[0m
+           [1m-MP  -MQ  -MT -Mno-modules -no-integrated-cpp  -P  -pthread  -remap -traditional  -traditional-cpp  -trigraphs -U[4m[22mmacro[24m  [1m-undef -Wp,[4m[22moption[24m  [1m-Xpreprocessor [4m[22moption[0m
+
+       [4mAssembler[24m [4mOptions[0m
+           [1m-Wa,[4m[22moption[24m  [1m-Xassembler [4m[22moption[0m
+
+       [4mLinker[24m [4mOptions[0m
+           [4mobject-file-name[24m  [1m-fuse-ld=[4m[22mlinker[24m  [1m-l[4m[22mlibrary[24m [1m-nostartfiles  -nodefaultlibs  -nolibc  -nostdlib  -nostdlib++ -e [4m[22mentry[24m  [1m--entry=[4m[22mentry[24m [1m-pie  -pthread  -r  -rdynamic -s  -static  -static-pie  -static-libgcc  -static-libstdc++ -static-libasan  -static-libtsan[0m
+           [1m-static-liblsan  -static-libubsan -shared  -shared-libgcc  -symbolic -T [4m[22mscript[24m  [1m-Wl,[4m[22moption[24m  [1m-Xlinker [4m[22moption[24m [1m-u [4m[22msymbol[24m  [1m-z [4m[22mkeyword[0m
+
+       [4mDirectory[24m [4mOptions[0m
+           [1m-B[4m[22mprefix[24m  [1m-I[4m[22mdir[24m  [1m-I- -idirafter [4m[22mdir[24m [1m-imacros [4m[22mfile[24m  [1m-imultilib [4m[22mdir[24m [1m-iplugindir=[4m[22mdir[24m  [1m-iprefix [4m[22mfile[24m [1m-iquote [4m[22mdir[24m  [1m-isysroot [4m[22mdir[24m  [1m-isystem [4m[22mdir[24m [1m-iwithprefix [4m[22mdir[24m  [1m-iwithprefixbefore [4m[22mdir[24m [1m--embed-dir=[4m[22mdir[24m [1m-L[4m[22mdir[24m  [1m-no-canonical-prefixes  --no-sysroot-suffix -nostdinc[0m
+           [1m-nostdinc++  --sysroot=[4m[22mdir[0m
+
+       [4mCode[24m [4mGeneration[24m [4mOptions[0m
+           [1m-fcall-saved-[4m[22mreg[24m  [1m-fcall-used-[4m[22mreg[24m [1m-ffixed-[4m[22mreg[24m  [1m-fexceptions -fnon-call-exceptions  -fdelete-dead-exceptions  -funwind-tables -fasynchronous-unwind-tables -fno-gnu-unique -finhibit-size-directive  -fcommon  -fno-ident -fpcc-struct-return  -fpic  -fPIC[0m
+           [1m-fpie  -fPIE  -fno-plt -fno-jump-tables -fno-bit-tests -frecord-gcc-switches -freg-struct-return  -fshort-enums  -fshort-wchar -fverbose-asm  -fpack-struct[=[4m[22mn[24m[1m] -fleading-underscore  -ftls-model=[4m[22mmodel[24m [1m-fstack-reuse=[4m[22mreuse_level[24m [1m-ftrampolines[0m
+           [1m-ftrampoline-impl=[22m[[1mstack[22m|[1mheap[22m] [1m-ftrapv  -fwrapv -fvisibility=[22m[[1mdefault[22m|[1minternal[22m|[1mhidden[22m|[1mprotected[22m] [1m-fstrict-volatile-bitfields  -fsync-libcalls -fzero-init-padding-bits=[4m[22mvalue[0m
+
+       [4mDeveloper[24m [4mOptions[0m
+           [1m-d[4m[22mletters[24m  [1m-dumpspecs  -dumpmachine  -dumpversion -dumpfullversion  -fcallgraph-info[22m[[1m=su,da[22m] [1m-fchecking  -fchecking=[4m[22mn[24m [1m-fdbg-cnt-list  -fdbg-cnt=[4m[22mcounter-value-list[24m [1m-fdisable-ipa-[4m[22mpass_name[24m [1m-fdisable-rtl-[4m[22mpass_name[24m [1m-fdisable-rtl-[4m[22mpass-name[24m[1m=[4m[22mrange-list[0m
+           [1m-fdisable-tree-[4m[22mpass_name[24m [1m-fdisable-tree-[4m[22mpass-name[24m[1m=[4m[22mrange-list[24m [1m-fdump-debug  -fdump-earlydebug -fdump-noaddr  -fdump-unnumbered  -fdump-unnumbered-links -fdump-final-insns[22m[[1m=[4m[22mfile[24m] [1m-fdump-ipa-all  -fdump-ipa-cgraph  -fdump-ipa-inline -fdump-lang-all[0m
+           [1m-fdump-lang-[4m[22mswitch[24m [1m-fdump-lang-[4m[22mswitch[24m[1m-[4m[22moptions[24m [1m-fdump-lang-[4m[22mswitch[24m[1m-[4m[22moptions[24m[1m=[4m[22mfilename[24m [1m-fdump-passes -fdump-rtl-[4m[22mpass[24m  [1m-fdump-rtl-[4m[22mpass[24m[1m=[4m[22mfilename[24m [1m-fdump-statistics -fdump-tree-all -fdump-tree-[4m[22mswitch[24m [1m-fdump-tree-[4m[22mswitch[24m[1m-[4m[22moptions[24m [1m-fdump-tree-[4m[22mswitch[24m[1m-[4m[22moptions[24m[1m=[4m[22mfilename[0m
+           [1m-fcompare-debug[22m[[1m=[4m[22mopts[24m]  [1m-fcompare-debug-second -fenable-[4m[22mkind[24m[1m-[4m[22mpass[24m [1m-fenable-[4m[22mkind[24m[1m-[4m[22mpass[24m[1m=[4m[22mrange-list[24m [1m-fira-verbose=[4m[22mn[24m [1m-flto-report  -flto-report-wpa  -fmem-report-wpa -fmem-report  -fpre-ipa-mem-report  -fpost-ipa-mem-report -fopt-info  -fopt-info-[4m[22moptions[24m[[1m=[4m[22mfile[24m]
+           [1m-fmultiflags  -fprofile-report -frandom-seed=[4m[22mstring[24m  [1m-fsched-verbose=[4m[22mn[24m [1m-fsel-sched-verbose  -fsel-sched-dump-cfg  -fsel-sched-pipelining-verbose -fstats  -fstack-usage  -ftime-report  -ftime-report-details -fvar-tracking-assignments-toggle  -gtoggle[0m
+           [1m-print-file-name=[4m[22mlibrary[24m  [1m-print-libgcc-file-name -print-multi-directory  -print-multi-lib  -print-multi-os-directory -print-prog-name=[4m[22mprogram[24m  [1m-print-search-dirs  -Q -print-sysroot  -print-sysroot-headers-suffix -save-temps  -save-temps=cwd[0m
+           [1m-save-temps=obj  -time[22m[[1m=[4m[22mfile[24m]
+
+       [4mMachine-Dependent[24m [4mOptions[0m
+           [4mAArch64[24m [4mOptions[24m ([1mAArch64 Options[22m) [1m-mabi=[4m[22mname[24m  [1m-mbig-endian  -mlittle-endian -mgeneral-regs-only -mcmodel=tiny  -mcmodel=small  -mcmodel=large -mstrict-align  -mno-strict-align -momit-leaf-frame-pointer -mtls-dialect=desc  -mtls-dialect=traditional[0m
+           [1m-mtls-size=[4m[22msize[24m [1m-mfix-cortex-a53-835769  -mfix-cortex-a53-843419 -mlow-precision-recip-sqrt  -mlow-precision-sqrt  -mlow-precision-div -mpc-relative-literal-loads -msign-return-address=[4m[22mscope[24m [1m-mbranch-protection=[4m[22mnone[24m[1m|[4m[22mstandard[24m[1m|[4m[22mpac-ret[24m[1m[+[4m[22mleaf[24m [1m+[4m[22mb-key[24m[1m]|[4m[22mbti[24m[1m|[4m[22mgcs[0m
+           [1m-mharden-sls=[4m[22mopts[24m [1m-march=[4m[22mname[24m  [1m-mcpu=[4m[22mname[24m  [1m-mtune=[4m[22mname[24m [1m-moverride=[4m[22mstring[24m  [1m-mverbose-cost-dump -mstack-protector-guard=[4m[22mguard[24m [1m-mstack-protector-guard-reg=[4m[22msysreg[24m [1m-mstack-protector-guard-offset=[4m[22moffset[24m [1m-mtrack-speculation -moutline-atomics -mearly-ldp-fusion[0m
+           [1m-mlate-ldp-fusion -Wexperimental-fmv-target[0m
+
+           [4mAdapteva[24m [4mEpiphany[24m [4mOptions[24m ([1mAdapteva Epiphany Options[22m) [1m-mhalf-reg-file  -mprefer-short-insn-regs -mbranch-cost=[4m[22mnum[24m  [1m-mcmove  -mnops=[4m[22mnum[24m  [1m-msoft-cmpsf -msplit-lohi  -mpost-inc  -mpost-modify  -mstack-offset=[4m[22mnum[24m [1m-mround-nearest  -mlong-calls  -mshort-calls[0m
+           [1m-msmall16 -mfp-mode=[4m[22mmode[24m  [1m-mvect-double  -max-vect-align=[4m[22mnum[24m [1m-msplit-vecmove-early  -m1reg-[4m[22mreg[0m
+
+           [4mAMD[24m [4mGCN[24m [4mOptions[24m ([1mAMD GCN Options[22m) [1m-march=[4m[22mgpu[24m [1m-mtune=[4m[22mgpu[24m [1m-mstack-size=[4m[22mbytes[0m
+
+           [4mARC[24m [4mOptions[24m ([1mARC Options[22m) [1m-mbarrel-shifter  -mjli-always -mcpu=[4m[22mcpu[24m  [1m-mA6  -mARC600  -mA7  -mARC700 -mdpfp  -mdpfp-compact  -mdpfp-fast  -mno-dpfp-lrsr -mea  -mno-mpy  -mmul32x16  -mmul64  -matomic -mnorm  -mspfp  -mspfp-compact  -mspfp-fast  -msimd[0m
+           [1m-msoft-float  -mswap -mcrc  -mdsp-packa  -mdvbf  -mlock  -mmac-d16  -mmac-24  -mrtsc  -mswape -mtelephony  -mxy  -misize  -mannotate-align  -marclinux  -marclinux_prof -mlong-calls  -mmedium-calls  -msdata  -mirq-ctrl-saved -mrgf-banked-regs[0m
+           [1m-mlpc-width=[4m[22mwidth[24m  [1m-G [4m[22mnum[24m [1m-mvolatile-cache  -mtp-regno=[4m[22mregno[24m [1m-malign-call  -mauto-modify-reg  -mbbit-peephole  -mno-brcc -mcase-vector-pcrel  -mcompact-casesi  -mno-cond-exec  -mearly-cbranchsi -mexpand-adddi  -mindexed-loads  -mlra  -mlra-priority-none[0m
+           [1m-mlra-priority-compact -mlra-priority-noncompact  -mmillicode -mmixed-code  -mq-class  -mRcq  -mRcw  -msize-level=[4m[22mlevel[24m [1m-mtune=[4m[22mcpu[24m  [1m-mmultcost=[4m[22mnum[24m  [1m-mcode-density-frame -munalign-prob-threshold=[4m[22mprobability[24m  [1m-mmpy-option=[4m[22mmulto[24m [1m-mdiv-rem  -mcode-density[0m
+           [1m-mll64  -mfpu=[4m[22mfpu[24m  [1m-mrf16  -mbranch-index[0m
+
+           [4mARM[24m [4mOptions[24m ([1mARM Options[22m) [1m-mapcs-frame  -mno-apcs-frame -mabi=[4m[22mname[24m [1m-mapcs-stack-check  -mno-apcs-stack-check -mapcs-reentrant  -mno-apcs-reentrant -mgeneral-regs-only -msched-prolog  -mno-sched-prolog -mlittle-endian  -mbig-endian -mbe8  -mbe32[0m
+           [1m-mfloat-abi=[4m[22mname[24m [1m-mfp16-format=[4m[22mname[24m [1m-mthumb-interwork  -mno-thumb-interwork -mcpu=[4m[22mname[24m  [1m-march=[4m[22mname[24m  [1m-mfpu=[4m[22mname[24m [1m-mtune=[4m[22mname[24m  [1m-mprint-tune-info -mstructure-size-boundary=[4m[22mn[24m [1m-mabort-on-noreturn -mlong-calls  -mno-long-calls -msingle-pic-base[0m
+           [1m-mno-single-pic-base -mpic-register=[4m[22mreg[24m [1m-mnop-fun-dllimport -mpoke-function-name -mthumb  -marm  -mflip-thumb -mtpcs-frame  -mtpcs-leaf-frame -mcaller-super-interworking  -mcallee-super-interworking -mtp=[4m[22mname[24m  [1m-mtls-dialect=[4m[22mdialect[24m [1m-mword-relocations[0m
+           [1m-mfix-cortex-m3-ldrd -mfix-cortex-a57-aes-1742098 -mfix-cortex-a72-aes-1655431 -munaligned-access -mneon-for-64bits -mslow-flash-data -masm-syntax-unified -mrestrict-it -mverbose-cost-dump -mpure-code -mcmse -mfix-cmse-cve-2021-35465[0m
+           [1m-mstack-protector-guard=[4m[22mguard[24m [1m-mstack-protector-guard-offset=[4m[22moffset[24m [1m-mfdpic -mbranch-protection=[4m[22mnone[24m[1m|[4m[22mstandard[24m[1m|[4m[22mpac-ret[24m[1m[+[4m[22mleaf[24m[1m] [+[4m[22mbti[24m[1m]|[4m[22mbti[24m[1m[+[4m[22mpac-ret[24m[1m[+[4m[22mleaf[24m[1m]][0m
+
+           [4mAVR[24m [4mOptions[24m ([1mAVR Options[22m) [1m-mmcu=[4m[22mmcu[24m  [1m-mabsdata  -maccumulate-args  -mcvt -mbranch-cost=[4m[22mcost[24m  [1m-mfuse-add=[4m[22mlevel[24m  [1m-mfuse-move=[4m[22mlevel[24m [1m-mfuse-move2  -mcall-prologues  -mgas-isr-prologues  -mint8  -mflmap -mdouble=[4m[22mbits[24m  [1m-mlong-double=[4m[22mbits[24m  [1m-mno-call-main[0m
+           [1m-mn_flash=[4m[22msize[24m  [1m-mfract-convert-truncate  -mno-interrupts -mmain-is-OS_task  -mrelax  -mrmw  -mstrict-X  -mtiny-stack -mrodata-in-ram  -msplit-bit-shift  -msplit-ldst  -mshort-calls -mskip-bug  -muse-nonzero-bits  -nodevicelib  -nodevicespecs[0m
+           [1m-Waddr-space-convert  -Wmisspelled-isr[0m
+
+           [4mBlackfin[24m [4mOptions[24m ([1mBlackfin Options[22m) [1m-mcpu=[4m[22mcpu[24m[[1m-[4m[22msirevision[24m] [1m-msim  -momit-leaf-frame-pointer  -mno-omit-leaf-frame-pointer -mspecld-anomaly  -mno-specld-anomaly  -mcsync-anomaly  -mno-csync-anomaly -mlow-64k  -mno-low64k  -mstack-check-l1[0m
+           [1m-mid-shared-library -mno-id-shared-library  -mshared-library-id=[4m[22mn[24m [1m-mleaf-id-shared-library  -mno-leaf-id-shared-library -msep-data  -mno-sep-data  -mlong-calls  -mno-long-calls -mfast-fp  -minline-plt  -mmulticore  -mcorea  -mcoreb  -msdram -micplb[0m
+
+           [4mC6X[24m [4mOptions[24m ([1mC6X Options[22m) [1m-mbig-endian  -mlittle-endian  -march=[4m[22mcpu[24m [1m-msim  -msdata=[4m[22msdata-type[0m
+
+           [4mCRIS[24m [4mOptions[24m ([1mCRIS Options[22m) [1m-mcpu=[4m[22mcpu[24m  [1m-march=[4m[22mcpu[24m [1m-mtune=[4m[22mcpu[24m [1m-mmax-stack-frame=[4m[22mn[24m [1m-metrax4  -metrax100  -mpdebug  -mcc-init  -mno-side-effects -mstack-align  -mdata-align  -mconst-align -m32-bit  -m16-bit  -m8-bit  -mno-prologue-epilogue -melf  -maout  -sim[0m
+           [1m-sim2 -mmul-bug-workaround  -mno-mul-bug-workaround[0m
+
+           [4mC-SKY[24m [4mOptions[24m ([1mC-SKY Options[22m) [1m-march=[4m[22march[24m  [1m-mcpu=[4m[22mcpu[24m [1m-mbig-endian  -EB  -mlittle-endian  -EL -mhard-float  -msoft-float  -mfpu=[4m[22mfpu[24m  [1m-mdouble-float  -mfdivdu -mfloat-abi=[4m[22mname[24m [1m-melrw  -mistack  -mmp  -mcp  -mcache  -msecurity  -mtrust -mdsp  -medsp  -mvdsp[0m
+           [1m-mdiv  -msmart  -mhigh-registers  -manchor -mpushpop  -mmultiple-stld  -mconstpool  -mstack-size  -mccrt -mbranch-cost=[4m[22mn[24m  [1m-mcse-cc  -msched-prolog -msim[0m
+
+           [4mCygwin[24m [4mand[24m [4mMinGW[24m [4mOptions[24m ([1mCygwin and MinGW Options[22m) [1m-mconsole  -mcrtdll=[4m[22mlibrary[24m  [1m-mdll -mnop-fun-dllimport  -mthread -municode  -mwin32  -mwindows  -fno-set-stack-executable[0m
+
+           [4mDarwin[24m [4mOptions[24m ([1mDarwin Options[22m) [1m-all_load  -allowable_client  -arch  -arch_errors_fatal -arch_only  -bind_at_load  -bundle  -bundle_loader -client_name  -compatibility_version  -current_version -dead_strip -dependency-file  -dylib_file[0m
+           [1m-dylinker_install_name -dynamic  -dynamiclib  -exported_symbols_list -filelist  -flat_namespace  -force_cpusubtype_ALL -force_flat_namespace  -headerpad_max_install_names -iframework -image_base  -init  -install_name  -keep_private_externs -multi_module[0m
+           [1m-multiply_defined  -multiply_defined_unused -noall_load   -no_dead_strip_inits_and_terms -nodefaultrpaths -nofixprebinding  -nomultidefs  -noprebind  -noseglinkedit -pagezero_size  -prebind  -prebind_all_twolevel_modules -private_bundle  -read_only_relocs[0m
+           [1m-sectalign -sectobjectsymbols  -whyload  -seg1addr -sectcreate  -sectobjectsymbols  -sectorder -segaddr  -segs_read_only_addr  -segs_read_write_addr -seg_addr_table  -seg_addr_table_filename  -seglinkedit -segprot  -segs_read_only_addr[0m
+           [1m-segs_read_write_addr -single_module  -static  -sub_library  -sub_umbrella -twolevel_namespace  -umbrella  -undefined -unexported_symbols_list  -weak_reference_mismatches -whatsloaded  -F  -gused  -gfull  -mmacosx-version-min=[4m[22mversion[24m [1m-mkernel[0m
+           [1m-mone-byte-bool[0m
+
+           [4mDEC[24m [4mAlpha[24m [4mOptions[24m ([1mDEC Alpha Options[22m) [1m-mno-fp-regs  -msoft-float -mieee  -mieee-with-inexact  -mieee-conformant -mfp-trap-mode=[4m[22mmode[24m  [1m-mfp-rounding-mode=[4m[22mmode[24m [1m-mtrap-precision=[4m[22mmode[24m  [1m-mbuild-constants -mcpu=[4m[22mcpu-type[24m  [1m-mtune=[4m[22mcpu-type[24m [1m-mbwx  -mmax  -mfix  -mcix[0m
+           [1m-msafe-bwa  -msafe-partial -mfloat-vax  -mfloat-ieee -mexplicit-relocs  -msmall-data  -mlarge-data -msmall-text  -mlarge-text -mmemory-latency=[4m[22mtime[0m
+
+           [4meBPF[24m [4mOptions[24m ([1meBPF Options[22m) [1m-mbig-endian -mlittle-endian -mframe-limit=[4m[22mbytes[24m [1m-mxbpf -mco-re -mno-co-re -mjmpext -mjmp32 -malu32 -mv3-atomics -mbswap -msdiv -msmov -mcpu=[4m[22mversion[24m [1m-masm=[4m[22mdialect[24m [1m-minline-memops-threshold=[4m[22mbytes[0m
+
+           [4mFR30[24m [4mOptions[24m ([1mFR30 Options[22m) [1m-msmall-model  -mno-lsim[0m
+
+           [4mFT32[24m [4mOptions[24m ([1mFT32 Options[22m) [1m-msim  -mlra  -mnodiv  -mft32b  -mcompress  -mnopm[0m
+
+           [4mFRV[24m [4mOptions[24m ([1mFRV Options[22m) [1m-mgpr-32  -mgpr-64  -mfpr-32  -mfpr-64 -mhard-float  -msoft-float -malloc-cc  -mfixed-cc  -mdword  -mno-dword -mdouble  -mno-double -mmedia  -mno-media  -mmuladd  -mno-muladd -mfdpic  -minline-plt  -mgprel-ro[0m
+           [1m-multilib-library-pic -mlinked-fp  -mlong-calls  -malign-labels -mlibrary-pic  -macc-4  -macc-8 -mpack  -mno-pack  -mno-eflags  -mcond-move  -mno-cond-move -moptimize-membar  -mno-optimize-membar -mscc  -mno-scc  -mcond-exec  -mno-cond-exec -mvliw-branch[0m
+           [1m-mno-vliw-branch -mmulti-cond-exec  -mno-multi-cond-exec  -mnested-cond-exec -mno-nested-cond-exec  -mtomcat-stats -mTLS  -mtls -mcpu=[4m[22mcpu[0m
+
+           [4mGNU/Linux[24m [4mOptions[24m ([1mGNU/Linux Options[22m) [1m-mglibc  -muclibc  -mmusl  -mbionic  -mandroid -tno-android-cc  -tno-android-ld[0m
+
+           [4mH8/300[24m [4mOptions[24m ([1mH8/300 Options[22m) [1m-mrelax  -mh  -ms  -mn  -mexr  -mno-exr  -mint32  -malign-300[0m
+
+           [4mHPPA[24m [4mOptions[24m ([1mHPPA Options[22m) [1m-march=[4m[22marchitecture-type[24m [1m-matomic-libcalls  -mbig-switch -mcaller-copies  -mdisable-fpregs  -mdisable-indexing -mordered  -mfast-indirect-calls  -mgas  -mgnu-ld   -mhp-ld -mfixed-range=[4m[22mregister-range[24m [1m-mcoherent-ldcw[0m
+           [1m-mjump-in-delay  -mlinker-opt  -mlong-calls -mlong-load-store  -mno-atomic-libcalls  -mno-disable-fpregs -mno-disable-indexing  -mno-fast-indirect-calls  -mno-gas -mno-jump-in-delay  -mno-long-load-store -mno-portable-runtime  -mno-soft-float[0m
+           [1m-mno-space-regs  -msoft-float  -mpa-risc-1-0 -mpa-risc-1-1  -mpa-risc-2-0  -mportable-runtime -mschedule=[4m[22mcpu-type[24m  [1m-mspace-regs  -msoft-mult  -msio  -mwsio -munix=[4m[22munix-std[24m  [1m-nolibdld  -static  -threads[0m
+
+           [4mIA-64[24m [4mOptions[24m ([1mIA-64 Options[22m) [1m-mbig-endian  -mlittle-endian  -mgnu-as  -mgnu-ld  -mno-pic -mvolatile-asm-stop  -mregister-names  -msdata  -mno-sdata -mconstant-gp  -mauto-pic  -mfused-madd -minline-float-divide-min-latency[0m
+           [1m-minline-float-divide-max-throughput -mno-inline-float-divide -minline-int-divide-min-latency -minline-int-divide-max-throughput -mno-inline-int-divide -minline-sqrt-min-latency  -minline-sqrt-max-throughput -mno-inline-sqrt -mdwarf2-asm  -mearly-stop-bits[0m
+           [1m-mfixed-range=[4m[22mregister-range[24m  [1m-mtls-size=[4m[22mtls-size[24m [1m-mtune=[4m[22mcpu-type[24m  [1m-milp32  -mlp64 -msched-br-data-spec  -msched-ar-data-spec  -msched-control-spec -msched-br-in-data-spec  -msched-ar-in-data-spec  -msched-in-control-spec -msched-spec-ldc[0m
+           [1m-msched-spec-control-ldc -msched-prefer-non-data-spec-insns  -msched-prefer-non-control-spec-insns -msched-stop-bits-after-every-cycle  -msched-count-spec-in-critical-path -msel-sched-dont-check-control-spec  -msched-fp-mem-deps-zero-cost[0m
+           [1m-msched-max-memory-insns-hard-limit  -msched-max-memory-insns=[4m[22mmax-insns[0m
+
+           [4mLM32[24m [4mOptions[24m ([1mLM32 Options[22m) [1m-mbarrel-shift-enabled  -mdivide-enabled  -mmultiply-enabled -msign-extend-enabled  -muser-enabled[0m
+
+           [4mLoongArch[24m
