@@ -3,8 +3,7 @@
         .globl name;                      \
         .func name;                       \
 name:                                     \
-        .byte 0x66, 0x0F, 0x38;     \
-        .word number;                     \
+        .byte 0x66, 0x0F, 0x38, number;   \
         ret;                              \
         .endfunc;
 

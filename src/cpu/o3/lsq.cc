@@ -777,15 +777,61 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
 
     const bool htm_cmd = isLoad && (flags & Request::HTM_CMD);
     const bool tlbi_cmd = isLoad && (flags & Request::TLBI_CMD);
+    const bool is_row_op = flags & Request::ROWOP;
 
     if (inst->translationStarted()) {
         request = inst->savedRequest;
         assert(request);
     } else {
+        // TODO (CIM): Add BaseDynInst::writeMem here !
+
         if (htm_cmd || tlbi_cmd) {
             assert(addr == 0x0lu);
             assert(size == 8);
             request = new UnsquashableDirectRequest(&thread[tid], inst, flags);
+        } else if (is_row_op) {
+
+            // TODO: create `request`: make it `UnsquashableDirectRequest` or `SplitDataRequest` or sth different ?
+            // request = new Request(asid, addr, size, flags, masterId(), this->pc.instAddr(),
+            //                   thread->contextId(), threadNumber);
+
+            request = new SingleDataRequest(&thread[tid], inst, false, addr,
+                    size, flags, data, res, std::move(amo_op));
+            RequestPtr req_dest, req_src1, req_src2;
+
+            // If this is being executed speculatively, we might get wacky
+            // addresses, so round down
+            Request::RowOpPayload* addrs = (Request::RowOpPayload*)data;
+            addrs->dest = addrs->dest / ROW_SIZE * ROW_SIZE;
+            addrs->src1 = addrs->src1 / ROW_SIZE * ROW_SIZE;
+            addrs->src2 = addrs->src2 / ROW_SIZE * ROW_SIZE;
+
+            request->req()->splitRowOp(addrs, req_dest, req_src1, req_src2);
+
+            inst->translationStarted(true);
+
+            WholeTranslationState *state =
+                new WholeTranslationState(request->req(), req_dest, req_src1, req_src2,
+                        data, res, BaseMMU::Write);
+
+            // FIXME: can we really issue 3 translation in Out-of-order Exec ?? (this is done in MIMDRAM)
+            DataTranslation<DynInstPtr> *trans1 =
+                new DataTranslation<DynInstPtr>(inst, state, 0);
+            cpu->mmu->translateTiming(req_dest, cpu->thread[tid]->getTC(), trans1, BaseMMU::Write);
+
+            if (req_src1 != NULL) {
+                DataTranslation<DynInstPtr> *trans2 =
+                       new DataTranslation<DynInstPtr>(inst, state, 1);
+                cpu->mmu->translateTiming(req_src1, cpu->thread[tid]->getTC(), trans2, BaseMMU::Write);
+            }
+
+            // Only include the third address if it is non-NULL, to account for NOT
+            // operations
+            if (req_src2 != NULL) {
+                DataTranslation<DynInstPtr> *trans3 =
+                    new DataTranslation<DynInstPtr>(inst, state, 2);
+                cpu->mmu->translateTiming(req_src2, cpu->thread[tid]->getTC(), trans3, BaseMMU::Write);
+            }
         } else if (needs_burst) {
             request = new SplitDataRequest(&thread[tid], inst, isLoad, addr,
                     size, flags, data, res);

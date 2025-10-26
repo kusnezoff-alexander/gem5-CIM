@@ -420,6 +420,42 @@ class DynInst : public ExecContext, public RefCounted
     }
     void translationCompleted(bool f) { instFlags[TranslationCompleted] = f; }
 
+
+    // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+    // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/
+    // base_dyn_inst.hh#L1109)
+    inline void finishTranslation(WholeTranslationState *state)
+    {
+        fault = state->getFault();
+
+        instFlags[IsStrictlyOrdered] = state->isStrictlyOrdered();
+
+        if (fault == NoFault) {
+            // save Paddr for a single req
+            physEffAddr = state->getPaddr();
+
+            // FIXME
+            // case for the request that has been split
+            // if (state->isSplit) {
+            //   physEffAddrLow = state->sreqLow->getPaddr();
+            //   physEffAddrHigh = state->sreqHigh->getPaddr();
+            // }
+
+            memReqFlags = state->getFlags();
+
+            if (state->mainReq->isCondSwap()) {
+                assert(state->res);
+                state->mainReq->setExtraData(*state->res);
+            }
+
+        } else {
+            state->deleteReqs();
+        }
+        delete state;
+
+        translationCompleted(true);
+    }
+
     /** True if this address was found to match a previous load and they issued
      * out of order. If that happend, then it's only a problem if an incoming
      * snoop invalidate modifies the line, in which case we need to squash.

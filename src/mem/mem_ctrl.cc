@@ -1133,7 +1133,7 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
                && !(nvmWriteBlock(mem_intr)))) {
                 DPRINTF(MemCtrl, "Switching to write, params are: \
                     pendingRowOps=%d, \
-                    writeQueueSize=%d, readsThisTime=%d,
+                    writeQueueSize=%d, readsThisTime=%d, \
                     readQueueSize=%d\n",
                     pendingRowOps, mem_intr->writeQueueSize,
                     mem_intr->readsThisTime, mem_intr->readQueueSize);
