@@ -40,6 +40,7 @@
 
 #include "mem/mem_ctrl.hh"
 
+#include "base/logging.hh"
 #include "base/trace.hh"
 #include "debug/DRAM.hh"
 #include "debug/Drain.hh"
@@ -358,6 +359,15 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
         logRequest(MemCtrl::WRITE, pkt->requestorId(),
                    pkt->qosValue(), mem_pkt->addr, 1);
         writeQueue[mem_pkt->qosValue()].push_back(mem_pkt);
+
+
+        assert(totalWriteQueueSize < writeBufferSize);
+        stats.wrQLenPdf[totalWriteQueueSize]++;
+        mem_intr->writeQueueSize++;
+
+        // Update stats
+        stats.avgWrQLen = totalWriteQueueSize;
+
         pendingRowOps++;
 
     } else {
@@ -405,7 +415,10 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
 
                 mem_intr->writeQueueSize++;
 
-                assert(totalWriteQueueSize == isInWriteQueue.size());
+                // TODO: this is not true anymore since several RowOps
+                // might target
+                // same addr (right?)
+                // assert(totalWriteQueueSize == isInWriteQueue.size());
 
                 // Update stats
                 stats.avgWrQLen = totalWriteQueueSize;
@@ -951,10 +964,10 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
                         EventFunctionWrapper& next_req_event,
                         bool& retry_wr_req) {
     // transition is handled by QoS algorithm if enabled
-    // if (turnPolicy) {
-    //     // select bus state - only done if QoS algorithms are in use
-    //     busStateNext = selectNextBusState();
-    // }
+    if (turnPolicy) {
+        // select bus state - only done if QoS algorithms are in use
+        busStateNext = selectNextBusState();
+    }
 
     // detect bus state change
     bool switched_cmd_type = (mem_intr->busState != mem_intr->busStateNext);
@@ -966,6 +979,7 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
             switched_cmd_type?"[turnaround triggered]":"");
 
     if (switched_cmd_type) {
+        MemCtrl::printQs();
         if (mem_intr->busState == MemCtrl::READ) {
             DPRINTF(MemCtrl,
             "Switching to writes after %d reads with %d reads "
@@ -1077,7 +1091,7 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
             Tick cmd_at = doBurstAccess(mem_pkt, mem_intr);
 
             DPRINTF(MemCtrl,
-            "Command for %#x, issued at %lld.\n", mem_pkt->addr, cmd_at);
+            "Read Command for %#x, issued at %lld.\n", mem_pkt->addr, cmd_at);
 
             // sanity check
             assert(pktSizeCheck(mem_pkt, mem_intr));
@@ -1088,6 +1102,7 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
                         mem_pkt->qosValue(), mem_pkt->getAddr(), 1,
                         mem_pkt->readyTime - mem_pkt->entryTime);
 
+            assert(mem_intr->readQueueSize > 0);
             mem_intr->readQueueSize--;
 
             // Insert into response queue. It will be sent back to the
@@ -1116,6 +1131,12 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
                (mem_intr->readsThisTime >= minReadsPerSwitch ||
                mem_intr->readQueueSize == 0)
                && !(nvmWriteBlock(mem_intr)))) {
+                DPRINTF(MemCtrl, "Switching to write, params are: \
+                    pendingRowOps=%d, \
+                    writeQueueSize=%d, readsThisTime=%d,
+                    readQueueSize=%d\n",
+                    pendingRowOps, mem_intr->writeQueueSize,
+                    mem_intr->readsThisTime, mem_intr->readQueueSize);
                 switch_to_writes = true;
             }
 
@@ -1174,9 +1195,10 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
 
         Tick cmd_at = doBurstAccess(mem_pkt, mem_intr);
         DPRINTF(MemCtrl,
-        "Command for %#x, issued at %lld.\n", mem_pkt->addr, cmd_at);
+        "Write Command for %#x, issued at %lld.\n", mem_pkt->addr, cmd_at);
+        auto wqSize = mem_intr->writeQueueSize;
         DPRINTF(MemCtrl,
-        "WriteQueueSize is %d\n", mem_intr->writeQueueSize);
+        "WriteQueueSize is %d\n", wqSize);
 
         isInWriteQueue.erase(burstAlign(mem_pkt->addr, mem_intr));
 
@@ -1185,8 +1207,10 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
                     mem_pkt->qosValue(), mem_pkt->getAddr(), 1,
                     mem_pkt->readyTime - mem_pkt->entryTime);
 
-        assert(mem_intr->writeQueueSize > 0);
+        assert(mem_intr->writeQueueSize > 0 &&
+            mem_intr->writeQueueSize < mem_intr->writeBufferSize);
         mem_intr->writeQueueSize--;
+
 
         // remove the request from the queue - the iterator is no longer valid
         writeQueue[mem_pkt->qosValue()].erase(to_write);

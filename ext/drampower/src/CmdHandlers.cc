@@ -34,9 +34,6 @@
  */
 
 #include "CommandAnalysis.h"
-#include "base/trace.hh"
-#include "debug/DRAM.hh"
-#include <cstdio>
 
 using std::cerr;
 using std::endl;
@@ -183,7 +180,6 @@ void CommandAnalysis::handlePre(unsigned bank, int64_t timestamp)
     latest_pre_cycle = timestamp;
   } else {
     printWarning("Bank is already precharged!", MemCommand::PRE, timestamp, bank);
-    dprintf(gem5::debug::DRAM, "Bank is already precharged!", MemCommand::PRE, timestamp, bank);
   }
 }
 
