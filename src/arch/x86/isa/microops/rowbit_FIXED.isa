@@ -11,6 +11,7 @@ def template RowOpDeclare {{
             : %(base_class)s(_mnemonic, _machInst, RowOpClass){
 
             this->flags[IsRowOp] = true;
+            this->flags[IsStore] = true;
         }
 
         Fault execute(ExecContext *, trace::InstRecord *) const override;
@@ -142,7 +143,7 @@ def format RowOp() {{
     }
 
     iop = InstObjParams(name, Name, 'X86ISA::X86StaticInst', params,
-        ['IsRowOp'])
+        ['IsRowOp','IsStore'])
     header_output = RowOpDeclare.subst(iop)
     exec_output = RowOpExecute.subst(iop) \
                 + RowOpInitiateAcc.subst(iop) \
