@@ -718,13 +718,8 @@
             // AMBIT Instructions
             // take NO register arguments (row-addresses are expected to be
             // placed in %rdi (dst), %rsi (src1), %rdx (src2)
-            0x6: RowOp::ROWAND();
-            0x7: RowOp::ROWOR();
-            // TODO: `BOTTOM3`=only 3 bits !!
-            // 0x8: RowOp::ROWNOT();
-            // 0x9: RowOp::ROWXOR();
-            // 0xA: RowOp::ROWAP();
-            // 0xB: RowOp::ROWAAP();
+            // 0x6: RowOp::ROWAP();
+            // 0x7: RowOp::ROWAAP();
             default: Inst::UD2();
         }
         0x15: decode OPCODE_OP_BOTTOM3 {
@@ -1031,6 +1026,17 @@
                 // repne (0xF2)
                 0x8: decode OPCODE_OP_BOTTOM3 {
                     0x0: LDDQU(Vo,Mq);
+
+                    // this will be used for PIM Instructions
+                    // take NO register arguments
+                    // (row-addresses are expected to be
+                    // placed in %rdi (dst), %rsi (src1), %rdx (src2)
+                    // 0x2: RowOp::ROWAND();
+                    // 0x3: RowOp::ROWOR();
+                    // 0x4: RowOp::ROWNOT();
+                    // 0x5: RowOp::ROWXOR();
+                    // 0x6: RowOp::ROWAP();
+                    // 0x7: RowOp::ROWAAP();
                     default: UD2();
                 }
                 default: UD2();

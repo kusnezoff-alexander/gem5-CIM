@@ -3235,6 +3235,18 @@ getrandomFunc(SyscallDesc *desc, ThreadContext *tc,
     return count;
 }
 
+template <typename OS>
+SyscallReturn
+getCimRegion(SyscallDesc *desc, ThreadContext *tc,
+              VPtr<> buf_ptr, typename OS::size_t count,
+              unsigned int flags)
+{
+    warn("getCimRegion: Executing");
+
+    return 1;
+}
+
+
 } // namespace gem5
 
 #endif // __SIM_SYSCALL_EMUL_HH__

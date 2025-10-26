@@ -139,6 +139,19 @@
             0x41: decode MODRM_MOD {
                 default: Inst::PHMINPOSUW(Vdq, Wdq);
             }
+
+            // this will be used for PIM Instructions
+            // take NO register arguments (row-addresses are expected to be
+            // placed in %rdi (dst), %rsi (src1), %rdx (src2)
+
+            0x42: decode MODRM_MOD {
+                default: RowOp::ROWAND();
+            }
+            0x43: RowOp::ROWOR();
+            0x44: RowOp::ROWNOT();
+            0x45: RowOp::ROWXOR();
+            0x46: RowOp::ROWAP();
+            0x47: RowOp::ROWAAP();
             default: Inst::UD2();
         }
         default: decode LEGACY_REPNE {

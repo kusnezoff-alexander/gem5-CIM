@@ -382,7 +382,10 @@ SyscallDescTable<EmuLinux::SyscallABI32> EmuLinux::syscallDescs32 = {
     { 321, "signalfd" },
     { 322, "timerfd" },
     { 323, "eventfd", eventfdFunc<X86Linux32> },
-    { 355, "getrandom", getrandomFunc<X86Linux32>}
+    { 355, "getrandom", getrandomFunc<X86Linux32>},
+    // new syscall for CIM
+    { 500, "get_cim_region", getCimRegion<X86Linux32>},
+
 };
 
 } // namespace X86ISA

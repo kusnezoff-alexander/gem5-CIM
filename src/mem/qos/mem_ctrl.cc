@@ -160,10 +160,14 @@ MemCtrl::logResponse(BusState dir, RequestorID id, uint8_t _qos,
             entries);
 
     if (dir == READ) {
+        assert(readQueueSizes[_qos] >= entries );
         readQueueSizes[_qos] -= entries;
+        assert(totalReadQueueSize >= entries);
         totalReadQueueSize -= entries;
     } else if (dir == WRITE) {
+        assert(writeQueueSizes[_qos] >= entries );
         writeQueueSizes[_qos] -= entries;
+        assert(totalWriteQueueSize >= entries);
         totalWriteQueueSize -= entries;
     }
 

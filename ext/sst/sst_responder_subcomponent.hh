@@ -27,7 +27,8 @@
 #ifndef __SST_RESPONDER_SUBCOMPONENT_HH__
 #define __SST_RESPONDER_SUBCOMPONENT_HH__
 
-#define TRACING_ON 0
+// #define TRACING_ON 0
+#define TRACING_ON 1
 
 #include <string>
 #include <vector>

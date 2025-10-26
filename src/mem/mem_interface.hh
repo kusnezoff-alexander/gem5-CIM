@@ -87,27 +87,6 @@ class MemInterface : public AbstractMemory
     {
 
       public:
-        // static const uint32_t NO_ROW = -1;
-
-        // uint32_t openRow;
-        // uint8_t bank;
-        // uint8_t bankgr;
-        //
-        // Tick rdAllowedAt;
-        // Tick wrAllowedAt;
-        // Tick preAllowedAt;
-        // Tick actAllowedAt;
-        //
-        // uint32_t rowAccesses;
-        // uint32_t bytesAccessed;
-        //
-        // Bank() :
-        //     openRow(NO_ROW), bank(0), bankgr(0),
-        //     rdAllowedAt(0), wrAllowedAt(0), preAllowedAt(0),
-        //     actAllowedAt(0),
-        //     rowAccesses(0), bytesAccessed(0)
-        // { }
-
         // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
         // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
         // dram_ctrl.hh#L165)
@@ -146,6 +125,7 @@ class MemInterface : public AbstractMemory
         Tick preAllowedAt;
         Tick actAllowedAt;
 
+        // statistics
         uint32_t rowAccesses;
         uint32_t bytesAccessed;
 

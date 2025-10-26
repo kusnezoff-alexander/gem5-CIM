@@ -71,7 +71,8 @@
 #ifndef __GEM5_COMPONENT_H__
 #define __GEM5_COMPONENT_H__
 
-#define TRACING_ON 0
+// #define TRACING_ON 0
+#define TRACING_ON 1
 
 #include <string>
 #include <vector>

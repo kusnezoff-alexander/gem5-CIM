@@ -415,7 +415,9 @@ SyscallDescTable<EmuLinux::SyscallABI64> EmuLinux::syscallDescs64 = {
     { 447, "memfd_secret" },
     { 448, "process_mrelease" },
     { 449, "futex_waitv" },
-    { 450, "set_mempolicy_home_node" }
+    { 450, "set_mempolicy_home_node" },
+     // new syscall for CIM
+    { 500, "get_cim_region", getCimRegion<X86Linux64>},
 };
 
 } // namespace X86ISA

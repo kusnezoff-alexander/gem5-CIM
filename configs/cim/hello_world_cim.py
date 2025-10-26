@@ -47,6 +47,8 @@ system.mem_ctrl = MemCtrl()
 system.mem_ctrl.dram = DDR3_1600_8x8()
 system.mem_ctrl.dram.range = system.mem_ranges[0]
 system.mem_ctrl.port = system.membus.mem_side_ports
+# system.mem_ctrl.turnPolicy = QoSTurnaroundPolicyIdeal() # Switch BusState depending on which of ReadQueue/WriteQueue have still elements inside
+# system.mem_ctrl.turnPolicy = None
 
 # Connect the system up to the membus
 system.system_port = system.membus.cpu_side_ports
@@ -58,6 +60,7 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 binary = os.path.join(
     thispath,
     "../../",
+    # "tests/cim/get_cim_region_syscall",
     "tests/cim/test_my_add42",
 )
 

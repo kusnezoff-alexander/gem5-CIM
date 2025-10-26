@@ -341,6 +341,10 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
         delete mem_pkt1;
         delete mem_pkt2;
 
+        DPRINTF(DRAM, "Src2 valid?: %d Note that src2 is not needed for \
+            ROWNOT/ROWAAP/ROWAP)\n",
+        addrs->op != Request::ROWNOT && addrs->op != Request::ROWAAP &&
+            addrs->op != Request::ROWAP);
         DPRINTF(DRAM,
                 "Adding to write queue: RowOp in rank %d bank %d, rows \
                 %d <-- %d (*) %d\n",
@@ -491,7 +495,7 @@ MemCtrl::recvTimingReq(PacketPtr pkt)
 
     // check local buffers and do not accept if full
     if (pkt->isWrite()) {
-        // NOTE: `isRowOp()` implies `isWriteOp()`
+        // NOTE: `isRowOp()` implies `isWrite()`
         // (RowOps are issued as Writes using `writeMem()`)
         assert(size != 0);
         if (writeQueueFull(pkt_count)) {
@@ -947,10 +951,10 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
                         EventFunctionWrapper& next_req_event,
                         bool& retry_wr_req) {
     // transition is handled by QoS algorithm if enabled
-    if (turnPolicy) {
-        // select bus state - only done if QoS algorithms are in use
-        busStateNext = selectNextBusState();
-    }
+    // if (turnPolicy) {
+    //     // select bus state - only done if QoS algorithms are in use
+    //     busStateNext = selectNextBusState();
+    // }
 
     // detect bus state change
     bool switched_cmd_type = (mem_intr->busState != mem_intr->busStateNext);
@@ -1103,14 +1107,15 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
             // there are no other writes that can issue
             // Also ensure that we've issued a minimum defined number
             // of reads before switching, or have emptied the readQ
-            if ((mem_intr->writeQueueSize > writeHighThreshold ||
-            // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
-            // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
-            // dram_ctrl.cc#L1536)
-                    pendingRowOps > 0) &&
+            if (
+                // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+                // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+                // dram_ctrl.cc#L1536)
+                (pendingRowOps > 0) ||
+                ((mem_intr->writeQueueSize > writeHighThreshold) &&
                (mem_intr->readsThisTime >= minReadsPerSwitch ||
                mem_intr->readQueueSize == 0)
-               && !(nvmWriteBlock(mem_intr))) {
+               && !(nvmWriteBlock(mem_intr)))) {
                 switch_to_writes = true;
             }
 
@@ -1124,7 +1129,7 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
         // draining), or because the writes hit the hight threshold
         if (switch_to_writes) {
             // transition to writing
-            mem_intr->busStateNext = WRITE;
+            mem_intr->busStateNext = MemCtrl::WRITE;
         }
     } else {
 
@@ -1158,7 +1163,7 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
         // avoid adding more complexity to the code, return at this point and
         // wait for a refresh event to kick things into action again.
         if (!write_found) {
-            DPRINTF(MemCtrl, "No Writes Found - exiting\n");
+            DPRINTF(MemCtrl, "WARNING: No Writes Found - exiting\n");
             return;
         }
 
@@ -1170,6 +1175,8 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
         Tick cmd_at = doBurstAccess(mem_pkt, mem_intr);
         DPRINTF(MemCtrl,
         "Command for %#x, issued at %lld.\n", mem_pkt->addr, cmd_at);
+        DPRINTF(MemCtrl,
+        "WriteQueueSize is %d\n", mem_intr->writeQueueSize);
 
         isInWriteQueue.erase(burstAlign(mem_pkt->addr, mem_intr));
 
@@ -1178,6 +1185,7 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
                     mem_pkt->qosValue(), mem_pkt->getAddr(), 1,
                     mem_pkt->readyTime - mem_pkt->entryTime);
 
+        assert(mem_intr->writeQueueSize > 0);
         mem_intr->writeQueueSize--;
 
         // remove the request from the queue - the iterator is no longer valid
@@ -1194,34 +1202,19 @@ MemCtrl::processNextReqEvent(MemInterface* mem_intr,
         bool below_threshold =
             mem_intr->writeQueueSize + minWritesPerSwitch < writeLowThreshold;
 
-        if (mem_intr->writeQueueSize == 0 ||
-            (below_threshold && drainState() != DrainState::Draining) ||
-            (mem_intr->readQueueSize && mem_intr->writesThisTime >= minWritesPerSwitch) ||
-            (mem_intr->readQueueSize && (nvmWriteBlock(mem_intr)))) {
-
-            // turn the bus back around for reads again
-            mem_intr->busStateNext = MemCtrl::READ;
-
-            // note that the we switch back to reads also in the idle
-            // case, which eventually will check for any draining and
-            // also pause any further scheduling if there is really
-            // nothing to do
-        }
-
+        // only switch to read if no RowOps are pending, no other writes
+        // are open etc.
         // see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
         // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
         // dram_ctrl.cc#L1583)
-        // If we emptied the write queue, or got sufficiently below the
-        // threshold (using the minWritesPerSwitch as the hysteresis) and
-        // are not draining, or we have reads waiting and have done enough
-        // writes, then switch to reads.
-        if (pendingRowOps == 0 && (writeQueue.empty() ||
-            (writeQueue.size() + minWritesPerSwitch < writeLowThreshold &&
-             drainState() != DrainState::Draining) ||
-            (!readQueue.empty() && mem_intr->writesThisTime >=
-             minWritesPerSwitch))) {
+        if ( pendingRowOps == 0 &&
+            (mem_intr->writeQueueSize == 0 ||
+            (below_threshold && drainState() != DrainState::Draining) ||
+            (mem_intr->readQueueSize && mem_intr->writesThisTime >= minWritesPerSwitch) ||
+            (mem_intr->readQueueSize && (nvmWriteBlock(mem_intr))))) {
+
             // turn the bus back around for reads again
-            busState = READ;
+            mem_intr->busStateNext = MemCtrl::READ;
 
             // note that the we switch back to reads also in the idle
             // case, which eventually will check for any draining and
