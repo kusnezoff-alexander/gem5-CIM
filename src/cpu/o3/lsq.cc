@@ -806,15 +806,19 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
             addrs->src1 = addrs->src1 / ROW_SIZE * ROW_SIZE;
             addrs->src2 = addrs->src2 / ROW_SIZE * ROW_SIZE;
 
-            request->req()->splitRowOp(addrs, req_dest, req_src1, req_src2);
 
+			// request->initiateTranslation();
+			request->addReq(addr, size, byte_enable);
+            request->mainReq()->splitRowOp(addrs, req_dest, req_src1, req_src2);
+
+			// TODO: when
             inst->translationStarted(true);
 
             WholeTranslationState *state =
                 new WholeTranslationState(request->req(), req_dest, req_src1, req_src2,
                         data, res, BaseMMU::Write);
 
-            // FIXME: can we really issue 3 translation in Out-of-order Exec ?? (this is done in MIMDRAM)
+            // FIXME: can we really issue 3 translations in Out-of-order Exec ?? (this is done in MIMDRAM)
             DataTranslation<DynInstPtr> *trans1 =
                 new DataTranslation<DynInstPtr>(inst, state, 0);
             cpu->mmu->translateTiming(req_dest, cpu->thread[tid]->getTC(), trans1, BaseMMU::Write);
@@ -832,6 +836,22 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
                     new DataTranslation<DynInstPtr>(inst, state, 2);
                 cpu->mmu->translateTiming(req_src2, cpu->thread[tid]->getTC(), trans3, BaseMMU::Write);
             }
+
+
+			// TODO: what to do with this?:
+            if (!request->isTranslationComplete()) {
+                // The translation isn't yet complete, so we can't possibly have a
+                // fault. Overwrite any existing fault we might have from a previous
+                // execution of this instruction (e.g. an uncachable load that
+                // couldn't execute because it wasn't at the head of the ROB).
+                // fault = NoFault;
+				inst->getFault() = NoFault;
+            //
+            //     // Save memory requests.
+            //     savedReq = state->mainReq;
+            //     savedSreqLow = state->sreqLow;
+            //     savedSreqHigh = state->sreqHigh;
+            }
         } else if (needs_burst) {
             request = new SplitDataRequest(&thread[tid], inst, isLoad, addr,
                     size, flags, data, res);
@@ -839,16 +859,20 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
             request = new SingleDataRequest(&thread[tid], inst, isLoad, addr,
                     size, flags, data, res, std::move(amo_op));
         }
-        assert(request);
-        request->_byteEnable = byte_enable;
-        inst->setRequest();
-        request->taskId(cpu->taskId());
 
-        // There might be fault from a previous execution attempt if this is
-        // a strictly ordered load
-        inst->getFault() = NoFault;
+		if(!is_row_op) {
+			// `translateTiming` does this for row-ops
+			assert(request);
+			request->_byteEnable = byte_enable;
+			inst->setRequest();
+			request->taskId(cpu->taskId());
 
-        request->initiateTranslation();
+			// There might be fault from a previous execution attempt if this is
+			// a strictly ordered load
+			inst->getFault() = NoFault;
+
+			request->initiateTranslation();
+		}
     }
 
     /* This is the place were instructions get the effAddr. */

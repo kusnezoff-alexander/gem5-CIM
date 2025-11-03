@@ -168,7 +168,7 @@
 1217000: system.mem_ctrl.dram: Timing access to addr 0xa8, rank/bank/row 0 0 0
 1217000: system.mem_ctrl.dram: Schedule RD/WR burst at tick 1217000
 1235750: system.mem_ctrl.dram: number of read entries for rank 0 is 0
-1266000: global: Value of Rdi: 1193046
+1266000: global: Value of Ri: 1193046
 1266000: global: Value of Rsi: 1193047
 1266000: global: Value of Rdx: 1193048
 1266000: global: ROWAND with op=ROWAND: 123456 <- 123457 ROWAND 123458 executing

@@ -35,7 +35,7 @@ def template RowOpDecoder {{
     }
 }};
 
-// NOTE: `%(classname)s` is filled in with `RowAND`/`RowOR`/...
+// NOTE: `%(classname)s` is filled in with `ROWAND`/`ROWOR`/...
 def template RowOpExecute {{
     Fault %(class_name)s::execute(ExecContext * xc,
             trace::InstRecord * traceData) const
@@ -43,11 +43,10 @@ def template RowOpExecute {{
         Fault fault = NoFault;
 
         std::cout << "Performing %(op)s..." << std::endl;
-        %(op_decl)s;
+        %(op_decl)s; // has no effect
         // stop
-        // <PERCENT>(op_rd)s;
+        // <PERCENT>(op_rd)s; // has no effect
 
-        // uint64_t rsi_val = xc->getRegOperand(this, X86ISA::int_reg::Rsi);
         uint64_t dst = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
         DPRINTF(X86, "Value of Rdi: %d\n", dst);
         uint64_t src1 = xc->tcBase()->getReg(X86ISA::int_reg::Rsi);
@@ -84,7 +83,8 @@ def template RowOpInitiateAcc {{
     {
         Fault fault = NoFault;
 
-        %(op_decl)s;
+        %(op_decl)s; // has no effect
+        // <PERCENT>(op_rd)s; // has no effect
 
         uint64_t dst = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
         DPRINTF(X86, "Value of Rdi: %d\n", dst);
@@ -131,7 +131,6 @@ def template RowOpDecodeWithMnemonic {{
     //     'X86ISA::RegOpT<X86ISA::FoldedDestOp,X86ISA::FoldedSrc1Op, \
     //     X86ISA::FoldedSrc2Op>',
     //      params, ['IsRowOp'])
-// @TODO: remove (just playing around with .isa language
 def format RowOp() {{
 
     params = {

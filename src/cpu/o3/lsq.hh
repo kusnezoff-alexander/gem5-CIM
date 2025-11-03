@@ -336,6 +336,14 @@ class LSQ
             }
         }
 
+        /** Destructor.
+         * The LSQRequest owns the request. If the packet has already been
+         * sent, the sender state will be deleted upon receiving the reply.
+         */
+        virtual ~LSQRequest();
+
+      public:
+
         /** Helper function used to add a (sub)request, given its address
          * `addr`, size `size` and byte-enable mask `byteEnable`.
          *
@@ -345,13 +353,6 @@ class LSQ
         void addReq(Addr addr, unsigned size,
                 const std::vector<bool>& byte_enable);
 
-        /** Destructor.
-         * The LSQRequest owns the request. If the packet has already been
-         * sent, the sender state will be deleted upon receiving the reply.
-         */
-        virtual ~LSQRequest();
-
-      public:
         /** Convenience getters/setters. */
         /** @{ */
         /** Set up Context numbers. */
