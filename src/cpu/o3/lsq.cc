@@ -807,11 +807,11 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
             addrs->src2 = addrs->src2 / ROW_SIZE * ROW_SIZE;
 
 
-			// request->initiateTranslation();
-			request->addReq(addr, size, byte_enable);
+            // request->initiateTranslation();
+            request->addReq(addr, size, byte_enable);
             request->mainReq()->splitRowOp(addrs, req_dest, req_src1, req_src2);
 
-			// TODO: when
+            // TODO: when
             inst->translationStarted(true);
 
             WholeTranslationState *state =
@@ -838,14 +838,14 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
             }
 
 
-			// TODO: what to do with this?:
+            // TODO: what to do with this?:
             if (!request->isTranslationComplete()) {
                 // The translation isn't yet complete, so we can't possibly have a
                 // fault. Overwrite any existing fault we might have from a previous
                 // execution of this instruction (e.g. an uncachable load that
                 // couldn't execute because it wasn't at the head of the ROB).
                 // fault = NoFault;
-				inst->getFault() = NoFault;
+                inst->getFault() = NoFault;
             //
             //     // Save memory requests.
             //     savedReq = state->mainReq;
@@ -860,19 +860,19 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
                     size, flags, data, res, std::move(amo_op));
         }
 
-		if(!is_row_op) {
-			// `translateTiming` does this for row-ops
-			assert(request);
-			request->_byteEnable = byte_enable;
-			inst->setRequest();
-			request->taskId(cpu->taskId());
+        if(!is_row_op) {
+            // `translateTiming` does this for row-ops
+            assert(request);
+            request->_byteEnable = byte_enable;
+            inst->setRequest();
+            request->taskId(cpu->taskId());
 
-			// There might be fault from a previous execution attempt if this is
-			// a strictly ordered load
-			inst->getFault() = NoFault;
+            // There might be fault from a previous execution attempt if this is
+            // a strictly ordered load
+            inst->getFault() = NoFault;
 
-			request->initiateTranslation();
-		}
+            request->initiateTranslation();
+        }
     }
 
     /* This is the place were instructions get the effAddr. */

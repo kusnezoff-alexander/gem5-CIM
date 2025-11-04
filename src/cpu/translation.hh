@@ -175,7 +175,7 @@ class WholeTranslationState
             }
             mainReq->setFlags(sreqDest->getFlags());
             if (sreqSrc1 != NULL) {
-                if (faults[1] == NoFault) {
+                if (faults[1] == NoFault) { // TODO: 2025-11-04
                     addrs->src1 = sreqSrc1->getPaddr();
                 }
                 mainReq->setFlags(sreqSrc1->getFlags());

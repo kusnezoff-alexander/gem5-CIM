@@ -328,6 +328,7 @@ class StaticInst : public RefCounted, public StaticInstFlags
             "size. Refer to the X86, Arm or RiscV decoders for an example.");
         return _size;
     }
+
     virtual void size(size_t newSize) { _size = newSize; }
 
     /**

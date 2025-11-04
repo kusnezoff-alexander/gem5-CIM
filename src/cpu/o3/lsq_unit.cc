@@ -1424,26 +1424,26 @@ LSQUnit::read(LSQRequest *request, ssize_t load_idx)
 
             auto coverage = AddrRangeCoverage::NoAddrRangeCoverage;
 
-			// TODO: insert code from `https://github.com/CMU-SAFARI/MIMDRAM/blob/23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/o3/lsq_unit.hh#L677`
-			// 2025-11-03
-			// If the store is a rowop that this load overlaps with, pretend it's a
-			// partial overlap and stall load
-			if (store_it->request()->mainReq()->isRowOp()) {
-				// Request::RowOpPayload* addrs = (Request::RowOpPayload*)&storeQueue[store_idx].data[0];
-				Request::RowOpPayload* addrs = (Request::RowOpPayload*)&store_it->data()[0]; // change `store_it` is also of type `SQEntry`, just like in MIMDRA. So this should be ok
-				DPRINTF(LSQUnit, "Store queue has rowop 0x%x <-- 0x%x (*) 0x%x\n", addrs->dest, addrs->src1, addrs->src2);
-				Addr ld_addr_low = request->mainReq()->getPaddr();
-				Addr ld_addr_high = ld_addr_low + request->mainReq()->getSize();
-				Addr st_addr_low = addrs->dest;
-				Addr st_addr_high = st_addr_low + ROW_SIZE;
-				if (st_addr_low < ld_addr_high && ld_addr_low < st_addr_high) {
-					DPRINTF(LSQUnit, "Load of 0x%x overlaps with pending rowop to 0x%x\n", ld_addr_low, st_addr_low);
-					store_has_lower_limit = true;
-					store_has_upper_limit = false;
-					lower_load_has_store_part = true;
-					upper_load_has_store_part = false;
-				}
-			}
+            // TODO: insert code from `https://github.com/CMU-SAFARI/MIMDRAM/blob/23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/o3/lsq_unit.hh#L677`
+            // 2025-11-03
+            // If the store is a rowop that this load overlaps with, pretend it's a
+            // partial overlap and stall load
+            if (store_it->request()->mainReq()->isRowOp()) {
+                // Request::RowOpPayload* addrs = (Request::RowOpPayload*)&storeQueue[store_idx].data[0];
+                Request::RowOpPayload* addrs = (Request::RowOpPayload*)&store_it->data()[0]; // change `store_it` is also of type `SQEntry`, just like in MIMDRA. So this should be ok
+                DPRINTF(LSQUnit, "Store queue has rowop 0x%x <-- 0x%x (*) 0x%x\n", addrs->dest, addrs->src1, addrs->src2);
+                Addr ld_addr_low = request->mainReq()->getPaddr();
+                Addr ld_addr_high = ld_addr_low + request->mainReq()->getSize();
+                Addr st_addr_low = addrs->dest;
+                Addr st_addr_high = st_addr_low + ROW_SIZE;
+                if (st_addr_low < ld_addr_high && ld_addr_low < st_addr_high) {
+                    DPRINTF(LSQUnit, "Load of 0x%x overlaps with pending rowop to 0x%x\n", ld_addr_low, st_addr_low);
+                    store_has_lower_limit = true;
+                    store_has_upper_limit = false;
+                    lower_load_has_store_part = true;
+                    upper_load_has_store_part = false;
+                }
+            }
 
             // If the store entry is not atomic (atomic does not have valid
             // data), the store has all of the data needed, and

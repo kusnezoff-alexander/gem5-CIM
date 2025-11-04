@@ -61,9 +61,9 @@ binary = os.path.join(
     thispath,
     "../../",
     # "tests/cim/get_cim_region_syscall",
-    # "tests/cim/test_my_add42",
+    "tests/cim/test_my_add42",
     # "workloads/MIMDRAM-microworkloads/bitweave-buddy_gem5-CIM.exe",
-    "workloads/MIMDRAM-microworkloads/00_addition-baseline.exe",
+    # "workloads/MIMDRAM-microworkloads/00_addition-baseline_gem5-CIM.exe",
 )
 
 system.workload = SEWorkload.init_compatible(binary)

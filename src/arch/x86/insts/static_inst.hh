@@ -222,6 +222,9 @@ class X86StaticInst : public StaticInst
         ret_pc_ptr->as<PCState>().uEnd();
         return std::unique_ptr<PCStateBase>{ret_pc_ptr};
     }
+
+
+    void size(size_t newSize) override { _size = newSize; };
 };
 
 } // namespace X86ISA
