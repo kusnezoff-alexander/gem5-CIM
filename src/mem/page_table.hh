@@ -63,6 +63,7 @@ class EmulationPageTable : public Serializable
     };
 
   protected:
+
     typedef std::unordered_map<Addr, Entry> PTable;
     typedef PTable::iterator PTableItr;
     PTable pTable;

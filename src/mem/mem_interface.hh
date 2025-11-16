@@ -161,15 +161,24 @@ class MemInterface : public AbstractMemory
      * ranks and banks, the burst size, and the row buffer size.
      */
     const uint32_t burstSize;
+	/** Size of a single device/chip */
     const uint64_t deviceSize;
     const uint32_t deviceRowBufferSize;
+	/** Number of DRAM Chips per rank (all operating on the same *chip select*
+	 * signal `CS_n` */
     const uint32_t devicesPerRank;
+	/** =`devicesPerRank * deviceRowBufferSize` */
     const uint32_t rowBufferSize;
     const uint32_t burstsPerRowBuffer;
     const uint32_t burstsPerStripe;
+	// TODO: why isn't this present else where?
+	// ->see [Github Discussion](https://github.com/orgs/gem5/discussions/2747)
+	// - gem5 models one Memory-Controller for each Channel
+	// const uint8_t  nrChannels;
     const uint32_t ranksPerChannel;
     const uint32_t banksPerRank;
     uint32_t rowsPerBank;
+    uint32_t matsPerBank; // TODO: set in config
 
     /**
      * General timing requirements

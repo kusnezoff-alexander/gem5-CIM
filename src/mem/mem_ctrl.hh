@@ -60,6 +60,7 @@
 #include "mem/qport.hh"
 #include "params/MemCtrl.hh"
 #include "sim/eventq.hh"
+#include "mimdram_control_unit.hh"
 
 namespace gem5
 {
@@ -313,6 +314,7 @@ class MemCtrl : public qos::MemCtrl
      */
     bool retryRdReq;
     bool retryWrReq;
+    bool retryCimReq;
 
     /**
      * see [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
@@ -321,6 +323,7 @@ class MemCtrl : public qos::MemCtrl
      * TODO: move into `CtlrStats`
      */
     int pendingRowOps;
+	MIMDRAMControlUnit mimdram_control_unit;
 
     /**
      * Bunch of things requires to setup "events" in gem5
@@ -610,6 +613,7 @@ class MemCtrl : public qos::MemCtrl
 
         statistics::Scalar numRdRetry;
         statistics::Scalar numWrRetry;
+        statistics::Scalar numCimRetry;
         statistics::Vector readPktSize;
         statistics::Vector writePktSize;
         statistics::Vector rdQLenPdf;

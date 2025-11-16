@@ -106,6 +106,9 @@ Source('serial_link.cc')
 Source('mem_delay.cc')
 Source('port_terminator.cc')
 
+Source('mimdram_control_unit.cc')
+Source('mat_translation_table.cc')
+
 GTest('backdoor_manager.test', 'backdoor_manager.test.cc',
       'backdoor_manager.cc', with_tag('gem5_trace'))
 GTest('translation_gen.test', 'translation_gen.test.cc')
@@ -154,6 +157,7 @@ DebugFlag('LLSC')
 DebugFlag('MemCtrl')
 DebugFlag('MMU')
 DebugFlag('MemoryAccess')
+DebugFlag('RowOp')
 DebugFlag('PacketQueue')
 DebugFlag("PortTrace")
 DebugFlag('ResponsePort')

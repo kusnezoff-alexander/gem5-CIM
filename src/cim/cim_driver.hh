@@ -1,44 +1,5 @@
-/*
- * Copyright (c) 2015-2018 Advanced Micro Devices, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- * contributors may be used to endorse or promote products derived from this
- * software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
-/**
- * @file
- * The GPUComputeDriver implements an HSADriver for an HSA AMD GPU
- * agent. Other GPU devices, or other HSA agents, should not derive
- * from this class. Instead device-specific implementations of an
- * HSADriver should be provided for each unique device.
- */
-
-#ifndef __GPU_COMPUTE_GPU_COMPUTE_DRIVER_HH__
-#define __GPU_COMPUTE_GPU_COMPUTE_DRIVER_HH__
+#ifndef __CIM_COMPUTE_DRIVER_HH__
+#define __CIM_COMPUTE_DRIVER_HH__
 
 #include <cassert>
 #include <cstdint>
@@ -47,23 +8,23 @@
 
 #include "base/addr_range_map.hh"
 #include "base/types.hh"
-#include "enums/GfxVersion.hh"
 #include "mem/request.hh"
 #include "sim/emul_driver.hh"
 
 namespace gem5
 {
 
-struct GPUComputeDriverParams;
-class CIMMemoryDevice;
+struct CIMDriverParams;
+class CIMMemoryDevice; // TODO: replace with DRAM that is controlled by this driver
 class PortProxy;
 class ThreadContext;
 
-class GPUComputeDriver final : public EmulatedDriver
+// TODO: A separate driver is needed for each memory technology
+class CIMDriver : public EmulatedDriver
 {
   public:
-    typedef GPUComputeDriverParams Params;
-    GPUComputeDriver(const Params &p);
+    typedef CIMDriverParams Params;
+    CIMDriver(const Params &p);
     int ioctl(ThreadContext *tc, unsigned req, Addr ioc_buf) override;
 
     int open(ThreadContext *tc, int mode, int flags) override;
@@ -82,32 +43,18 @@ class GPUComputeDriver final : public EmulatedDriver
      */
     void setMtype(RequestPtr req);
 
-    int
-    doorbellSize()
-    {
-        switch (gfxVersion) {
-          case GfxVersion::gfx902:
-            return 4;
-          case GfxVersion::gfx900:
-            // gfx900 supports large BAR, so it has a larger doorbell
-            return 8;
-          default:
-            fatal("Invalid GPU type\n");
-        }
-        return 4;
-    }
 
     class DriverWakeupEvent : public Event
     {
       public:
-        DriverWakeupEvent(GPUComputeDriver *gpu_driver,
+        DriverWakeupEvent(CIMDriver *gpu_driver,
                           ThreadContext *thrd_cntxt)
           : driver(gpu_driver), tc(thrd_cntxt) {}
         void process() override;
         const char *description() const override;
         void scheduleWakeup(Tick wakeup_delay);
       private:
-        GPUComputeDriver *driver;
+        CIMDriver *driver;
         ThreadContext *tc;
     };
 
@@ -140,17 +87,12 @@ class GPUComputeDriver final : public EmulatedDriver
     };
     typedef class EventTableEntry ETEntry;
 
-    GfxVersion getGfxVersion() const { return gfxVersion; }
-
   private:
     /**
      * GPU that is controlled by this driver.
      */
     CIMMemoryDevice *device;
     uint32_t queueId;
-    bool isdGPU;
-    GfxVersion gfxVersion;
-    int dGPUPoolID;
     Addr eventPage;
     uint32_t eventSlotIndex;
     //Event table that keeps track of events. It is indexed with event ID.
@@ -183,7 +125,7 @@ class GPUComputeDriver final : public EmulatedDriver
     {
       public:
         EventList() : driver(nullptr), timerEvent(nullptr, nullptr) {}
-        EventList(GPUComputeDriver *gpu_driver, ThreadContext *thrd_cntxt)
+        EventList(CIMDriver *gpu_driver, ThreadContext *thrd_cntxt)
             : driver(gpu_driver), timerEvent(gpu_driver, thrd_cntxt)
         { }
         void clearEvents() {
@@ -198,7 +140,7 @@ class GPUComputeDriver final : public EmulatedDriver
                 driver->deschedule(timerEvent);
             }
         }
-        GPUComputeDriver *driver;
+        CIMDriver *driver;
         DriverWakeupEvent timerEvent;
         // The set of events that can wake up the same thread.
         std::set<uint32_t> signalEvents;
@@ -241,9 +183,9 @@ class GPUComputeDriver final : public EmulatedDriver
      * be able to select which pages to unmap when the user provides us with
      * a handle during the free ioctl.
      */
-    void allocateGpuVma(Request::CacheCoherenceFlags mtype, Addr start,
+    void allocateCIMVma(Request::CacheCoherenceFlags mtype, Addr start,
                         Addr length);
-    Addr deallocateGpuVma(Addr start);
+    Addr deallocateCIMVma(Addr start);
 
     void allocateQueue(PortProxy &mem_proxy, Addr ioc_buf_addr);
 
@@ -251,4 +193,4 @@ class GPUComputeDriver final : public EmulatedDriver
 
 } // namespace gem5
 
-#endif // __GPU_COMPUTE_GPU_COMPUTE_DRIVER_HH__
+#endif // __CIM_COMPUTE_DRIVER_HH__

@@ -460,8 +460,8 @@ CXX_version = readCommand([main['CXX'], '--version'], exception=False)
 
 main['GCC'] = CXX_version and CXX_version.find('g++') >= 0
 main['CLANG'] = CXX_version and CXX_version.find('clang') >= 0
-if main['GCC'] + main['CLANG'] > 1:
-    error('Two compilers enabled at once?')
+# if main['GCC'] + main['CLANG'] > 1:
+#     error('Two compilers enabled at once?')
 
 # Find the gem5 binary target architecture (usually host architecture). The
 # "Target: <target>" is consistent accross gcc and clang at the time of

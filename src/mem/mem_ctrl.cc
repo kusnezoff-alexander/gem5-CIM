@@ -47,8 +47,10 @@
 #include "debug/MemCtrl.hh"
 #include "debug/NVM.hh"
 #include "debug/QOS.hh"
+#include "debug/RowOp.hh"
 #include "mem/dram_interface.hh"
 #include "mem/mem_interface.hh"
+#include "mem/mimdram_control_unit.hh"
 #include "mem/nvm_interface.hh"
 #include "sim/system.hh"
 
@@ -61,8 +63,8 @@ namespace memory
 MemCtrl::MemCtrl(const MemCtrlParams &p) :
     qos::MemCtrl(p),
     port(name() + ".port", *this), isTimingMode(false),
-    retryRdReq(false), retryWrReq(false),
-    pendingRowOps(0),
+    retryRdReq(false), retryWrReq(false), retryCimReq(false),
+    pendingRowOps(0), mimdram_control_unit(128), // TODO: change nr mats to be actual number, see [Issue #7](https://github.com/kusnezoff-alexander/gem5-CIM/issues/7)
     nextReqEvent([this] {processNextReqEvent(dram, respQueue,
                          respondEvent, nextReqEvent, retryWrReq);}, name()),
     respondEvent([this] {processRespondEvent(dram, respQueue,
@@ -505,6 +507,22 @@ MemCtrl::recvTimingReq(PacketPtr pkt)
 
     // run the QoS scheduler and assign a QoS priority value to the packet
     qosSchedule( { &readQueue, &writeQueue }, burst_size, pkt);
+
+	// TODO: handle RowOps completely separately
+	if (pkt->isRowOp()) {
+		DPRINTF(MemCtrl, "Sending CIM-Op to MIMDRAM Control Unit\n");
+		DPRINTF(RowOp, "Got request for RowOp, sending to MIMDRAM Control Unit\n");
+		mimdram_control_unit.addToBbopBuffer(pkt, pkt_count, dram);
+
+
+        if (mimdram_control_unit.bbopBufferFull(pkt_count)) {
+            DPRINTF(RowOp, "Bbop Buffer full, not accepting\n");
+            // remember that we have to retry this port
+            retryCimReq = true;
+            stats.numCimRetry++;
+            return false;
+		}
+	}
 
     // check local buffers and do not accept if full
     if (pkt->isWrite()) {

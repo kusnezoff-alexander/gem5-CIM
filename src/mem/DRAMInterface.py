@@ -66,6 +66,13 @@ class DRAMInterface(MemInterface):
     # update per memory class when bank group architecture is supported
     bank_groups_per_rank = Param.Unsigned(0, "Number of bank groups per rank")
 
+    # Subarray/Mat Level. These are used to compute `subarraysPerBank`
+    # see MIMDRAM paper for common parameters (mats_per_subarray \in [32,128],
+    # rows_per_mat \in [512,1024], cols_per_mat \in [512,1024]\)
+    mats_per_subarray = Param.Unsigned(32, "Number of mats inside a DRAM subarray")
+    rows_per_mat = Param.Unsigned(1024, "Number of columns inside a DRAM mat")
+    cols_per_mat = Param.Unsigned(1024, "Number of columns inside a DRAM mat")
+
     # Enable DRAM powerdown states if True. This is False by default due to
     # performance being lower when enabled
     enable_dram_powerdown = Param.Bool(False, "Enable powerdown states")

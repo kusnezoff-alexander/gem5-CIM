@@ -48,7 +48,9 @@
 #include "arch/x86/regs/msr.hh"
 #include "arch/x86/x86_traits.hh"
 #include "base/trace.hh"
+#include "base/types.hh"
 #include "cpu/thread_context.hh"
+#include "debug/RowOp.hh"
 #include "debug/TLB.hh"
 #include "mem/packet_access.hh"
 #include "mem/page_table.hh"
@@ -338,6 +340,19 @@ TLB::translate(const RequestPtr &req,
     Addr vaddr = req->getVaddr();
     DPRINTF(TLB, "Translating vaddr %#x.\n", vaddr);
 
+	// FIXME: ILLEGAL QUICKFIX
+	// RowOps will go right through TLB (NOTE: this is a functionality which is not actually performed by the TLB,
+	// this is just a temporal workaround to map physical addresses=virtual addresses). Else the requests would have to go
+	// through the OS page-table walker due to TLB misses. For CIM another computer architecture, like the one proposed by
+	// "The Virtual Block Interface: A Flexible Alternative to the Conventional Virtual Memory Framework (2020)" might be suited better
+    if(req->isRowOp()) {
+		// TODO: assert the vaddr is in the preallocated address range for CIM operations
+        DPRINTF(RowOp, "Translating vaddr %#x.\n", vaddr);
+		req->setPaddr(vaddr);
+		DPRINTF(RowOp, "Translated %#x -> %#x.\n", vaddr, vaddr);
+		return NoFault;
+	}
+
     HandyM5Reg m5Reg = tc->readMiscRegNoEffect(misc_reg::M5Reg);
 
     const Addr logAddrSize = (flags >> AddrSizeFlagShift) & AddrSizeFlagMask;
@@ -445,13 +460,27 @@ TLB::translate(const RequestPtr &req,
                     Process *p = tc->getProcessPtr();
                     const EmulationPageTable::Entry *pte =
                         p->pTable->lookup(vaddr);
+
+                    // if (!pte) {
+                    //     p->allocateMem(vaddr, size); // THIS QUICKFIX SHOULD BE ILLEGAL, but I dont care for now... (2025-11-04) - we are in SE-mode anyway....
+                    //     pte =
+                    //         p->pTable->lookup(vaddr);
+                    //     req->setPaddr(pte->paddr);
+                    // }
+
                     if (!pte) {
+                        if(req->isRowOp())
+                            DPRINTF(RowOp, "ERROR: PageFault for RowOp Address");
                         return std::make_shared<PageFault>(vaddr, true, mode,
                                                            true, false);
                     } else {
                         Addr alignedVaddr = p->pTable->pageAlign(vaddr);
                         DPRINTF(TLB, "Mapping %#x to %#x\n", alignedVaddr,
                                 pte->paddr);
+
+                        if(req->isRowOp())
+                            DPRINTF(RowOp, "Mapping %#x to %#x\n", alignedVaddr,
+                                    pte->paddr);
                         entry = insert(alignedVaddr, TlbEntry(
                                 p->pTable->pid(), alignedVaddr, pte->paddr,
                                 pte->flags & EmulationPageTable::Uncacheable,
@@ -485,6 +514,8 @@ TLB::translate(const RequestPtr &req,
 
             Addr paddr = entry->paddr | (vaddr & mask(entry->logBytes));
             DPRINTF(TLB, "Translated %#x -> %#x.\n", vaddr, paddr);
+            if(req->isRowOp())
+                DPRINTF(RowOp, "Translated %#x -> %#x.\n", vaddr, paddr);
             req->setPaddr(paddr);
             if (entry->uncacheable)
                 req->setFlags(Request::UNCACHEABLE | Request::STRICT_ORDER);
@@ -492,12 +523,16 @@ TLB::translate(const RequestPtr &req,
             //Use the address which already has segmentation applied.
             DPRINTF(TLB, "Paging disabled.\n");
             DPRINTF(TLB, "Translated %#x -> %#x.\n", vaddr, vaddr);
+            if(req->isRowOp())
+                DPRINTF(RowOp, "Translated %#x -> %#x.\n", vaddr, vaddr);
             req->setPaddr(vaddr);
         }
     } else {
         // Real mode
         DPRINTF(TLB, "In real mode.\n");
         DPRINTF(TLB, "Translated %#x -> %#x.\n", vaddr, vaddr);
+        if(req->isRowOp())
+            DPRINTF(RowOp, "Translated %#x -> %#x.\n", vaddr, vaddr);
         req->setPaddr(vaddr);
     }
 

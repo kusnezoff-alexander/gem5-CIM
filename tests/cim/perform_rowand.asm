@@ -20,45 +20,12 @@ _start:
     call print_string 		; call our function
 
  	; mov rax, 10          ; Set RAX = 10
-	mov rdi, 0x9678901		; dst
+	mov rdi, 0x9567890		; dst
 	mov rsi, 0x9678901		; src1
 	; mov rdx, 0x9789012		; src2
 	mov rdx, 0x9678901		; src2
-
-	; mov qword [rdi], 42		; put sth at this addr (maybe PageFault "unmapped address" is caused by this?)
-	; mov byte [0x1000], 42	; example mem-access (for debugging `writeMem()`)
-	; TODO: change this to a CIM-instruction code
-    ; db 0x0F, 0xAA        ; Our custom instruction: my_add42
-    ; db 0x0F, 0xAB, 0xD8         ; BT RAX, RCX
-	;db 0x0F, 0xA4, 0xD8, 0x01   ; SHLD EAX, EBX, 1
-	;db 0x0F, 0xA6, 0xC0          ; ROWAND instruction with Mod/RM byte set (else next byte is taken as Mod/RM ://)
-									; with `0xC0`=Mod/RM byte (specifying a reg-reg s.t. no displacement follows it)
-	;db 0x0F, 0xA6       		   ; ROWAND instruction (without 0x00: no syscall Error??)
-	;db 0x0F, 0xF2, 0xC0
-	;db 0x0F, 0xF3, 0xC0
-	;db 0x0F, 0xF4, 0xC0
-	;db 0x0F, 0xF5, 0xC0
-	;db 0x0F, 0xF6, 0xC0
-	;db 0x0F, 0xF7, 0xC0
-	db 0x66, 0x0F, 0x38, 0x41, 0xCA ; phminposuw
-	align 8
 	db 0x66, 0x0F, 0x38, 0x42 ; ROWAND
 	align 16
-	db 0x66, 0x0F, 0x38, 0x43 ; ROWOR
-	align 16
-	db 0x66, 0x0F, 0x38, 0x44 ; ROWNOT
-	align 16
-	db 0x66, 0x0F, 0x38, 0x45 ; ROWXOR
-	align 16
-	db 0x66, 0x0F, 0x38, 0x46 ; ROWAP
-	align 16
-	db 0x66, 0x0F, 0x38, 0x47 ; ROWAAP
-	;db 0x00, 0x00, 0x00, 0x00
-	;nop
-	;nop
-	;nop
-	;nop
-	;db 0x66, 0x0F, 0x38, 0x42
 
 	; debug printing after ROWAND has been executed
 	align 16

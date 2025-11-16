@@ -293,10 +293,11 @@ class DataTranslation : public BaseMMU::Translation
 {
   protected:
     ExecContextPtr xc;
-    WholeTranslationState *state;
     int index;
 
   public:
+    WholeTranslationState *state; // this fix should be ILLEGAL !! (2025-11-04)
+
     DataTranslation(ExecContextPtr _xc, WholeTranslationState* _state)
         : xc(_xc), state(_state), index(0)
     {

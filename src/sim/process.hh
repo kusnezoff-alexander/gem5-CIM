@@ -194,6 +194,7 @@ class Process : public SimObject
     bool zeroPages;
 
     EmulationPageTable *pTable;
+	// TODO: `matTable`
 
     // Memory proxy for initial image load.
     std::unique_ptr<SETranslatingPortProxy> initVirtMem;

@@ -42,6 +42,7 @@
 #ifndef __SIM_SYSCALL_EMUL_HH__
 #define __SIM_SYSCALL_EMUL_HH__
 
+#include "debug/RowOp.hh"
 #if (defined(__APPLE__) || defined(__OpenBSD__) ||      \
      defined(__FreeBSD__) || defined(__CYGWIN__) ||     \
      defined(__NetBSD__))
@@ -3234,18 +3235,38 @@ getrandomFunc(SyscallDesc *desc, ThreadContext *tc,
 
     return count;
 }
-
+/**
+ * @brief Allocates a memory region of size `length` to perform CIM in
+ *
+ * @param size Size in bytes to allocate
+ * @param mat_label Logical label of mat in which to allocate the memory
+ */
 template <typename OS>
 SyscallReturn
-getCimRegion(SyscallDesc *desc, ThreadContext *tc,
-              VPtr<> buf_ptr, typename OS::size_t count,
-              unsigned int flags)
+pimMalloc(SyscallDesc *desc, ThreadContext *tc,
+              typename OS::size_t size,
+              typename OS::size_t mat_label)
 {
-    warn("getCimRegion: Executing");
+    DPRINTF(RowOp, "pimMalloc: Allocating %d bytes in mat %d", size, mat_label);
 
+	// TODO: use *huge page pool* (allocated at bootup time)
+    auto p = tc->getProcessPtr();
+	/** do it similarly to `p->allocateMem(0, length);` */
+    Addr page_bytes = p->pTable->pageSize();
     return 1;
 }
 
+template <typename OS>
+SyscallReturn
+allocCimRow(SyscallDesc *desc, ThreadContext *tc,
+              VPtr<> buf_ptr, typename OS::size_t count,
+              unsigned int flags)
+{
+
+    DPRINTF(RowOp, "allocCimRow executing...\n");
+
+    return 1;
+}
 
 } // namespace gem5
 

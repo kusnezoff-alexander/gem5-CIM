@@ -3,9 +3,9 @@ global _start
 
 _start:
     mov     rax, 500         ; syscall number
-    xor     rdi, rdi         ; arg1 (optional, here 0)
-    xor     rsi, rsi         ; arg2 (optional, here 0)
-    xor     rdx, rdx         ; arg3 (optional, here 0)
+    mov     rdi, 123         ; arg1 (optional, here 0)
+    mov 	rsi, 456         ; arg2 (optional, here 0)
+    mov 	rdx, 789         ; arg3 (optional, here 0)
     syscall                  ; invoke syscall
 
     ; Exit normally (sys_exit)

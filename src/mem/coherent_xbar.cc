@@ -50,6 +50,7 @@
 #include "base/trace.hh"
 #include "debug/AddrRanges.hh"
 #include "debug/CoherentXBar.hh"
+#include "debug/RowOp.hh"
 #include "sim/system.hh"
 
 namespace gem5
@@ -172,6 +173,10 @@ CoherentXBar::recvTimingReq(PacketPtr pkt, PortID cpu_side_port_id)
 
     DPRINTF(CoherentXBar, "%s: src %s packet %s\n", __func__,
             src_port->name(), pkt->print());
+
+	if(pkt->isRowOp())
+		DPRINTF(RowOp, "RowOp-Pkt on CoherentXBar: %s: src %s packet %s\n", __func__,
+				src_port->name(), pkt->print());
 
     // store size and command as they might be modified when
     // forwarding the packet

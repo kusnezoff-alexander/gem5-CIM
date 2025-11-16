@@ -60,8 +60,8 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 binary = os.path.join(
     thispath,
     "../../",
-    # "tests/cim/get_cim_region_syscall",
-    "tests/cim/test_my_add42",
+    "tests/cim/pim_malloc_syscall",
+    # "tests/cim/test_my_add42",
     # "workloads/MIMDRAM-microworkloads/bitweave-buddy_gem5-CIM.exe",
     # "workloads/MIMDRAM-microworkloads/00_addition-baseline_gem5-CIM.exe",
 )
@@ -73,6 +73,11 @@ process = Process()
 # Set the command
 # cmd is a list which begins with the executable (like argv)
 process.cmd = [binary]
+
+# make vaddr=paddr (1:1 mapping)
+# m5.instantiate()
+# process.map(vaddr= system.aimc_ctrl.pio_addr, paddr= system.aimc_ctrl.pio_addr, size=system.aimc_ctrl.pio_size, cacheable=False) # TODO make this work with dram mem_ctrl
+
 # Set the cpu to use the process as its workload and create thread contexts
 system.cpu.workload = process
 system.cpu.createThreads()

@@ -47,6 +47,7 @@
 #include "cpu/thread_context.hh"
 #include "debug/LLSC.hh"
 #include "debug/MemoryAccess.hh"
+#include "debug/RowOp.hh"
 #include "mem/packet_access.hh"
 #include "sim/system.hh"
 
@@ -399,8 +400,13 @@ AbstractMemory::access(PacketPtr pkt)
             pkt->getConstPtr<Request::RowOpPayload>();
         uint64_t *dest = (uint64_t*)(pmemAddr + addrs->dest - range.start());
         uint64_t *src1 = (uint64_t*)(pmemAddr + addrs->src1 - range.start());
-        uint64_t *src2 = (uint64_t*)(pmemAddr + addrs->src2 - range.start());
-        DPRINTF(MemoryAccess, "Performing rowop %d on %p (%x) and %p (%x)\n",
+
+		uint64_t *src2 = nullptr;
+		if(addrs->op != Request::ROWAAP)
+			src2 = (uint64_t*)(pmemAddr + addrs->src2 - range.start());
+
+
+        DPRINTF(RowOp, "Performing rowop %d on %p (%x) and %p (%x)\n",
             addrs->op, src1, *src1, src2, src2 == NULL? 0 : *src2);
 
         // perform actual ROWOP in memory

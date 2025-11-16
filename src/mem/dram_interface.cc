@@ -46,6 +46,7 @@
 #include "debug/DRAM.hh"
 #include "debug/DRAMPower.hh"
 #include "debug/DRAMState.hh"
+#include "debug/RowOp.hh"
 #include "sim/system.hh"
 
 namespace gem5
@@ -399,8 +400,13 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         Tick issue_tick = cmd_at; // store tick at which pkt has been issued
 
         // Do sequence of activate-activate-precharge operations
+		// - this code corresponds to the translation into μPrograms
+		// (done by a *Control Unit*) described in Chap4.1 of the MIMDRAM Paper
         assert(mem_pkt->row_op); // ensure `row_op` is set
+        DPRINTF(RowOp, "DRAMCtrl recieved RowOp=%d Packet to rank=%d, bank=%d \n",
+                *mem_pkt->row_op, mem_pkt->rank, mem_pkt->bank);
         switch (*mem_pkt->row_op) {
+			// TODO: Control Unit should take over here (see [#Issue 7](https://github.com/kusnezoff-alexander/gem5-CIM/issues/7))
             case Request::ROWAND:
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
                         Bank::B_T0,    true);
@@ -486,7 +492,7 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         nextReqTime = mem_pkt->readyTime - (tRP + tRCD_WR + tWL);
         // pendingRowOps--; // moved into `MemCtrl`
 
-        DPRINTF(DRAM, "[RowOp] NextReqTime set to %d\n", nextReqTime);
+        DPRINTF(RowOp, "NextReqTime set to %d\n", nextReqTime);
         return std::make_pair(issue_tick, nextReqTime);
     }
 
@@ -956,6 +962,7 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
     // channel, respectively
     uint8_t rank;
     uint8_t bank;
+
     // use a 64-bit unsigned during the computations as the row is
     // always the top bits, and check before creating the packet
     uint64_t row;
@@ -967,12 +974,24 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
     // a specific buffer, row, bank, rank and channel
     addr = addr / burstSize;
 
+	// Address Translation of RowOps requires extra care. This is sth the DRAM-Controller would probably need to take care of
+	if(pkt->isRowOp()) {
+		// TODO: mapping that ensures that operands end up in same subarray ?
+
+		// see MIMDRAM Paper Chap4.1
+		// "the memory controller specifies the logical address of the first and last DRAM mats that the PUD operation targets"
+		// NOTE: these are just logical addresses which are then translated into "appropriate physical mat range, which is used as input for the mat selector"
+		uint16_t first_mat, last_mat;
+	}
+
     // we have removed the lowest order address bits that denote the
     // position within the column
-    if (addrMapping == enums::RoRaBaChCo || addrMapping == enums::RoRaBaCoCh) {
+	if (addrMapping == enums::RoRaBaChCo || addrMapping == enums::RoRaBaCoCh) {
         // the lowest order bits denote the column to ensure that
         // sequential cache lines occupy the same row
         addr = addr / burstsPerRowBuffer;
+
+		// TODO: channel bits ????
 
         // after the channel bits, get the bank bits to interleave
         // over the banks
@@ -1015,6 +1034,11 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
         row = addr % rowsPerBank;
     } else
         panic("Unknown address mapping policy chosen!");
+
+
+    if(pkt->isRowOp())
+        DPRINTF(RowOp, "Address: %#x Rank %d Bank %d Row %d\n",
+                pkt_addr, rank, bank, row);
 
     assert(rank < ranksPerChannel);
     assert(bank < banksPerRank);
