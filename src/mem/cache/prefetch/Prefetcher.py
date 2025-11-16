@@ -89,6 +89,9 @@ class BasePrefetcher(ClockedObject):
     page_bytes = Param.MemorySize(
         "4KiB", "Size of pages for virtual addresses"
     )
+    huge_page_bytes = Param.MemorySize(
+        "2MiB", "Size of huge pages for virtual addresses"
+    )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

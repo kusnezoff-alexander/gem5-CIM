@@ -71,6 +71,9 @@ class EmulationPageTable : public Serializable
     const Addr _pageSize;
     const Addr offsetMask;
 
+    const Addr _hugePageSize;
+    const Addr hugePageOffsetMask;
+
     const uint64_t _pid;
     const std::string _name;
 
@@ -79,9 +82,19 @@ class EmulationPageTable : public Serializable
     EmulationPageTable(
             const std::string &__name, uint64_t _pid, Addr _pageSize) :
             _pageSize(_pageSize), offsetMask(mask(floorLog2(_pageSize))),
+			_hugePageSize(0), hugePageOffsetMask(0),
             _pid(_pid), _name(__name), shared(false)
     {
         assert(isPowerOf2(_pageSize));
+    }
+    EmulationPageTable(
+            const std::string &__name, uint64_t _pid, Addr _pageSize, Addr _hugePageSize) :
+            _pageSize(_pageSize), offsetMask(mask(floorLog2(_pageSize))),
+			_hugePageSize(_hugePageSize), hugePageOffsetMask(mask(floorLog2(_hugePageSize))),
+            _pid(_pid), _name(__name), shared(false)
+    {
+        assert(isPowerOf2(_pageSize));
+        assert(isPowerOf2(_hugePageSize));
     }
 
     uint64_t pid() const { return _pid; };
@@ -111,9 +124,12 @@ class EmulationPageTable : public Serializable
 
     Addr pageAlign(Addr a)  { return (a & ~offsetMask); }
     Addr pageOffset(Addr a) { return (a &  offsetMask); }
+    Addr hugePageAlign(Addr a)  { return (a & ~hugePageOffsetMask); }
+    Addr hugePageOffset(Addr a) { return (a &  hugePageOffsetMask); }
     // Page size can technically vary based on the virtual address, but we'll
     // ignore that for now.
     Addr pageSize()   { return _pageSize; }
+    Addr hugePageSize()   { return _hugePageSize; }
 
     /**
      * Maps a virtual memory region to a physical memory region.

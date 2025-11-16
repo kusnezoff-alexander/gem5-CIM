@@ -88,7 +88,8 @@ X86Process::X86Process(const ProcessParams &params,
                             new ArchPageTable(params.name, params.pid,
                                               params.system, PageBytes)) :
                     new EmulationPageTable(params.name, params.pid,
-                                           PageBytes),
+                                           // PageBytes, params.system->hugePageSize()),
+                                           PageBytes, 4194304),
             objFile)
 {
 }

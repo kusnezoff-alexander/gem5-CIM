@@ -3236,23 +3236,31 @@ getrandomFunc(SyscallDesc *desc, ThreadContext *tc,
     return count;
 }
 /**
- * @brief Allocates a memory region of size `length` to perform CIM in
+ * @brief Maps virtual address `start` to a physical memory region / huge page
+ * of size `length` in a mat-range specified by logical `mat_label`
  *
  * @param size Size in bytes to allocate
- * @param mat_label Logical label of mat in which to allocate the memory
+ * @param mat_label Logical label of mat(-range) in which to allocate the memory
  */
-template <typename OS>
+template <class OS>
 SyscallReturn
-pimMalloc(SyscallDesc *desc, ThreadContext *tc,
-              typename OS::size_t size,
-              typename OS::size_t mat_label)
+mmapPimFunc(SyscallDesc *desc, ThreadContext *tc,
+         VPtr<> start, typename OS::size_t size, int mat_label)
 {
-    DPRINTF(RowOp, "pimMalloc: Allocating %d bytes in mat %d", size, mat_label);
+    DPRINTF(RowOp, "mmapPimFunc: Mapping region starting at vaddr=%d of %d bytes to a paddr in mat %d\n", start, size, mat_label);
 
 	// TODO: use *huge page pool* (allocated at bootup time)
     auto p = tc->getProcessPtr();
 	/** do it similarly to `p->allocateMem(0, length);` */
-    Addr page_bytes = p->pTable->pageSize();
+
+    Addr hugePageSize = p->pTable->hugePageSize();
+	auto start_aligned = p->pTable->hugePageAlign(start); // gem5 considers non-aligned vaddr as error when mapping regions/VMAs...
+	auto length_aligned =  (size + hugePageSize - 1) / hugePageSize * hugePageSize; // gem5 also checks `Assertion `(_addrRange.end() % _pageBytes) == 0' failed.` ...
+	// TODO: Next - assertion `(_addrRange.end() % _pageBytes) == 0' failed.`  still fails
+    // p->memState->mapHugePageRegion(start_aligned, length_aligned, "PIM Huge Page", -1, 0); // TODO !
+	// for `mmapFunc` actual mapping to paddr is performed in `MemState::fixupFault()` (?? WHY ??)
+	// we'll allocate it directly... should be equivalent
+	p->allocatePimMem(start, size, mat_label);
     return 1;
 }
 

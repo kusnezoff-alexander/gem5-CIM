@@ -203,6 +203,11 @@ public:
             EmulationPageTable(__name, _pid, _pageSize), system(_sys)
     {}
 
+    MultiLevelPageTable(const std::string &__name, uint64_t _pid,
+                        System *_sys, Addr _pageSize, Addr _hugePageSize) :
+            EmulationPageTable(__name, _pid, _pageSize, _hugePageSize), system(_sys)
+    {}
+
     ~MultiLevelPageTable() {}
 
     void

@@ -189,6 +189,26 @@ MemState::mapRegion(Addr start_addr, Addr length,
 }
 
 void
+MemState::mapHugePageRegion(Addr start_addr, Addr length,
+                    const std::string& region_name, int sim_fd, Addr offset)
+{
+    DPRINTF(Vma, "memstate: creating vma (%s) [0x%x - 0x%x]\n",
+            region_name.c_str(), start_addr, start_addr + length);
+
+    /**
+     * Avoid creating a region that has preexisting mappings. This should
+     * not happen under normal circumstances so consider this to be a bug.
+     */
+    assert(isUnmapped(start_addr, length));
+
+    /**
+     * Record the region in our list structure.
+     */
+    _vmaList.emplace_back(AddrRange(start_addr, start_addr + length),
+                          _hugePageBytes, region_name, sim_fd, offset);
+}
+
+void
 MemState::unmapRegion(Addr start_addr, Addr length)
 {
     Addr end_addr = start_addr + length;

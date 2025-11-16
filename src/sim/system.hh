@@ -359,6 +359,9 @@ class System : public SimObject, public PCEventScope
      */
     bool isMemAddr(Addr addr) const;
 
+	/** Check if given addr is inside the huge page pool */
+	bool isHugePagePoolAddr(Addr addr) const;
+
     /**
      * Add a physical memory range for a device. The ranges added here will
      * be considered a non-PIO memory address if the requestorId of the packet
@@ -565,6 +568,9 @@ class System : public SimObject, public PCEventScope
      */
     const AddrRange _m5opRange;
 
+	Addr _hugePageSize;
+    AddrRange _hugePagePoolRange;
+
   public:
     PARAMS(System);
 
@@ -576,6 +582,9 @@ class System : public SimObject, public PCEventScope
      * an invalid/empty range if disabled.
      */
     const AddrRange &m5opRange() const { return _m5opRange; }
+
+    const AddrRange &hugePagePoolrange() const { return _hugePagePoolRange; }
+    Addr hugePageSize() { return _hugePageSize; }
 
   public:
 

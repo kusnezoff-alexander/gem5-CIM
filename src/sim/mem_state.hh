@@ -131,6 +131,9 @@ class MemState : public Serializable
                    const std::string& name="anon", int sim_fd=-1,
                    Addr offset=0);
 
+	// dirty work around bc `mapRegion` only works with fixed `_pageBytes` size
+	void mapHugePageRegion(Addr start_addr, Addr length,
+                    const std::string& region_name, int sim_fd, Addr offset);
     /**
      * Unmap a pre-existing region. Depending on the range being unmapped
      * the resulting new regions will either be split, resized, or
@@ -269,6 +272,7 @@ class MemState : public Serializable
     Process * _ownerProcess;
 
     Addr _pageBytes;
+    Addr _hugePageBytes;
     Addr _brkPoint;
     Addr _stackBase;
     Addr _stackSize;

@@ -28,15 +28,21 @@
 #include "sim/se_workload.hh"
 
 #include "cpu/thread_context.hh"
+#include "debug/RowOp.hh"
 #include "params/SEWorkload.hh"
 #include "sim/process.hh"
+#include "sim/syscall_debug_macros.hh"
 #include "sim/system.hh"
 
 namespace gem5
 {
 
 SEWorkload::SEWorkload(const Params &p, Addr page_shift) :
-    Workload(p), memPools(page_shift)
+    Workload(p), memPools(page_shift),
+	hugePagePool(p.huge_page_shift, p.huge_page_pool_base, p.huge_page_pool_base + p.huge_page_size),
+	hugePagesNr(p.huge_pages_nr),
+	_hugePageSize(p.huge_page_size),
+	hugePagePoolRange(p.huge_page_pool_base, p.huge_page_pool_base + p.huge_page_size)
 {}
 
 void
@@ -47,8 +53,12 @@ SEWorkload::setSystem(System *sys)
     AddrRangeList memories = sys->getPhysMem().getConfAddrRanges();
     const auto &m5op_range = sys->m5opRange();
 
-    if (m5op_range.valid())
+    if (m5op_range.valid()) {
         memories -= m5op_range;
+	}
+
+	// hugePagePoolRange = sys->hugePagePoolrange(); // TODO: remove huge page pool logic from system and move into `SEWorkload`?
+	memories -= hugePagePoolRange; // reserved for huge page pool !
 
     memPools.populate(memories);
 }
@@ -69,6 +79,16 @@ void
 SEWorkload::syscall(ThreadContext *tc)
 {
     tc->getProcessPtr()->syscall(tc);
+}
+
+Addr
+SEWorkload::allocPhysPimHugePages(int npages)
+{
+    auto huge_page_frame_number = hugePagePool.allocate(npages);
+
+	auto pim_paddr = hugePagePoolRange.start() + hugePageSize() * huge_page_frame_number;
+	DPRINTF(RowOp, "Allocated huge page for PIM with paddr=%d\n", pim_paddr);
+	return pim_paddr;
 }
 
 Addr

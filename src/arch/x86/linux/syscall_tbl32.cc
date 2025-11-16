@@ -384,7 +384,7 @@ SyscallDescTable<EmuLinux::SyscallABI32> EmuLinux::syscallDescs32 = {
     { 323, "eventfd", eventfdFunc<X86Linux32> },
     { 355, "getrandom", getrandomFunc<X86Linux32>},
     // new syscall for CIM
-    { 500, "pim_malloc", pimMalloc<X86Linux32>},
+    { 500, "mmap_pim_func", mmapPimFunc<X86Linux32>},
 
 };
 

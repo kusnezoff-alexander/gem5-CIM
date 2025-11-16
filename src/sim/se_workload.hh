@@ -40,6 +40,11 @@ class SEWorkload : public Workload
   protected:
     /** Memory allocation objects for all physical memories in the system. */
     MemPools memPools;
+	MemPool hugePagePool;
+
+	uint64_t hugePagesNr;
+	Addr _hugePageSize;
+	AddrRange hugePagePoolRange;
 
   public:
     using Params = SEWorkloadParams;
@@ -89,10 +94,16 @@ class SEWorkload : public Workload
     // For now, assume the only type of events are system calls.
     void event(ThreadContext *tc) override { syscall(tc); }
 
+
+	// Alloc pages in reserved huge page pool for pim operations
+	Addr allocPhysPimHugePages(int npages);
+
     Addr allocPhysPages(int npages, int pool_id=0);
     void deallocPhysPage(Addr paddr, int pool_id=0);
     Addr memSize(int pool_id=0) const;
     Addr freeMemSize(int pool_id=0) const;
+
+	Addr hugePageSize() { return _hugePageSize; }
 };
 
 } // namespace gem5

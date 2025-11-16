@@ -56,6 +56,7 @@
 #include "base/loader/symtab.hh"
 #include "base/statistics.hh"
 #include "cpu/thread_context.hh"
+#include "debug/RowOp.hh"
 #include "mem/page_table.hh"
 #include "mem/se_translating_port_proxy.hh"
 #include "params/Process.hh"
@@ -312,6 +313,18 @@ Process::drain()
 {
     fds->updateFileOffsets();
     return DrainState::Drained;
+}
+
+void
+Process::allocatePimMem(Addr vaddr, int64_t size, uint32_t mat_label)
+{
+	// TODO ! make use of `seWorkload->allocPhysHugePages(npages)` !!!
+
+    const int npages = divCeil(size, seWorkload->hugePageSize());
+	const Addr pim_paddr = seWorkload->allocPhysPimHugePages(npages);
+
+	DPRINTF(RowOp, "Inserting pte for huge page vaddr=%d,paddr=%d\n", vaddr, pim_paddr);
+	// TODO: insert into pTable
 }
 
 void

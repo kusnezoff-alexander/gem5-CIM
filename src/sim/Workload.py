@@ -137,6 +137,15 @@ class SEWorkload(Workload, metaclass=SEWorkloadMeta):
     cxx_class = "gem5::SEWorkload"
     abstract = True
 
+    # Support Huge Page Pools (TODO: only add required params)
+    huge_pages_nr = Param.Unsigned(0, "Number of huge pages in the system")
+    huge_page_size = Param.MemorySize('2MiB', "Size of a huge page in the system")
+    huge_page_shift = Param.Unsigned(0, "Nr of bits used to address offset into page \
+            (determines size of huge pages via huge_page_size = 1 << huge_page_shift")
+    huge_page_pool_base = Param.Addr(
+        0, "Start address for huge page pool"
+    )
+
     @classmethod
     def _is_compatible_with(cls, obj):
         return False

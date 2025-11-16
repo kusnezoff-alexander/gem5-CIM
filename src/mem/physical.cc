@@ -80,9 +80,12 @@ PhysicalMemory::PhysicalMemory(const std::string& _name,
                                const std::vector<AbstractMemory*>& _memories,
                                bool mmap_using_noreserve,
                                const std::string& shared_backstore,
-                               bool auto_unlink_shared_backstore) :
+                               bool auto_unlink_shared_backstore
+                               // uint64_t hugepages_nr, Addr hugepages_size) :
+	) :
     _name(_name), size(0), mmapUsingNoReserve(mmap_using_noreserve),
     sharedBackstore(shared_backstore), sharedBackstoreSize(0),
+    // hugepages_nr(hugepages_nr), hugepages_size(hugepages_size),
     pageSize(sysconf(_SC_PAGE_SIZE))
 {
     // Register cleanup callback if requested.

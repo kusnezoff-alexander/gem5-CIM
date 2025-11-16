@@ -43,6 +43,7 @@
 
 #include <algorithm>
 
+#include "base/addr_range.hh"
 #include "base/compiler.hh"
 #include "base/cprintf.hh"
 #include "base/loader/object_file.hh"
@@ -173,7 +174,9 @@ System::System(const Params &p)
       physProxy(_systemPort, p.cache_line_size),
       workload(p.workload),
       physmem(name() + ".physmem", p.memories, p.mmap_using_noreserve,
-              p.shared_backstore, p.auto_unlink_shared_backstore),
+              p.shared_backstore, p.auto_unlink_shared_backstore
+			  // p.hugepages_nr, p.hugepages_size
+			  ),
       ShadowRomRanges(p.shadow_rom_ranges.begin(),
                       p.shadow_rom_ranges.end()),
       memoryMode(p.mem_mode),
@@ -183,6 +186,8 @@ System::System(const Params &p)
       _m5opRange(p.m5ops_base ?
                  RangeSize(p.m5ops_base, 0x10000) :
                  AddrRange(1, 0)), // Create an empty range if disabled
+	  _hugePageSize(p.huge_page_size),
+	  _hugePagePoolRange(RangeSize(p.huge_page_pool_base, p.huge_pages_nr * p.huge_page_size)),
       redirectPaths(p.redirect_paths)
 {
     panic_if(!workload, "No workload set for system %s "
@@ -301,6 +306,12 @@ System::isMemAddr(Addr addr) const
 
         return false;
     }
+}
+
+bool
+System::isHugePagePoolAddr(Addr addr) const
+{
+	hugePagePoolrange().contains(addr);
 }
 
 void

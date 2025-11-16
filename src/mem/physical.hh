@@ -156,6 +156,11 @@ class PhysicalMemory : public Serializable
     const std::string sharedBackstore;
     uint64_t sharedBackstoreSize;
 
+	// TODO: remove this, huge-pages info is probably not needed in the physical memory
+    // // Nr of huge pages to reserve
+    // uint64_t hugepages_nr;
+    // // size of a single huge page
+    // Addr hugepages_size;
     long pageSize;
 
     // The physical memory used to provide the memory in the simulated
@@ -191,7 +196,9 @@ class PhysicalMemory : public Serializable
                    const std::vector<AbstractMemory*>& _memories,
                    bool mmap_using_noreserve,
                    const std::string& shared_backstore,
-                   bool auto_unlink_shared_backstore);
+                   bool auto_unlink_shared_backstore
+                   // uint64_t hugepages_nr, Addr hugepages_size
+				   );
 
     /**
      * Unmap all the backing store we have used.

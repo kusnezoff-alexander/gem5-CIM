@@ -35,6 +35,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "base/loader/memory_image.hh"
@@ -106,6 +107,9 @@ class Process : public SimObject
     Addr getBias();
     Addr getStartPC();
     loader::ObjectFile *getInterpreter();
+
+	// Allocates memory for pim operations in the reserved huge page pool
+	void allocatePimMem(Addr vaddr, int64_t size, uint32_t mat_label);
 
     // This function allocates physical memory as backing store, and then maps
     // it into the virtual address space of the process. The range of virtual
@@ -194,7 +198,9 @@ class Process : public SimObject
     bool zeroPages;
 
     EmulationPageTable *pTable;
-	// TODO: `matTable`
+	// maps logical mat labels (`uint32_t`) to (contiguous) mat ranges ([`uint32_t,uint32_t`])
+	typedef std::unordered_map<uint32_t, std::pair<uint32_t,uint32_t>> MatTable;
+	MatTable matTable;
 
     // Memory proxy for initial image load.
     std::unique_ptr<SETranslatingPortProxy> initVirtMem;

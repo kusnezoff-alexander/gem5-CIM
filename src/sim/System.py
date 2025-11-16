@@ -163,3 +163,11 @@ class System(SimObject):
         "Base of the 64KiB PA range used for "
         "memory-mapped m5ops. Set to 0 to disable.",
     )
+
+    # Support Huge Page Pools
+    huge_page_pool_base = Param.Addr(
+        0, "Start address for huge page pool"
+    )
+    huge_pages_nr = Param.Unsigned(0, "Number of huge pages in the system")
+    huge_page_size = Param.MemorySize('2MiB', "Size of a huge page in the system")
+
