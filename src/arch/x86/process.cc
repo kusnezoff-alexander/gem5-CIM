@@ -89,7 +89,7 @@ X86Process::X86Process(const ProcessParams &params,
                                               params.system, PageBytes)) :
                     new EmulationPageTable(params.name, params.pid,
                                            // PageBytes, params.system->hugePageSize()),
-                                           PageBytes, 4194304),
+                                           PageBytes, 2097152),
             objFile)
 {
 }

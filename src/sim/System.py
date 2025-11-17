@@ -169,5 +169,5 @@ class System(SimObject):
         0, "Start address for huge page pool"
     )
     huge_pages_nr = Param.Unsigned(0, "Number of huge pages in the system")
-    huge_page_size = Param.MemorySize('2MiB', "Size of a huge page in the system")
+    huge_page_size = Param.MemorySize("2MiB", "Size of a huge page in the system")
 

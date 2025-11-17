@@ -3257,7 +3257,7 @@ mmapPimFunc(SyscallDesc *desc, ThreadContext *tc,
 	auto start_aligned = p->pTable->hugePageAlign(start); // gem5 considers non-aligned vaddr as error when mapping regions/VMAs...
 	auto length_aligned =  (size + hugePageSize - 1) / hugePageSize * hugePageSize; // gem5 also checks `Assertion `(_addrRange.end() % _pageBytes) == 0' failed.` ...
 	// TODO: Next - assertion `(_addrRange.end() % _pageBytes) == 0' failed.`  still fails
-    // p->memState->mapHugePageRegion(start_aligned, length_aligned, "PIM Huge Page", -1, 0); // TODO !
+    p->memState->mapHugePageRegion(start_aligned, length_aligned, "PIM Huge Page", -1, 0); // TODO !
 	// for `mmapFunc` actual mapping to paddr is performed in `MemState::fixupFault()` (?? WHY ??)
 	// we'll allocate it directly... should be equivalent
 	p->allocatePimMem(start, size, mat_label);
