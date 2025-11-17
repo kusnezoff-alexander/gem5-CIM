@@ -3247,7 +3247,7 @@ SyscallReturn
 mmapPimFunc(SyscallDesc *desc, ThreadContext *tc,
          VPtr<> start, typename OS::size_t size, int mat_label)
 {
-    DPRINTF(RowOp, "mmapPimFunc: Mapping region starting at vaddr=%d of %d bytes to a paddr in mat %d\n", start, size, mat_label);
+    DPRINTF(RowOp, "mmapPimFunc: Mapping region starting at vaddr=0x%X of %d bytes to a paddr in mat %d\n", start, size, mat_label);
 
 	// TODO: use *huge page pool* (allocated at bootup time)
     auto p = tc->getProcessPtr();
@@ -3257,22 +3257,13 @@ mmapPimFunc(SyscallDesc *desc, ThreadContext *tc,
 	auto start_aligned = p->pTable->hugePageAlign(start); // gem5 considers non-aligned vaddr as error when mapping regions/VMAs...
 	auto length_aligned =  (size + hugePageSize - 1) / hugePageSize * hugePageSize; // gem5 also checks `Assertion `(_addrRange.end() % _pageBytes) == 0' failed.` ...
 	// TODO: Next - assertion `(_addrRange.end() % _pageBytes) == 0' failed.`  still fails
-    p->memState->mapHugePageRegion(start_aligned, length_aligned, "PIM Huge Page", -1, 0); // TODO !
+
+	// Allocation of huge page pool in memory is done during `X86Process::argsInit()` (alongside eg stack memory region setup)
+	// p->memState->mapHugePageRegion(start_aligned, length_aligned, "PIM Huge Page", -1, 0); // TODO !
+
 	// for `mmapFunc` actual mapping to paddr is performed in `MemState::fixupFault()` (?? WHY ??)
 	// we'll allocate it directly... should be equivalent
 	p->allocatePimMem(start, size, mat_label);
-    return 1;
-}
-
-template <typename OS>
-SyscallReturn
-allocCimRow(SyscallDesc *desc, ThreadContext *tc,
-              VPtr<> buf_ptr, typename OS::size_t count,
-              unsigned int flags)
-{
-
-    DPRINTF(RowOp, "allocCimRow executing...\n");
-
     return 1;
 }
 

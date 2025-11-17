@@ -163,6 +163,7 @@ DebugFlag('ClockDomain')
 DebugFlag('VoltageDomain')
 DebugFlag('DVFS')
 DebugFlag('Vma')
+DebugFlag('HugePage')
 DebugFlag('PowerDomain')
 DebugFlag('EnteringEventQueue')
 

@@ -37,6 +37,7 @@
 
 #include "base/compiler.hh"
 #include "base/trace.hh"
+#include "debug/HugePage.hh"
 #include "debug/MMU.hh"
 #include "sim/faults.hh"
 #include "sim/serialize.hh"
@@ -52,6 +53,16 @@ EmulationPageTable::map(Addr vaddr, Addr paddr, int64_t size, uint64_t flags)
     assert(pageOffset(vaddr) == 0);
 
     DPRINTF(MMU, "Allocating Page: %#x-%#x\n", vaddr, vaddr + size);
+
+	if(hugePagePoolRange.contains(vaddr)) {
+		if (hugePageSize() == 1 << 21) {
+			flags = flags | HugePage2MiB;
+		} else if (hugePageSize() == 1 << 30) {
+			flags = flags | HugePage1GiB;
+		}
+		mapMultiLevel(vaddr, paddr, size, flags); // WIP: build multi-level pTable in parallel/
+												  // separaetely for huge pages for now
+	}
 
     while (size > 0) {
         auto it = pTable.find(vaddr);
@@ -69,6 +80,100 @@ EmulationPageTable::map(Addr vaddr, Addr paddr, int64_t size, uint64_t flags)
         vaddr += _pageSize;
         paddr += _pageSize;
     }
+}
+
+void
+EmulationPageTable::mapMultiLevel(Addr vaddr, Addr paddr, int64_t size, uint64_t flags)
+{
+    bool clobber = flags & Clobber;
+    // starting address must be page aligned
+    assert(pageOffset(vaddr) == 0);
+
+    DPRINTF(MMU, "Allocating Page in Multi-Level PTable: %#x-%#x\n", vaddr, vaddr + size);
+
+	auto pageSize = _pageSize; // eg 4KiB is default
+	if (flags & HugePage1GiB) {
+		pageSize = 1 << 30;
+		DPRINTF(HugePage, "Allocating Huge Page in Multi-Level PTable: %#x-%#x\n", vaddr, vaddr + size);
+	} else if (flags & HugePage2MiB) {
+		pageSize = 1 << 21;
+		DPRINTF(HugePage, "Allocating Huge Page in Multi-Level PTable: %#x-%#x\n", vaddr, vaddr + size);
+	}
+
+    while (size > 0) {
+        // auto it = pTable.find(vaddr);
+        // if (it != pTable.end()) {
+        //     // already mapped
+        //     panic_if(!clobber,
+        //              "EmulationPageTable::allocate: addr %#x already mapped",
+        //              vaddr);
+        //     it->second = Entry(paddr, flags);
+        // } else {
+        //     pTable.emplace(vaddr, Entry(paddr, flags));
+
+			// Addresses used to index into corresponding PTables
+			// FIXME: are all `uint64_t` for now, but should be smaller (depending on mask size)
+			auto pgd_idx = PGD_MASK & vaddr;
+			auto p4d_idx= P4D_MASK & vaddr;
+			auto pud_idx = PUD_MASK & vaddr;
+			auto pmd_idx = PMD_MASK & vaddr;
+			auto pte_idx = PTE_MASK & vaddr; // only needed for normal pages
+
+			// Perform Page Walk
+			auto p4d = pageTableWalk(&multiLevelPTable.pgd, pgd_idx);
+			assert(std::holds_alternative<PTableLevel*>(p4d));
+			auto pud = pageTableWalk(std::get<PTableLevel*>(p4d), p4d_idx);
+			assert(std::holds_alternative<PTableLevel*>(pud));
+			if (flags & HugePage1GiB) {
+				// stop here for `1GiB` huge pages
+				auto it = std::get<PTableLevel*>(pud)->entries.find(pud_idx);
+				if(it !=  std::get<PTableLevel*>(pud)->entries.end())
+					DPRINTF(HugePage, "WARNING: Huge Page already mapped in Multi-Level PTable pud: for vaddr=%#x \n", vaddr);
+
+				std::get<PTableLevel*>(pud)->entries[pud_idx] = new Entry(paddr, flags);  // map '1GiB' huge page
+				DPRINTF(HugePage, "Mapped Huge Page in Multi-Level PTable pud: %#x-%#x to paddr=0x%x\n", vaddr, vaddr + size, paddr);
+			} else {
+				auto pmd = pageTableWalk(std::get<PTableLevel*>(pud), pud_idx);
+				assert(std::holds_alternative<PTableLevel*>(pmd));
+				auto pte = pageTableWalk(std::get<PTableLevel*>(pmd), pmd_idx); // this is only needed for 4KiB pages
+				if (flags & HugePage2MiB) {
+					// stop here for `2MiB` huge pages
+					auto it = std::get<PTableLevel*>(pud)->entries.find(pmd_idx);
+					if(it !=  std::get<PTableLevel*>(pmd)->entries.end())
+					DPRINTF(HugePage, "WARNING: Huge Page already mapped in Multi-Level PTable pmd: for vaddr=%#x \n", vaddr);
+
+					std::get<PTableLevel*>(pmd)->entries[pmd_idx] = new Entry(paddr, flags); // map '2MiB' huge page
+					DPRINTF(HugePage, "Mapped Huge Page in Multi-Level PTable pmd: %#x-%#x to paddr=0x%x\n", vaddr, vaddr + size, paddr);
+				} else {
+
+					auto it = std::get<PTableLevel*>(pte)->entries.find(pte_idx);
+					if(it !=  std::get<PTableLevel*>(pte)->entries.end())
+					DPRINTF(HugePage, "WARNING: Huge Page already mapped in Multi-Level PTable pte: for vaddr=%#x \n", vaddr);
+
+					std::get<PTableLevel*>(pte)->entries[pte_idx] = new Entry(paddr, flags); // map '4KiB' huge page
+					DPRINTF(HugePage, "In PTE although huge page?: Mapped Huge Page in Multi-Level PTable pte: %#x-%#x to paddr=0x%x\n", vaddr, vaddr + size, paddr);
+				}
+			}
+        // }
+
+        size -= pageSize;
+        vaddr += pageSize;
+        paddr += pageSize;
+    }
+}
+
+std::variant<EmulationPageTable::Entry*, EmulationPageTable::PTableLevel*>
+EmulationPageTable::pageTableWalk(PTableLevel* pxd, Addr pxd_vaddr) {
+	auto it = pxd->entries.find(pxd_vaddr);
+    if (it != pxd->entries.end()) {
+        // Entry exists, return the stored variant
+        return it->second;
+    } else {
+		// allocate new one for next level
+		auto pd_next = new PTableLevel;
+		pxd->entries[pxd_vaddr] = pd_next;
+		return pd_next;
+	}
 }
 
 void
@@ -98,6 +203,8 @@ EmulationPageTable::getMappings(std::vector<std::pair<Addr, Addr>> *addr_maps)
 {
     for (auto &iter : pTable)
         addr_maps->push_back(std::make_pair(iter.first, iter.second.paddr));
+
+	// TODO: return MutliLevel PageTable mappings
 }
 
 void
@@ -132,6 +239,55 @@ EmulationPageTable::isUnmapped(Addr vaddr, int64_t size)
 const EmulationPageTable::Entry *
 EmulationPageTable::lookup(Addr vaddr)
 {
+	// TODO: if in huge page pool: use `multiLevelPTable` to find it
+	if (hugePagePoolRange.contains(vaddr)) {
+
+		// DPRINTF(HugePage, "EmulationPageTable::lookup into huge page pool at vaddr=0x%X", vaddr);
+		Entry* entry;
+
+		auto pgd_idx = PGD_MASK & vaddr;
+		auto p4d_idx= P4D_MASK & vaddr;
+		auto pud_idx = PUD_MASK & vaddr;
+		auto pmd_idx = PMD_MASK & vaddr;
+		auto pte_idx = PTE_MASK & vaddr; // only needed for normal pages
+
+		// Perform Page Walk
+		auto p4d = pageTableWalk(&multiLevelPTable.pgd, pgd_idx);
+		assert(std::holds_alternative<PTableLevel*>(p4d));
+		auto pud = pageTableWalk(std::get<PTableLevel*>(p4d), p4d_idx);
+		assert(std::holds_alternative<PTableLevel*>(pud));
+		if (std::holds_alternative<Entry*>(pud)) {
+			// stop here for `1GiB` huge pages
+			entry = std::get<Entry*>(
+					std::get<PTableLevel*>(pud)->entries[pud_idx]
+			);
+		}
+
+		auto pmd = pageTableWalk(std::get<PTableLevel*>(pud), pud_idx);
+		assert(std::holds_alternative<PTableLevel*>(pmd));
+		auto pte = pageTableWalk(std::get<PTableLevel*>(pmd), pmd_idx); // this is only needed for 4KiB pages
+		if (std::holds_alternative<Entry*>(
+					std::get<PTableLevel*>(pmd)->entries[pmd_idx]
+		)) {
+			// stop here for `2MiB` huge pages
+			entry = std::get<Entry*>(
+				std::get<PTableLevel*>(pmd)->entries[pmd_idx]
+			);
+		} else if (std::holds_alternative<Entry*>(
+		std::get<PTableLevel*>(pmd)->entries[pmd_idx]
+		)) {
+			DPRINTF(HugePage, "Returning non-huge page although vaddr=0x%x is inside huge page pool??", vaddr);
+			entry = std::get<Entry*>(
+				std::get<PTableLevel*>(pte)->entries[pte_idx]
+			);
+		} else {
+			return nullptr;
+		}
+
+		DPRINTF(HugePage, "Lookup for huge page at vaddr=0x%X served with paddr=0x%x\n", vaddr, entry->paddr);
+		return entry;
+	}
+
     Addr page_addr = pageAlign(vaddr);
     PTableItr iter = pTable.find(page_addr);
     if (iter == pTable.end())

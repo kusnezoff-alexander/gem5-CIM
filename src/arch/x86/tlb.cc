@@ -50,6 +50,7 @@
 #include "base/trace.hh"
 #include "base/types.hh"
 #include "cpu/thread_context.hh"
+#include "debug/HugePage.hh"
 #include "debug/RowOp.hh"
 #include "debug/TLB.hh"
 #include "mem/packet_access.hh"
@@ -66,7 +67,8 @@ namespace X86ISA {
 
 TLB::TLB(const Params &p)
     : BaseTLB(p), configAddress(0), size(p.size),
-      tlb(size), lruSeq(0), m5opRange(p.system->m5opRange()), stats(this)
+      tlb(size), lruSeq(0), m5opRange(p.system->m5opRange()),
+	  hugePagePoolRange(p.system->hugePagePoolrange()), stats(this)
 {
     if (!size)
         fatal("TLBs must have a non-zero size.\n");
@@ -137,9 +139,19 @@ TLB::insert(Addr vpn, const TlbEntry &entry, uint64_t pcid)
 TlbEntry *
 TLB::lookup(Addr va, bool update_lru)
 {
+	if(hugePagePoolRange.contains(va)){
+		DPRINTF(HugePage, "TLB lookup inside hugePagePool for va=0x%x\n",va);
+	}
+
     TlbEntry *entry = trie.lookup(va);
-    if (entry && update_lru)
+    if (entry && update_lru) {
         entry->lruSeq = nextSeq();
+	}
+
+	if(entry!=nullptr && hugePagePoolRange.contains(va)) {
+		DPRINTF(HugePage, "TLB lookup inside hugePagePool found paddr=0x%x for va=0x%x\n", entry->paddr, va);
+	}
+
     return entry;
 }
 

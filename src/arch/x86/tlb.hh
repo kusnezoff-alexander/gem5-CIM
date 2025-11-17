@@ -108,6 +108,7 @@ namespace X86ISA
         uint64_t lruSeq;
 
         AddrRange m5opRange;
+        AddrRange hugePagePoolRange;
 
         struct TlbStats : public statistics::Group
         {

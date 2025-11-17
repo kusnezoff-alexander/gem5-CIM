@@ -51,6 +51,7 @@
 #include <string>
 #include <vector>
 
+#include "debug/HugePage.hh"
 #include "base/intmath.hh"
 #include "base/loader/object_file.hh"
 #include "base/loader/symtab.hh"
@@ -318,13 +319,26 @@ Process::drain()
 void
 Process::allocatePimMem(Addr vaddr, int64_t size, uint32_t mat_label)
 {
-	// TODO ! make use of `seWorkload->allocPhysHugePages(npages)` !!!
+	assert(system->hugePagePoolrange().contains(vaddr));
 
-    const int npages = divCeil(size, seWorkload->hugePageSize());
-	const Addr pim_paddr = seWorkload->allocPhysPimHugePages(npages);
+    const auto page_size = pTable->hugePageSize();
+    const Addr page_addr = roundDown(vaddr, page_size); // virtual page addres
+    const int npages = divCeil(size, page_size);
+	const Addr pim_paddr = seWorkload->allocPhysPimHugePages(npages); // physical page address
+    const Addr pages_size = npages * page_size;
 
-	DPRINTF(RowOp, "Inserting pte for huge page vaddr=%d,paddr=%d\n", vaddr, pim_paddr);
-	// TODO: insert into pTable
+	int flags = 0;
+	if(pTable->hugePageSize() == 1 << 30) {
+		flags = flags | EmulationPageTable::MappingFlags::HugePage1GiB;
+	} else if(pTable->hugePageSize() == 1 << 21) {
+		flags = flags | EmulationPageTable::MappingFlags::HugePage2MiB;
+	} else {
+		DPRINTF(HugePage, "WARNING: HugePageSize is neither 2MiB nor 2GiB but 0x%X ! ... defaulting to 2MiB\n", pTable->hugePageSize());
+		flags = flags | EmulationPageTable::MappingFlags::HugePage2MiB;
+	}
+
+	DPRINTF(HugePage, "Inserting entry for huge page vaddr=0x%X,paddr=0x%X\n", vaddr, pim_paddr);
+	pTable->map(page_addr, pim_paddr, pages_size, flags);
 }
 
 void

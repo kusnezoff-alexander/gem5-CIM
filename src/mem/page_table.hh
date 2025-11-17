@@ -37,7 +37,9 @@
 
 #include <string>
 #include <unordered_map>
+#include <variant>
 
+#include "base/addr_range.hh"
 #include "base/bitfield.hh"
 #include "base/intmath.hh"
 #include "base/types.hh"
@@ -62,17 +64,49 @@ class EmulationPageTable : public Serializable
         Entry() {}
     };
 
+	// /** A single PTableLevel is responsible for */
+	// struct _PTableLevel;
+	// // maps addr to next PTableLevel (_PTableLevel==null for last level)
+	// typedef std::unordered_map<Addr, _PTableLevel*> PTableLevel;
+	struct PTableLevel {
+		// map virtual addresses to child levels (nullptr at leaves)
+		std::unordered_map<Addr, std::variant<Entry*, PTableLevel*>> entries;
+	};
+
+	/**
+	 * see  [Linux Kernel Docs: Page Tables](https://docs.kernel.org/mm/page_tables.html)
+	 *
+	 * This table does NOT implement: Folding
+	 */
+	struct MultiLevelPTable
+	{
+		PTableLevel pgd;
+	};
+
   protected:
 
     typedef std::unordered_map<Addr, Entry> PTable;
     typedef PTable::iterator PTableItr;
     PTable pTable;
-
+	// WIP: this is going to replace `pTable`
+	MultiLevelPTable multiLevelPTable;
+	const uint64_t PGD_SHIFT = 39;
+	const uint64_t PGD_MASK  = 0x1FFULL << PGD_SHIFT;   // bits 47:39
+	const uint64_t P4D_SHIFT = 39;
+	const uint64_t P4D_MASK  = 0x1FFULL << P4D_SHIFT;   // bits 47:39 (folded)
+	const uint64_t PUD_SHIFT = 30;
+	const uint64_t PUD_MASK  = 0x1FFULL << PUD_SHIFT;   // bits 38:30 (contains 2^30=1 GiB huge page level)
+	const uint64_t PMD_SHIFT = 21;
+	const uint64_t PMD_MASK  = 0x1FFULL << PMD_SHIFT;   // bits 29:21 (contains 2^21=2 MiB huge page level)
+	const uint64_t PTE_SHIFT = 12;
+	const uint64_t PTE_MASK  = 0x1FFULL << PTE_SHIFT;   // bits 20:12 (contains 2^12=4 KiB pages)
+	const uint64_t PAGE_4K_OFFSET = 0xFFFULL;           // bits 11:0
+	const uint64_t PAGE_2M_OFFSET = 0x1FFFFFULL;        // bits 20:0
     const Addr _pageSize;
     const Addr offsetMask;
-
     const Addr _hugePageSize;
     const Addr hugePageOffsetMask;
+	const AddrRange hugePagePoolRange;
 
     const uint64_t _pid;
     const std::string _name;
@@ -88,9 +122,11 @@ class EmulationPageTable : public Serializable
         assert(isPowerOf2(_pageSize));
     }
     EmulationPageTable(
-            const std::string &__name, uint64_t _pid, Addr _pageSize, Addr _hugePageSize) :
+            const std::string &__name, uint64_t _pid, Addr _pageSize, Addr _hugePageSize,
+			AddrRange hugePagePoolRange) :
             _pageSize(_pageSize), offsetMask(mask(floorLog2(_pageSize))),
 			_hugePageSize(_hugePageSize), hugePageOffsetMask(mask(floorLog2(_hugePageSize))),
+			hugePagePoolRange(hugePagePoolRange),
             _pid(_pid), _name(__name), shared(false)
     {
         assert(isPowerOf2(_pageSize));
@@ -102,16 +138,20 @@ class EmulationPageTable : public Serializable
     virtual ~EmulationPageTable() {};
 
     /* generic page table mapping flags
-     *              unset | set
-     * bit 0 - no-clobber | clobber
-     * bit 2 - cacheable  | uncacheable
-     * bit 3 - read-write | read-only
+     *              unset   | set
+     * bit 0 - no-clobber   | clobber
+     * bit 2 - cacheable    | uncacheable
+     * bit 3 - read-write   | read-only
+     * bit 4 - 4KiB or 1GiB | 2MiB Pages
+	 * bit 5 - 4KiB or 2Mib | 1GiB Pages
      */
     enum MappingFlags : uint32_t
     {
-        Clobber     = 1,
-        Uncacheable = 4,
-        ReadOnly    = 8,
+        Clobber     	= 1,
+        Uncacheable 	= 4,
+        ReadOnly    	= 8,
+        HugePage2MiB    = 16,
+        HugePage1GiB	= 32,
     };
 
     // flag which marks the page table as shared among software threads
@@ -142,6 +182,11 @@ class EmulationPageTable : public Serializable
     virtual void map(Addr vaddr, Addr paddr, int64_t size, uint64_t flags = 0);
     virtual void remap(Addr vaddr, int64_t size, Addr new_vaddr);
     virtual void unmap(Addr vaddr, int64_t size);
+
+	/** Map huge pages into pTable (NOTE: this is a diry workaround to support huge pages */
+	virtual void mapMultiLevel(Addr vaddr, Addr paddr, int64_t size, uint64_t flags);
+	// perform pageTableWalk onto next level `pxd` with given (masked) address `pxd_addr`
+	std::variant<Entry*, PTableLevel*> pageTableWalk(PTableLevel* pxd, Addr pxd_addr);
 
     /**
      * Check if any pages in a region are already allocated

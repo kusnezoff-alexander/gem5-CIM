@@ -53,6 +53,11 @@ system.mem_ctrl.port = system.membus.mem_side_ports
 # Connect the system up to the membus
 system.system_port = system.membus.cpu_side_ports
 
+# allocate 40MiB of DRAM memory for huge page pool (we will be using for PIM Space)
+system.huge_page_pool_base = 0x0F7000000
+system.huge_pages_nr = 20
+system.huge_page_size = '2MiB'
+
 # Here we set the X86 "hello world" binary. With other ISAs you must specify
 # workloads compiled to those ISAs. Other "hello world" binaries for other ISAs
 # can be found in "tests/test-progs/hello".

@@ -133,7 +133,7 @@ class MemState : public Serializable
 
 	// dirty work around bc `mapRegion` only works with fixed `_pageBytes` size
 	void mapHugePageRegion(Addr start_addr, Addr length,
-                    const std::string& region_name, int sim_fd, Addr offset);
+                    const std::string& region_name, int sim_fd=-1, Addr offset=0);
     /**
      * Unmap a pre-existing region. Depending on the range being unmapped
      * the resulting new regions will either be split, resized, or

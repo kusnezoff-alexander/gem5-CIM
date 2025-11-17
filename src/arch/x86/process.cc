@@ -88,8 +88,8 @@ X86Process::X86Process(const ProcessParams &params,
                             new ArchPageTable(params.name, params.pid,
                                               params.system, PageBytes)) :
                     new EmulationPageTable(params.name, params.pid,
-                                           // PageBytes, params.system->hugePageSize()),
-                                           PageBytes, 2097152),
+                                           PageBytes, params.system->hugePageSize(),
+										   params.system->hugePagePoolrange()),
             objFile)
 {
 }
@@ -967,6 +967,9 @@ X86Process::argsInit(int pageSize,
 
     DPRINTF(Stack, "Mapping the stack: 0x%x %dB\n", stack_end, stack_size);
     memState->mapRegion(stack_end, stack_size, "stack");
+
+    DPRINTF(Stack, "Mapping the Huge Page Pool: 0x%x %dB\n", system->hugePagePoolrange().start(), system->hugePagePoolrange().size());
+    memState->mapHugePageRegion(system->hugePagePoolrange().start(), system->hugePagePoolrange().size(), "huge page pool");
 
     // map out initial stack contents
     IntType sentry_base = stack_base - sentry_size;

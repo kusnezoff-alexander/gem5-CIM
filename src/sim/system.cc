@@ -187,7 +187,7 @@ System::System(const Params &p)
                  RangeSize(p.m5ops_base, 0x10000) :
                  AddrRange(1, 0)), // Create an empty range if disabled
 	  _hugePageSize(p.huge_page_size),
-	  _hugePagePoolRange(RangeSize(p.huge_page_pool_base, p.huge_pages_nr * p.huge_page_size)),
+	  _hugePagePoolRange(RangeSize(p.huge_page_pool_base, p.huge_page_pool_base + p.huge_pages_nr * p.huge_page_size)),
       redirectPaths(p.redirect_paths)
 {
     panic_if(!workload, "No workload set for system %s "

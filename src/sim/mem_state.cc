@@ -29,8 +29,12 @@
 #include "sim/mem_state.hh"
 
 #include <cassert>
+#include <cstdlib>
 
 #include "arch/generic/mmu.hh"
+#include "base/addr_range.hh"
+#include "base/trace.hh"
+#include "debug/HugePage.hh"
 #include "debug/Vma.hh"
 #include "mem/se_translating_port_proxy.hh"
 #include "sim/process.hh"
@@ -52,6 +56,9 @@ MemState::MemState(Process *owner, Addr brk_point, Addr stack_base,
       _nextThreadStackBase(next_thread_stack_base),
       _mmapEnd(mmap_end)
 {
+	// make sure that mapped regions/address ranges don't overlap
+	// - REMINDER: stack grows downwards
+	assert(!owner->system->hugePagePoolrange().intersects(AddrRange(_stackBase, _stackBase - _maxStackSize)));
 }
 
 MemState&
@@ -195,12 +202,16 @@ MemState::mapHugePageRegion(Addr start_addr, Addr length,
 {
     DPRINTF(Vma, "memstate: creating vma (%s) [0x%x - 0x%x]\n",
             region_name.c_str(), start_addr, start_addr + length);
+    DPRINTF(HugePage, "Mapped huge page pool to [0x%x - 0x%x]\n",
+            start_addr, start_addr + length);
 
     /**
      * Avoid creating a region that has preexisting mappings. This should
      * not happen under normal circumstances so consider this to be a bug.
      */
     assert(isUnmapped(start_addr, length));
+	// make sure request is completely inside huge page pool
+	// assert(AddrRange(start_addr, start_addr+length).isSubset(_ownerProcess->system->hugePagePoolrange()));
 
     /**
      * Record the region in our list structure.
@@ -407,6 +418,10 @@ MemState::remapRegion(Addr start_addr, Addr new_start_addr, Addr length)
 bool
 MemState::fixupFault(Addr vaddr)
 {
+	if (_ownerProcess->system->hugePagePoolrange().contains(vaddr)) {
+		DPRINTF(HugePage, "Received PageFault into huge page pool at vaddr=0x%X\n", vaddr);
+	}
+
     /**
      * Check if we are accessing a mapped virtual address. If so then we
      * just haven't allocated it a physical page yet and can do so here.
