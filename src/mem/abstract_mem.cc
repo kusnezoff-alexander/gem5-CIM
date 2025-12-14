@@ -505,6 +505,12 @@ AbstractMemory::access(PacketPtr pkt)
         }
     } else if (pkt->isRead()) {
         assert(!pkt->isWrite());
+
+
+		if (system()->hugePagePoolrange().contains(pkt->getAddr()))
+			DPRINTF(RowOp, "%s READ into PIM region due to %s\n",
+					__func__, pkt->print());
+
         if (pkt->isLLSC()) {
             assert(!pkt->fromCache());
             // if the packet is not coming from a cache then we have
@@ -529,6 +535,12 @@ AbstractMemory::access(PacketPtr pkt)
 
         // no need to do anything
     } else if (pkt->isWrite()) {
+
+		if (system()->hugePagePoolrange().contains(pkt->getAddr()))
+			DPRINTF(RowOp, "%s WRITE into PIM region due to %s\n",
+					__func__, pkt->print());
+
+
         if (writeOK(pkt)) {
             if (pmemAddr) {
                 pkt->writeData(host_addr);

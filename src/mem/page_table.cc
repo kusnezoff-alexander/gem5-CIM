@@ -62,6 +62,7 @@ EmulationPageTable::map(Addr vaddr, Addr paddr, int64_t size, uint64_t flags)
 		}
 		mapMultiLevel(vaddr, paddr, size, flags); // WIP: build multi-level pTable in parallel/
 												  // separaetely for huge pages for now
+		return;
 	}
 
     while (size > 0) {
@@ -94,10 +95,10 @@ EmulationPageTable::mapMultiLevel(Addr vaddr, Addr paddr, int64_t size, uint64_t
 	auto pageSize = _pageSize; // eg 4KiB is default
 	if (flags & HugePage1GiB) {
 		pageSize = 1 << 30;
-		DPRINTF(HugePage, "Allocating Huge Page in Multi-Level PTable: %#x-%#x\n", vaddr, vaddr + size);
+		DPRINTF(HugePage, "Allocating 1GiB Huge Page in Multi-Level PTable: %#x-%#x\n", vaddr, vaddr + size);
 	} else if (flags & HugePage2MiB) {
 		pageSize = 1 << 21;
-		DPRINTF(HugePage, "Allocating Huge Page in Multi-Level PTable: %#x-%#x\n", vaddr, vaddr + size);
+		DPRINTF(HugePage, "Allocating 2MiB Huge Page in Multi-Level PTable: %#x-%#x\n", vaddr, vaddr + size);
 	}
 
     while (size > 0) {
@@ -284,6 +285,8 @@ EmulationPageTable::lookup(Addr vaddr)
 			return nullptr;
 		}
 
+		// QUICKFIX (bc we are not touching `trie` for huge pages I guess?
+		// entry->paddr = entry->paddr | (vaddr & hugePageAddrMask);
 		DPRINTF(HugePage, "Lookup for huge page at vaddr=0x%X served with paddr=0x%x\n", vaddr, entry->paddr);
 		return entry;
 	}
@@ -303,7 +306,14 @@ EmulationPageTable::translate(Addr vaddr, Addr &paddr)
         DPRINTF(MMU, "Couldn't Translate: %#x\n", vaddr);
         return false;
     }
-    paddr = pageOffset(vaddr) + entry->paddr;
+
+	if (hugePagePoolRange.contains(vaddr)) {
+		paddr = hugePageOffset(vaddr) + entry->paddr;
+		DPRINTF(HugePage, "Translating in HugePagePool: %#x->%#x\n", vaddr, paddr);
+	}
+	else
+		paddr = pageOffset(vaddr) + entry->paddr;
+
     DPRINTF(MMU, "Translating: %#x->%#x\n", vaddr, paddr);
     return true;
 }

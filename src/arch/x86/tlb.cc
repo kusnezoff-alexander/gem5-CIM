@@ -37,6 +37,7 @@
 
 #include "arch/x86/tlb.hh"
 
+#include <cstdlib>
 #include <cstring>
 #include <memory>
 
@@ -103,6 +104,7 @@ TLB::evictLRU()
 TlbEntry *
 TLB::insert(Addr vpn, const TlbEntry &entry, uint64_t pcid)
 {
+
     //Adding pcid to the page address so
     //that multiple processes using the same
     //tlb do not conflict when using the same
@@ -111,6 +113,9 @@ TLB::insert(Addr vpn, const TlbEntry &entry, uint64_t pcid)
 
     // If somebody beat us to it, just use that existing entry.
     TlbEntry *newEntry = trie.lookup(vpn);
+	// if (hugePagePoolRange.contains(vpn))
+	// 	DPRINTF(HugePage, "TLB::insert inside hugePagePool for va=0x%x and paddr=0x%x (newEntry->paddr=0x%x)\n", vpn, entry.paddr, newEntry->paddr);
+
     if (newEntry) {
         assert(newEntry->vaddr == vpn);
         return newEntry;
@@ -148,7 +153,11 @@ TLB::lookup(Addr va, bool update_lru)
         entry->lruSeq = nextSeq();
 	}
 
+
 	if(entry!=nullptr && hugePagePoolRange.contains(va)) {
+		// QUICKFIX (bc we are not touching `trie` for huge pages I guess?
+		// entry->paddr = entry->paddr | (va & hugePageAddrMask);
+
 		DPRINTF(HugePage, "TLB lookup inside hugePagePool found paddr=0x%x for va=0x%x\n", entry->paddr, va);
 	}
 
@@ -357,7 +366,7 @@ TLB::translate(const RequestPtr &req,
 	// this is just a temporal workaround to map physical addresses=virtual addresses). Else the requests would have to go
 	// through the OS page-table walker due to TLB misses. For CIM another computer architecture, like the one proposed by
 	// "The Virtual Block Interface: A Flexible Alternative to the Conventional Virtual Memory Framework (2020)" might be suited better
-    if(req->isRowOp()) {
+    if(hugePagePoolRange.contains(vaddr)) {
 		// TODO: assert the vaddr is in the preallocated address range for CIM operations
         DPRINTF(RowOp, "Translating vaddr %#x.\n", vaddr);
 		req->setPaddr(vaddr);

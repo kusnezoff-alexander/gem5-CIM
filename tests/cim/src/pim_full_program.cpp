@@ -55,16 +55,18 @@ void test_every_rowop()
 
 }
 
+using dtype = uint16_t;
+
 int main(int argc, char* argv[])
 {
 
-	auto array1 = static_cast<uint16_t*>(pim_malloc(N_ELEMS, 0));
-	auto array2 = static_cast<uint16_t*>(pim_malloc(N_ELEMS, 0));
+	auto array1 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
+	auto array2 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
 	// 1. Write data
 	for(uint16_t i=0; i<N_ELEMS; ++i) {
 		// array1[i] = 1;
 		array1[i] = i;
-		// array2[i] = ~i;
+		array2[i] = ~i;
 	}
 
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);

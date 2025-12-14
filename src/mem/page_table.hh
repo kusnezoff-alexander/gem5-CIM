@@ -106,6 +106,7 @@ class EmulationPageTable : public Serializable
     const Addr offsetMask;
     const Addr _hugePageSize;
     const Addr hugePageOffsetMask;
+	const Addr hugePageAddrMask = 0x1FFFFF; // TODO: adjust for 2GiB pages (based on given config)
 	const AddrRange hugePagePoolRange;
 
     const uint64_t _pid;
