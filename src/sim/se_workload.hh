@@ -40,11 +40,11 @@ class SEWorkload : public Workload
   protected:
     /** Memory allocation objects for all physical memories in the system. */
     MemPools memPools;
-	MemPool hugePagePool;
+	MemPool hugePagePool = MemPool(0, 0, 0);
 
-	uint64_t hugePagesNr;
-	Addr _hugePageSize;
-	AddrRange hugePagePoolRange;
+	uint64_t hugePagesNr = 0;
+	Addr _hugePageSize = 0;
+	AddrRange hugePagePoolRange = AddrRange(0,0);
 
   public:
     using Params = SEWorkloadParams;
@@ -52,6 +52,7 @@ class SEWorkload : public Workload
     SEWorkload(const Params &p, Addr page_shift=0);
 
     void setSystem(System *sys) override;
+	void initHugePagePool(System *sys);
 
     Addr
     getEntry() const override

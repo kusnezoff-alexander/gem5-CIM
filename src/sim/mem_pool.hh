@@ -56,6 +56,12 @@ class MemPool : public Serializable
 
     FreeList<Addr> freePhysPages;
 
+	// support Huge Pages in Physical Address Range
+    Addr hugePageShift = 0;
+	/** Number of huge pages in the memory pool */
+    Counter _totalHugePages = 0;
+    FreeList<Addr> freePhysHugePages;
+
     MemPool() = default;
 
     friend class MemPools;

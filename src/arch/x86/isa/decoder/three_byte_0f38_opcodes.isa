@@ -150,8 +150,8 @@
             0x43: RowOp::ROWOR();
             0x44: RowOp::ROWNOT();
             0x45: RowOp::ROWXOR();
-            0x46: RowOp::ROWAP();
-            0x47: RowOp::ROWAAP();
+            0x46: RowOp::ROWMAJ3(); 	// formerly `RowOp::ROWAP`
+            0x47: RowOp::ROWCLONE();	// formerly `RowOp::AAP`
             default: Inst::UD2();
         }
         default: decode LEGACY_REPNE {

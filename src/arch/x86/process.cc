@@ -56,6 +56,7 @@
 #include "base/logging.hh"
 #include "base/trace.hh"
 #include "cpu/thread_context.hh"
+#include "debug/HugePage.hh"
 #include "debug/Stack.hh"
 #include "mem/multi_level_page_table.hh"
 #include "mem/page_table.hh"
@@ -968,7 +969,7 @@ X86Process::argsInit(int pageSize,
     DPRINTF(Stack, "Mapping the stack: 0x%x %dB\n", stack_end, stack_size);
     memState->mapRegion(stack_end, stack_size, "stack");
 
-    DPRINTF(Stack, "Mapping the Huge Page Pool: 0x%x %dB\n", system->hugePagePoolrange().start(), system->hugePagePoolrange().size());
+    DPRINTF(HugePage, "Mapping the Huge Page Pool: 0x%x %dB\n", system->hugePagePoolrange().start(), system->hugePagePoolrange().size());
     memState->mapHugePageRegion(system->hugePagePoolrange().start(), system->hugePagePoolrange().size(), "huge page pool");
 
     // map out initial stack contents

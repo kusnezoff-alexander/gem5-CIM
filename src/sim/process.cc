@@ -319,6 +319,8 @@ Process::drain()
 void
 Process::allocatePimMem(Addr vaddr, int64_t size, uint32_t mat_label)
 {
+	// TODO: track `mat_label` in mat_lable_table: if already exists there, just perform usual allocation inside that huge page
+
 	assert(system->hugePagePoolrange().contains(vaddr));
 
     const auto page_size = pTable->hugePageSize();

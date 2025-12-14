@@ -18,7 +18,8 @@ set debuginfod enabled on
 define run_rowand
 	run
 	disable breakpoints
-	tbreak ROWNOT::execute
+	# tbreak ROWNOT::execute
+	tbreak ROWAAP::initiateAcc
 	continue
 	enable breakpoints
 end

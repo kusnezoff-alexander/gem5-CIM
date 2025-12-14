@@ -398,16 +398,19 @@ AbstractMemory::access(PacketPtr pkt)
     if (pkt->isRowOp()) {
         const Request::RowOpPayload* addrs =
             pkt->getConstPtr<Request::RowOpPayload>();
+
+		// address of data inside gem5 simulator is different from the one used in the simulated program
         uint64_t *dest = (uint64_t*)(pmemAddr + addrs->dest - range.start());
         uint64_t *src1 = (uint64_t*)(pmemAddr + addrs->src1 - range.start());
 
 		uint64_t *src2 = nullptr;
-		if(addrs->op != Request::ROWAAP)
+		if(addrs->op != Request::ROWMAJ3)
 			src2 = (uint64_t*)(pmemAddr + addrs->src2 - range.start());
 
 
-        DPRINTF(RowOp, "Performing rowop %d on %p (%x) and %p (%x)\n",
-            addrs->op, src1, *src1, src2, src2 == NULL? 0 : *src2);
+        DPRINTF(RowOp, "Performing rowop %d on %p (%x) and %p (%x), previously (dst=0x%x, src1=0x%x, src2=0x%x)\n",
+            addrs->op, src1, *src1, src2, src2 == NULL? 0 : *src2,
+			addrs->dest, addrs->src1, addrs->src2);
 
         // perform actual ROWOP in memory
         switch (addrs->op) {
@@ -431,13 +434,20 @@ AbstractMemory::access(PacketPtr pkt)
                     *dest++ = *src1++ ^ *src2++;
                 }
                 break;
-            case Request::ROWAP:
-                //TODO implement
+            case Request::ROWMAJ3:
+				for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+					uint64_t a = *dest++;
+					uint64_t b = *src1++;
+					uint64_t c = *src2++;
+					*dest++ = (a & b) | (a & c) | (b & c);
+				}
                 break;
-            case Request::ROWAAP:
-                //TODO implement
-                break;
-            default:
+            case Request::ROWCLONE:
+				for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+					*dest++ = *src1++;
+				}
+				break;
+			default:
                 assert(false);
                 break;
         }
@@ -576,4 +586,4 @@ AbstractMemory::functionalAccess(PacketPtr pkt)
 }
 
 } // namespace memory
-} // namespace gem5
+} // namespace gem

@@ -48,11 +48,11 @@ def template RowOpExecute {{
         // <PERCENT>(op_rd)s; // has no effect
 
         uint64_t dst = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
-        DPRINTF(X86, "Value of Rdi: %d\n", dst);
+        DPRINTF(RowOp, "Value of Rdi (dst): %d\n", dst);
         uint64_t src1 = xc->tcBase()->getReg(X86ISA::int_reg::Rsi);
-        DPRINTF(X86, "Value of Rsi: %d\n", src1);
+        DPRINTF(RowOp, "Value of Rsi (src1): %d\n", src1);
         uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
-        DPRINTF(X86, "Value of Rdx: %d\n", src2);
+        DPRINTF(RowOp, "Value of Rdx (src2): %d\n", src2);
 
         // store operands inside the Request
         // previously `<PERCENT>(rowop_data)s;`
@@ -87,11 +87,11 @@ def template RowOpInitiateAcc {{
         // <PERCENT>(op_rd)s; // has no effect
 
         uint64_t dst = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
-        DPRINTF(X86, "Value of Rdi: %d\n", dst);
+        DPRINTF(RowOp, "Value of Rdi (dst): %d\n", dst);
         uint64_t src1 = xc->tcBase()->getReg(X86ISA::int_reg::Rsi);
-        DPRINTF(X86, "Value of Rsi: %d\n", src1);
+        DPRINTF(RowOp, "Value of Rsi (src1): %d\n", src1);
         uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
-        DPRINTF(X86, "Value of Rdx: %d\n", src2);
+        DPRINTF(RowOp, "Value of Rdx (src2): %d\n", src2);
 
         Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2};
         DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated\n", mnemonic, dst,

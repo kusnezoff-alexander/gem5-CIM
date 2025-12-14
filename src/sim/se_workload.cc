@@ -27,22 +27,21 @@
 
 #include "sim/se_workload.hh"
 
+#include "base/intmath.hh"
 #include "cpu/thread_context.hh"
+#include "debug/HugePage.hh"
 #include "debug/RowOp.hh"
 #include "params/SEWorkload.hh"
 #include "sim/process.hh"
 #include "sim/syscall_debug_macros.hh"
 #include "sim/system.hh"
+#include <chrono>
 
 namespace gem5
 {
 
 SEWorkload::SEWorkload(const Params &p, Addr page_shift) :
-    Workload(p), memPools(page_shift),
-	hugePagePool(p.huge_page_shift, p.huge_page_pool_base, p.huge_page_pool_base + p.huge_page_size),
-	hugePagesNr(p.huge_pages_nr),
-	_hugePageSize(p.huge_page_size),
-	hugePagePoolRange(p.huge_page_pool_base, p.huge_page_pool_base + p.huge_page_size)
+    Workload(p), memPools(page_shift)
 {}
 
 void
@@ -57,10 +56,28 @@ SEWorkload::setSystem(System *sys)
         memories -= m5op_range;
 	}
 
+	initHugePagePool(sys);
+
 	// hugePagePoolRange = sys->hugePagePoolrange(); // TODO: remove huge page pool logic from system and move into `SEWorkload`?
 	memories -= hugePagePoolRange; // reserved for huge page pool !
 
+	// make sure hugePagePoolRange doesn't overlap with any other memPool
+	DPRINTF(HugePage, "HugePagePoolRange is [0x%x-0x%x]\n" , hugePagePoolRange.start(), hugePagePoolRange.end());
+	for(auto &memory: memories) {
+		DPRINTF(HugePage, "MemoryPool in [0x%x-0x%x]\n" , memory.start(), memory.start()+memory.size());
+	}
+
     memPools.populate(memories);
+}
+
+void
+SEWorkload::initHugePagePool(System *sys)
+{
+	hugePagePool = MemPool(ceilLog2(system->hugePageSize()), system->hugePagePoolrange().start(), system->hugePagePoolrange().end());
+	hugePagesNr = system->hugePagePoolrange().size() / system->hugePageSize();
+	_hugePageSize = system->hugePageSize();
+		// TODO: no! - this is the <u>physical</u> address range !
+	hugePagePoolRange = AddrRange(system->hugePagePoolrange());
 }
 
 void
@@ -84,10 +101,10 @@ SEWorkload::syscall(ThreadContext *tc)
 Addr
 SEWorkload::allocPhysPimHugePages(int npages)
 {
-    auto huge_page_frame_number = hugePagePool.allocate(npages);
+    auto pim_paddr = hugePagePool.allocate(npages);
 
-	auto pim_paddr = hugePagePoolRange.start() + hugePageSize() * huge_page_frame_number;
-	DPRINTF(RowOp, "Allocated huge page for PIM with paddr=%d\n", pim_paddr);
+	// auto pim_paddr = hugePagePoolRange.start() + hugePageSize() * huge_page_frame_number;
+	DPRINTF(RowOp, "Allocated huge page for PIM with paddr=0x%x\n", pim_paddr);
 	return pim_paddr;
 }
 
@@ -100,19 +117,23 @@ SEWorkload::allocPhysPages(int npages, int pool_id)
 void
 SEWorkload::deallocPhysPage(Addr paddr, int pool_id)
 {
-    memPools.deallocPhysPages(paddr, 1, pool_id);
+	if(hugePagePoolRange.contains(paddr)) {
+		hugePagePool.deallocate(paddr, 1);
+	} else {
+		memPools.deallocPhysPages(paddr, 1, pool_id);
+	}
 }
 
 Addr
 SEWorkload::memSize(int pool_id) const
 {
-    return memPools.memSize(pool_id);
+    return memPools.memSize(pool_id) + hugePagePool.totalBytes();
 }
 
 Addr
 SEWorkload::freeMemSize(int pool_id) const
 {
-    return memPools.freeMemSize(pool_id);
+    return memPools.freeMemSize(pool_id) + + hugePagePool.freeBytes();
 }
 
 } // namespace gem5

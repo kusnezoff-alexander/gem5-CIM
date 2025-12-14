@@ -47,6 +47,7 @@
 #include "debug/DRAMPower.hh"
 #include "debug/DRAMState.hh"
 #include "debug/RowOp.hh"
+#include "enums/AddrMap.hh"
 #include "sim/system.hh"
 
 namespace gem5
@@ -407,30 +408,39 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
                 *mem_pkt->row_op, mem_pkt->rank, mem_pkt->bank);
         switch (*mem_pkt->row_op) {
 			// TODO: Control Unit should take over here (see [#Issue 7](https://github.com/kusnezoff-alexander/gem5-CIM/issues/7))
+			// TODO: extract into new function ("PIMDRAMInterface"-function or sth like that)
             case Request::ROWAND:
+				// 1) Copy src1 to `T0`
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
                         Bank::B_T0,    true);
                 cmd_at = bank_ref.actAllowedAt;
+				// 2) Copy src2 to `T1`
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
                         Bank::B_T1,    true);
+				// 3) Copy C0 to `T2`
                 cmd_at = bank_ref.actAllowedAt;
                 aapBank(rank_ref, bank_ref, cmd_at, Bank::C_0,
                         Bank::B_T2,    true);
                 cmd_at = bank_ref.actAllowedAt;
+				// TRA (due to `ACT` to `B_T0_T1_T2`) & copy result to dst-row (`mem_pkt->row`)
                 aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
                         mem_pkt->row, true);
                 cmd_at = bank_ref.actAllowedAt;
                 break;
             case Request::ROWOR:
+				// clone input1
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
                         Bank::B_T0,    true);
                 cmd_at = bank_ref.actAllowedAt;
+				// clone input2
                 aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
                         Bank::B_T1,    true);
                 cmd_at = bank_ref.actAllowedAt;
+				// clone constant 1s
                 aapBank(rank_ref, bank_ref, cmd_at, Bank::C_1,
                         Bank::B_T2,    true);
                 cmd_at = bank_ref.actAllowedAt;
+				// TRA & copy result back into result row
                 aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
                         mem_pkt->row, true);
                 cmd_at = bank_ref.actAllowedAt;
@@ -464,13 +474,13 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
                         mem_pkt->row,    true);
                 cmd_at = bank_ref.actAllowedAt;
                 break;
-            case Request::ROWAP:
+            case Request::ROWMAJ3:
                 //[comment from MIMDRAM]: TODO replace Bank::B_T0_T1_T2
                 //with correct bank_ref
                 apBank (rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2);
                 cmd_at = bank_ref.actAllowedAt;
                 break;
-            case Request::ROWAAP:
+            case Request::ROWCLONE:
                 //[comment from MIMDRAM]: TODO replace NULLs with
                 //correct bank_refs
                 aapBank(rank_ref, bank_ref, cmd_at, 0,
@@ -758,6 +768,7 @@ DRAMInterface::DRAMInterface(const DRAMInterfaceParams &_p)
     : MemInterface(_p),
       bankGroupsPerRank(_p.bank_groups_per_rank),
       bankGroupArch(_p.bank_groups_per_rank > 0),
+	  rowsPerMat(0), matsPerBank(_p.mats_per_bank),
       tRL(_p.tCL),
       tWL(_p.tCWL),
       tBURST_MIN(_p.tBURST_MIN),
@@ -817,6 +828,7 @@ DRAMInterface::DRAMInterface(const DRAMInterfaceParams &_p)
             rowBufferSize, burstsPerRowBuffer);
 
     rowsPerBank = capacity / (rowBufferSize * banksPerRank * ranksPerChannel);
+	rowsPerMat = rowsPerBank / matsPerBank;
 
     // some basic sanity checks
     if (tREFI <= tRP || tREFI <= tRFC) {
@@ -967,6 +979,8 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
     // always the top bits, and check before creating the packet
     uint64_t row;
 
+	uint64_t mat = 0;
+
     // Get packed address, starting at 0
     Addr addr = getCtrlAddr(pkt_addr);
 
@@ -981,17 +995,20 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
 		// see MIMDRAM Paper Chap4.1
 		// "the memory controller specifies the logical address of the first and last DRAM mats that the PUD operation targets"
 		// NOTE: these are just logical addresses which are then translated into "appropriate physical mat range, which is used as input for the mat selector"
-		uint16_t first_mat, last_mat;
+		uint16_t first_mat, last_mat; // ignored for now, could be  used when implementing fine-grained MIMDRAM (that is PIM on mat-level) Programming Model
 	}
 
     // we have removed the lowest order address bits that denote the
     // position within the column
 	if (addrMapping == enums::RoRaBaChCo || addrMapping == enums::RoRaBaCoCh) {
+		assert(!pkt->isRowOp()); // "Only AddrMapping enums::RoRaBaChCo is supported with RowOps"
+		// Channel bits: 0
+		// gem5 seems to model each channel behind a separate Memory Controller (so basically /1)
+		// - see https://github.com/orgs/gem5/discussions/2747#discussioncomment-14971006
+
         // the lowest order bits denote the column to ensure that
         // sequential cache lines occupy the same row
         addr = addr / burstsPerRowBuffer;
-
-		// TODO: channel bits ????
 
         // after the channel bits, get the bank bits to interleave
         // over the banks
@@ -1006,6 +1023,8 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
         // lastly, get the row bits, no need to remove them from addr
         row = addr % rowsPerBank;
     } else if (addrMapping == enums::RoCoRaBaCh) {
+		assert(!pkt->isRowOp()); // "Only AddrMapping enums::RoRaBaChCo is supported with RowOps"
+
         // with emerging technologies, could have small page size with
         // interleaving granularity greater than row buffer
         if (burstsPerStripe > burstsPerRowBuffer) {
@@ -1032,13 +1051,40 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
 
         // lastly, get the row bits, no need to remove them from addr
         row = addr % rowsPerBank;
-    } else
+    } else if (addrMapping == enums::RaBaMaRoCh) {
+		// Channel bits: 0
+		// gem5 seems to model each channel behind a separate Memory Controller (so basically /1)
+		// - see https://github.com/orgs/gem5/discussions/2747#discussioncomment-14971006
+
+        // the lowest order bits denote the column to ensure that
+        // sequential cache lines occupy the same row
+        addr = addr / burstsPerRowBuffer;
+
+		// get row bits: ensures contiguous data remains in same mat (instead of being
+		// in the same row but being split across banks/ranks/mats)
+		auto rowsPerMat = rowsPerBank / matsPerBank;
+        row = addr % rowsPerMat;
+		addr = addr / rowsPerMat;
+
+		mat = addr % matsPerBank;
+		addr = addr / matsPerBank;
+
+        // after the channel bits, get the bank bits to interleave
+        // over the banks
+        bank = addr % banksPerRank;
+        addr = addr / banksPerRank;
+
+        // lastly, get the rank, no need to remove them from addr
+        // after the bank, we get the rank bits which thus interleaves
+        // over the ranks
+        rank = addr % ranksPerChannel;
+	} else
         panic("Unknown address mapping policy chosen!");
 
 
     if(pkt->isRowOp())
-        DPRINTF(RowOp, "Address: %#x Rank %d Bank %d Row %d\n",
-                pkt_addr, rank, bank, row);
+        DPRINTF(RowOp, "Address: %#x Rank %d Bank %d Row %d Mat %d\n",
+                pkt_addr, rank, bank, row, mat);
 
     assert(rank < ranksPerChannel);
     assert(bank < banksPerRank);
@@ -1053,8 +1099,8 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
     // later
     uint16_t bank_id = banksPerRank * rank + bank;
 
-    return new MemPacket(pkt, is_read, true, pseudo_channel, rank, bank, row,
-                   bank_id, pkt_addr, size);
+    return new MemPacket(pkt, is_read, true, pseudo_channel, rank, bank,
+			0, mat, row, bank_id, pkt_addr, size); // do we even need subarray-level ??
 }
 
 void DRAMInterface::setupRank(const uint8_t rank, const bool is_read)
@@ -1264,6 +1310,7 @@ void
 DRAMInterface::apBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick,
         uint32_t row)
 {
+	stats.nrMaj3++;
     activateBank(rank_ref, bank_ref, act_tick, row);
     prechargeBank(rank_ref, bank_ref, bank_ref.preAllowedAt);
 }
@@ -1276,7 +1323,8 @@ void
 DRAMInterface::aapBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick,
          uint32_t row1, uint32_t row2, bool act_overlapped)
 {
-    DPRINTF(DRAM, "Activate-Activate at tick %d\n", act_tick);
+	stats.nrRowClones++;
+    DPRINTF(RowOp, "Activate-Activate at tick %d\n", act_tick);
 
     // update the open row
     assert(bank_ref.openRow == Bank::NO_ROW);
@@ -1291,7 +1339,7 @@ DRAMInterface::aapBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick,
     ++rank_ref.numBanksActive;
     assert(rank_ref.numBanksActive <= banksPerRank);
 
-    DPRINTF(DRAM,
+    DPRINTF(RowOp,
         "Activate-Activate bank %d, rank %d at tick %lld, now got %d active\n",
         bank_ref.bank, rank_ref.rank, act_tick,
         ranks[rank_ref.rank]->numBanksActive);
@@ -1338,6 +1386,7 @@ DRAMInterface::aapBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick,
         // move it sooner in time
         reschedule(rank_ref.activateEvent, act_tick);
 
+	// end with PRECHARGE
     prechargeBank(rank_ref, bank_ref, bank_ref.preAllowedAt);
 }
 

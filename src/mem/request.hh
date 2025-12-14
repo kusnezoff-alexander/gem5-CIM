@@ -374,8 +374,8 @@ class Request : public Extensible<Request>
         ROWOR,
         ROWNOT,
         ROWXOR,
-        ROWAP,
-        ROWAAP
+        ROWCLONE,
+        ROWMAJ3
     };
 
     struct RowOpPayload
@@ -690,7 +690,7 @@ class Request : public Extensible<Request>
         req_dest = std::make_shared<Request>(*this);
         req_dest->_vaddr = addrs->dest;
 
-        if (addrs->op == ROWAP) {
+        if (addrs->op == ROWMAJ3) {
             // AP operations have no second operand
             req_src1 = NULL;
         } else {
@@ -699,7 +699,7 @@ class Request : public Extensible<Request>
             req_src1->_vaddr = addrs->src1;
         }
 
-        if (addrs->op == ROWNOT || addrs->op == ROWAP || addrs->op == ROWAAP) {
+        if (addrs->op == ROWNOT || addrs->op == ROWMAJ3 || addrs->op == ROWCLONE) {
             // NOT, AAP and AP operations have no third operand
             req_src2 = NULL;
         } else {

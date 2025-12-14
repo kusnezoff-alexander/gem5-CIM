@@ -1,0 +1,23 @@
+# Set a breakpoint on the method
+break ExecContext::setRegOperand
+
+# Define commands for the breakpoint
+commands
+    # Print the index argument
+    printf "setRegOperand called with idx=%d, val=%p\n", idx, val
+
+    # Optional: print the StaticInst pointer
+    printf "StaticInst pointer si=%p\n", si
+
+    # Continue execution automatically
+    continue
+end
+
+define run_rowaap
+	run
+	disable breakpoints
+	# tbreak ROWNOT::execute
+	tbreak ROWAAP::initiateAcc
+	continue
+	enable breakpoints
+end

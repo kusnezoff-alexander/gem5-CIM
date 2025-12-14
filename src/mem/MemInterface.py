@@ -50,7 +50,9 @@ from m5.proxy import *
 # hitting in the open row. For a closed-page policy, RoCoRaBaCh
 # maximises parallelism.
 class AddrMap(Enum):
-    vals = ["RoRaBaChCo", "RoRaBaCoCh", "RoCoRaBaCh"]
+    vals = ["RoRaBaChCo", "RoRaBaCoCh", "RoCoRaBaCh",
+             "RaBaMaRoCh" # for PIM
+            ]
 
 
 class MemInterface(AbstractMemory):

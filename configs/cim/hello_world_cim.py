@@ -24,6 +24,7 @@ system.mem_ranges = [AddrRange("512MiB")]  # Create an address range
 # You can use ISA-specific CPU models for different workloads:
 # `RiscvTimingSimpleCPU`, `ArmTimingSimpleCPU`.
 system.cpu = X86TimingSimpleCPU()
+# system.cpu = X86O3CPU()           # Unfortunately this doesn't work yet
 
 # Create a memory bus, a system crossbar, in this case
 system.membus = SystemXBar()
@@ -46,6 +47,7 @@ system.cpu.interrupts[0].int_responder = system.membus.mem_side_ports
 system.mem_ctrl = MemCtrl()
 system.mem_ctrl.dram = DDR3_1600_8x8()
 system.mem_ctrl.dram.range = system.mem_ranges[0]
+system.mem_ctrl.dram.addr_mapping = "RaBaMaRoCh"
 system.mem_ctrl.port = system.membus.mem_side_ports
 # system.mem_ctrl.turnPolicy = QoSTurnaroundPolicyIdeal() # Switch BusState depending on which of ReadQueue/WriteQueue have still elements inside
 # system.mem_ctrl.turnPolicy = None
@@ -54,9 +56,11 @@ system.mem_ctrl.port = system.membus.mem_side_ports
 system.system_port = system.membus.cpu_side_ports
 
 # allocate 40MiB of DRAM memory for huge page pool (we will be using for PIM Space)
-system.huge_page_pool_base = 0x0F7000000
+# system.huge_page_pool_base = 0x0F7000000
+system.huge_page_pool_base = 0x10000000
 system.huge_pages_nr = 20
 system.huge_page_size = '2MiB'
+
 
 # Here we set the X86 "hello world" binary. With other ISAs you must specify
 # workloads compiled to those ISAs. Other "hello world" binaries for other ISAs
@@ -65,7 +69,8 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 binary = os.path.join(
     thispath,
     "../../",
-    "tests/cim/pim_malloc_syscall",
+    # "tests/cim/pim_malloc_syscall",
+    "tests/cim/src/pim_full_program",
     # "tests/cim/test_my_add42",
     # "workloads/MIMDRAM-microworkloads/bitweave-buddy_gem5-CIM.exe",
     # "workloads/MIMDRAM-microworkloads/00_addition-baseline_gem5-CIM.exe",

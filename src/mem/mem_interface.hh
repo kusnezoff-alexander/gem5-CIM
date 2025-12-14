@@ -178,7 +178,6 @@ class MemInterface : public AbstractMemory
     const uint32_t ranksPerChannel;
     const uint32_t banksPerRank;
     uint32_t rowsPerBank;
-    uint32_t matsPerBank; // TODO: set in config
 
     /**
      * General timing requirements

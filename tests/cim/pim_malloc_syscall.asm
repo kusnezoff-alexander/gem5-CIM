@@ -13,29 +13,39 @@ global _start
 _start:
 	; Alloc 1st huge page
     mov     rax, 500         ; syscall number
-    mov     rdi, 0x0F7000000 ; Start vaddr
+    ; mov     rdi, 0x0F7000000 ; Start vaddr
+    mov     rdi, 0x10000000 ; Start vaddr
     mov 	rsi, 456         ; Region size
     mov 	rdx, 789         ; Mat label
     syscall
 
 	; Alloc 2nd huge page
     mov     rax, 500
-    mov     rdi, 0x0F8000000 ; Start vaddr (=next huge page)
+    ; mov     rdi, 0x0F8000000 ; Start vaddr (=next huge page)
+    mov     rdi, 0x11000000; Start vaddr (=next huge page)
     mov 	rsi, 456
     mov 	rdx, 789
     syscall
 
 	; Write some value into huge page 1
-	mov     rdi, qword 0x0F8000000   ; absolute address
+	; mov     rdi, qword 0x0F8000000   ; absolute address
+	mov     rdi, qword 0x10000000   ; absolute address
 	mov     byte [rdi], 0x41
     ; Read written value from before and print
     movzx rax, byte [rdi]
     call print_rax_hex       ; should print 0x42
 
 	; allocate normal page
-    ; mov rdi, 0x9789000       ; addr (page aligned)
-	; call mmap_alloc          ; returns addr in rax
-	; call print_rax_hex       ; print returned pointer
+    mov rdi, 0x9789000       ; addr (page aligned)
+	call mmap_alloc          ; returns addr in rax
+	call print_rax_hex       ; print returned pointer
+
+	; make sure memory allocated for huge page can't be mapped
+	; (syscall should return -EINVAL)
+    ; mov rdi, qword 0x0F8000000; addr (page aligned)
+    mov rdi, qword   0x10000000; addr (page aligned)
+	call mmap_alloc          ; returns addr in rax
+	call print_rax_hex       ; print returned pointer
 
     ; Exit
     mov     rax, 60

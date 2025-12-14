@@ -46,6 +46,7 @@
 #ifndef __MEM_CTRL_HH__
 #define __MEM_CTRL_HH__
 
+#include <cstdint>
 #include <deque>
 #include <optional>
 #include <string>
@@ -124,6 +125,8 @@ class MemPacket
     /** Will be populated by address decoder */
     const uint8_t rank;
     const uint8_t bank;
+    const uint8_t subarray;	// a bank typically has 16-64 subarrays
+    const uint8_t mat;		// mat inside subarray
     const uint32_t row;
 
     /** Used for row ops
@@ -221,12 +224,30 @@ class MemPacket
     inline bool isDram() const { return dram; }
 
     MemPacket(PacketPtr _pkt, bool is_read, bool is_dram, uint8_t _channel,
-               uint8_t _rank, uint8_t _bank, uint32_t _row, uint16_t bank_id,
+               uint8_t _rank, uint8_t _bank,
+			   uint32_t _row, uint16_t bank_id,
                Addr _addr, unsigned int _size)
         : entryTime(curTick()), readyTime(curTick()), pkt(_pkt),
           _requestorId(pkt->requestorId()),
           read(is_read), dram(is_dram), pseudoChannel(_channel), rank(_rank),
-          bank(_bank), row(_row),
+          bank(_bank), subarray(0), mat(0), row(_row),
+          // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
+          // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
+          // dram_ctrl.hh#L502)
+		  // `src1_row`&`src2_row` are set later on
+          src1_row(0), src2_row(0), is_row_op(false), row_op(std::nullopt),
+          bankId(bank_id), addr(_addr), size(_size),
+          burstHelper(NULL), _qosValue(_pkt->qosValue())
+    { }
+
+    MemPacket(PacketPtr _pkt, bool is_read, bool is_dram, uint8_t _channel,
+               uint8_t _rank, uint8_t _bank, uint8_t _subarray, uint8_t _mat,
+			   uint32_t _row, uint16_t bank_id,
+               Addr _addr, unsigned int _size)
+        : entryTime(curTick()), readyTime(curTick()), pkt(_pkt),
+          _requestorId(pkt->requestorId()),
+          read(is_read), dram(is_dram), pseudoChannel(_channel), rank(_rank),
+          bank(_bank), subarray(_subarray), mat(_mat),  row(_row),
           // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
           // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
           // dram_ctrl.hh#L502)
@@ -234,7 +255,6 @@ class MemPacket
           bankId(bank_id), addr(_addr), size(_size),
           burstHelper(NULL), _qosValue(_pkt->qosValue())
     { }
-
 };
 
 // The memory packets are store in a multiple dequeue structure,

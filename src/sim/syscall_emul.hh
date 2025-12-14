@@ -43,6 +43,7 @@
 #define __SIM_SYSCALL_EMUL_HH__
 
 #include "debug/RowOp.hh"
+#include <cstdlib>
 #if (defined(__APPLE__) || defined(__OpenBSD__) ||      \
      defined(__FreeBSD__) || defined(__CYGWIN__) ||     \
      defined(__NetBSD__))
@@ -1378,6 +1379,11 @@ mremapFunc(SyscallDesc *desc, ThreadContext *tc,
         typename OS::size_t new_length, int flags,
         guest_abi::VarArgs<uint64_t> varargs)
 {
+	if (tc->getSystemPtr()->hugePagePoolrange().contains(start)) {
+		warn("Can't remap vaddr=0x%x which is inside huge page pool.", start);
+        return -EINVAL;
+	}
+
     auto p = tc->getProcessPtr();
     Addr page_bytes = p->pTable->pageSize();
     uint64_t provided_address = 0;
@@ -2001,6 +2007,12 @@ mmapFunc(SyscallDesc *desc, ThreadContext *tc,
          VPtr<> start, typename OS::size_t length, int prot,
          int tgt_flags, int tgt_fd, typename OS::off_t offset)
 {
+
+	if (tc->getSystemPtr()->hugePagePoolrange().contains(start)) {
+		warn("vaddr=0x%x is in huge page pool. Use `mmap_pim_func` syscall", start);
+        return -EINVAL;
+	}
+
     auto p = tc->getProcessPtr();
     Addr page_bytes = p->pTable->pageSize();
 
@@ -3237,7 +3249,7 @@ getrandomFunc(SyscallDesc *desc, ThreadContext *tc,
 }
 /**
  * @brief Maps virtual address `start` to a physical memory region / huge page
- * of size `length` in a mat-range specified by logical `mat_label`
+ * of size `length` in a mat-range specified by logical `mat_label` by allocating a new huge page.
  *
  * @param size Size in bytes to allocate
  * @param mat_label Logical label of mat(-range) in which to allocate the memory
@@ -3245,7 +3257,7 @@ getrandomFunc(SyscallDesc *desc, ThreadContext *tc,
 template <class OS>
 SyscallReturn
 mmapPimFunc(SyscallDesc *desc, ThreadContext *tc,
-         VPtr<> start, typename OS::size_t size, int mat_label)
+         VPtr<> start, typename OS::size_t size, typename OS::size_t mat_label)
 {
     DPRINTF(RowOp, "mmapPimFunc: Mapping region starting at vaddr=0x%X of %d bytes to a paddr in mat %d\n", start, size, mat_label);
 
@@ -3258,13 +3270,13 @@ mmapPimFunc(SyscallDesc *desc, ThreadContext *tc,
 	auto length_aligned =  (size + hugePageSize - 1) / hugePageSize * hugePageSize; // gem5 also checks `Assertion `(_addrRange.end() % _pageBytes) == 0' failed.` ...
 	// TODO: Next - assertion `(_addrRange.end() % _pageBytes) == 0' failed.`  still fails
 
-	// Allocation of huge page pool in memory is done during `X86Process::argsInit()` (alongside eg stack memory region setup)
-	// p->memState->mapHugePageRegion(start_aligned, length_aligned, "PIM Huge Page", -1, 0); // TODO !
-
-	// for `mmapFunc` actual mapping to paddr is performed in `MemState::fixupFault()` (?? WHY ??)
-	// we'll allocate it directly... should be equivalent
+	// for `mmapFunc` actual mapping to paddr is performed in `MemState::fixupFault()`
+	// - (probably to ensure that only memory for actually used data is allocated)
+	// - `mapHugePageRegion()` is already called on `X86Process::argsInit()`
+	//
+	// we'll allocate it directly for PIM... should be equivalent
 	p->allocatePimMem(start, size, mat_label);
-    return 1;
+    return (Addr)start;
 }
 
 } // namespace gem5

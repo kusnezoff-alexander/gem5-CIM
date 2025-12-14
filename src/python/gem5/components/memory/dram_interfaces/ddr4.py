@@ -231,6 +231,7 @@ class DDR4_2400_4x16(DDR4_2400_16x4):
     # configurations). Currently we do not capture the additional
     # constraints incurred by the bank groups
     banks_per_rank = 8
+    mats_per_bank = 512
 
     # RRD_S (different bank group) for 2K page is MAX(4 CK, 5.3ns)
     tRRD = "5.3ns"

@@ -328,30 +328,35 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
 
         // Make sure `dest`&`src1` address the same bank&rank
         // Only care about dram_pkt1 if the operation is not in place
-        if (addrs->op != Request::ROWAP) {
+        if (addrs->op != Request::ROWMAJ3) {
             assert(mem_pkt->rank == mem_pkt1->rank);
             assert(mem_pkt->bank == mem_pkt1->bank);
+            assert(mem_pkt->subarray== mem_pkt1->subarray);
+            assert(mem_pkt->mat == mem_pkt1->mat);
         }
         // Make sure `dest`&`src2` address the same bank&rank
         // Only care about dram_pkt2 if it's a binary op
-        if (addrs->op != Request::ROWNOT && addrs->op != Request::ROWAAP &&
-                addrs->op != Request::ROWAP) {
+        if (addrs->op != Request::ROWNOT && addrs->op != Request::ROWCLONE &&
+                addrs->op != Request::ROWMAJ3) {
           assert(mem_pkt->rank == mem_pkt2->rank);
           assert(mem_pkt->bank == mem_pkt2->bank);
+		  assert(mem_pkt->subarray== mem_pkt2->subarray);
+		  assert(mem_pkt->mat == mem_pkt2->mat);
         }
         mem_pkt->src1_row = mem_pkt1->row;
         mem_pkt->src2_row = mem_pkt2->row;
         delete mem_pkt1;
         delete mem_pkt2;
 
-        DPRINTF(DRAM, "Src2 valid?: %d Note that src2 is not needed for \
+        DPRINTF(RowOp, "Src2 valid?: %d Note that src2 is not needed for \
             ROWNOT/ROWAAP/ROWAP)\n",
-        addrs->op != Request::ROWNOT && addrs->op != Request::ROWAAP &&
-            addrs->op != Request::ROWAP);
-        DPRINTF(DRAM,
-                "Adding to write queue: RowOp in rank %d bank %d, rows \
+        addrs->op != Request::ROWNOT && addrs->op != Request::ROWCLONE &&
+            addrs->op != Request::ROWMAJ3);
+        DPRINTF(RowOp,
+                "Adding to write queue: RowOp in rank %d bank %d subarray %d mat %d, rows \
                 %d <-- %d (*) %d\n",
-                mem_pkt->rank, mem_pkt->bank, mem_pkt->row,
+                mem_pkt->rank, mem_pkt->bank, mem_pkt->subarray,
+				mem_pkt->mat, mem_pkt->row,
                 mem_pkt->src1_row, mem_pkt->src2_row);
 
         // Add to write queue, and set rowop counter to signal that we must
