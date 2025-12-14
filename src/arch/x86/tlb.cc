@@ -368,9 +368,8 @@ TLB::translate(const RequestPtr &req,
 	// "The Virtual Block Interface: A Flexible Alternative to the Conventional Virtual Memory Framework (2020)" might be suited better
     if(hugePagePoolRange.contains(vaddr)) {
 		// TODO: assert the vaddr is in the preallocated address range for CIM operations
-        DPRINTF(RowOp, "Translating vaddr %#x.\n", vaddr);
 		req->setPaddr(vaddr);
-		DPRINTF(RowOp, "Translated %#x -> %#x.\n", vaddr, vaddr);
+		DPRINTF(HugePage, "TLB::translate for Huge Page %#x -> %#x.\n", vaddr, vaddr);
 		return NoFault;
 	}
 

@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
 	}
 
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
-	// rowand(array1, array2, array1);
+	rowand(array1, array2, array1);
 
 	for(uint16_t i=0; i<N_ELEMS; ++i) {
 		std::printf("%d, %d\n", array1[i], array2[i]);
