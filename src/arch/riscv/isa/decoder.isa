@@ -6360,6 +6360,18 @@ decode QUADRANT default Unknown::unknown() {
             }
         }
 
+        0x1d: decode FUNCT3 {
+            format RowOp {
+                0x2: ROWAND();
+                0x3: ROWOR();
+                0x4: ROWNOT();
+                0x5: ROWXOR();
+                0x6: ROWAP();
+                0x7: ROWAAP();
+            }
+        }
+
+
         0x1e: M5Op::M5Op();
     }
 }

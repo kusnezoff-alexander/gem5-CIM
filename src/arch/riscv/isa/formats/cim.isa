@@ -1,0 +1,125 @@
+// -*- mode:c++ -*-
+
+def template RowOpDeclare {{
+    /**
+     * Static instruction class for "%(mnemonic)s".
+     */
+    class %(class_name)s : public %(base_class)s
+    {
+      private:
+        %(reg_idx_arr_decl)s;
+
+      public:
+        /// Constructor.
+        %(class_name)s(ExtMachInst machInst);
+
+        Fault execute(ExecContext *, trace::InstRecord *) const override;
+        Fault initiateAcc(ExecContext *, trace::InstRecord *) const override;
+        Fault completeAcc(PacketPtr, ExecContext *,
+                          trace::InstRecord *) const override;
+        std::string
+        generateDisassembly(Addr pc,
+                            const loader::SymbolTable *symtab) const override
+        {
+            std::stringstream ss;
+            ss << mnemonic << ' ' << registerName(srcRegIdx(0));
+            return ss.str();
+        }
+    };
+}};
+
+def template RowOpConstructor {{
+    %(class_name)s::%(class_name)s(ExtMachInst machInst):
+        %(base_class)s("%(mnemonic)s", machInst, %(op_class)s)
+    {
+        %(set_reg_idx_arr)s;
+        %(constructor)s;
+    }
+}};
+
+def template RowOpExecute {{
+    Fault
+    %(class_name)s::execute(
+        ExecContext *xc, trace::InstRecord *traceData) const
+    {
+        %(op_src_decl)s;
+        %(op_rd)s;
+        %(rowop_data)s;
+
+        std::vector<bool> byte_enable(sizeof(Request::RowOpPayload), false);
+
+        Fault fault = xc->writeMem(
+                          (uint8_t*)&data,
+                          sizeof(data),
+                          %(dst)s,
+                          %(mem_flags)s,
+                          NULL,
+                          byte_enable
+                      );
+
+        return fault;
+    }
+}};
+
+def template RowOpInitiateAcc {{
+    Fault
+    %(class_name)s::initiateAcc(ExecContext *xc,
+        trace::InstRecord *traceData) const
+    {
+        %(op_src_decl)s;
+        %(op_rd)s;
+        %(rowop_data)s;
+
+        std::vector<bool> byte_enable(sizeof(Request::RowOpPayload), false);
+
+        Fault fault = xc->writeMem(
+                          (uint8_t*)&data,
+                          sizeof(data),
+                          %(dst)s,
+                          %(mem_flags)s,
+                          NULL,
+                          byte_enable
+                      );
+
+        return fault;
+    }
+}};
+
+def template RowOpCompleteAcc {{
+    Fault
+    %(class_name)s::completeAcc(PacketPtr pkt, ExecContext *xc,
+        trace::InstRecord *traceData) const
+    {
+        %(op_decl)s;
+        %(op_rd)s;
+
+        %(op_wb)s;
+
+        return NoFault;
+    }
+}};
+
+def format RowOp() {{
+    params = {
+        'op': name,
+        'src1': '0' if Name == 'ROWAP' else 'Rs1',
+        'src2': '0' if Name in {'ROWNOT', 'ROWAP', 'ROWAAP'} else 'Rs2',
+        'dst': 'Rd',
+        'mem_flags': 'Request::UNCACHEABLE | Request::ROWOP',
+    }
+
+    params['rowop_data'] = """
+    Request::RowOpPayload data =
+        {Request::%(op)s, %(dst)s, %(src1)s, %(src2)s}
+    """%params
+
+    iop = InstObjParams(name, Name, 'RiscvStaticInst', params)
+
+    header_output = RowOpDeclare.subst(iop)
+    decoder_output = RowOpConstructor.subst(iop)
+    decode_block = BasicDecode.subst(iop)
+
+    exec_output = RowOpExecute.subst(iop) \
+                  + RowOpInitiateAcc.subst(iop) \
+                  + RowOpCompleteAcc.subst(iop)
+}};

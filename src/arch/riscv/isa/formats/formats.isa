@@ -51,3 +51,5 @@
 
 // Include the unknown
 ##include "unknown.isa"
+
+##include "cim.isa"
