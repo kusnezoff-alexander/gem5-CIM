@@ -6366,8 +6366,8 @@ decode QUADRANT default Unknown::unknown() {
                 0x3: ROWOR();
                 0x4: ROWNOT();
                 0x5: ROWXOR();
-                0x6: ROWAP();
-                0x7: ROWAAP();
+                0x6: ROWMAJ3();
+                0x7: ROWCLONE();
             }
         }
 
