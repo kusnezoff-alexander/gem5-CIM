@@ -9,12 +9,16 @@ libpim.a: pim_core.o
 	ar rcs libpim.a pim_core.o
 
 # Build the program
-pim_full_program.o: pim_full_program.cpp pim_core.h
+pim_full_program.o: pim_full_program.cpp pim_core_x86.h
 	# Include pim_core.h to ensure template rowand is visible
 	g++ -Wall -Wextra -O2 -c pim_full_program.cpp -o pim_full_program.o
 
 pim_full_program: pim_full_program.o libpim.a
 	g++ -Wall -Wextra -O2 pim_full_program.o -L. -lpim -o pim_full_program
+
+# Cross compile to rsicv
+pim_full_program_riscv: pim_full_program.cpp pim_core_riscv.h
+	riscv64-linux-gnu-g++ -Wall -Wextra -O2 -static -c pim_full_program.cpp -o pim_full_program_riscv
 
 clean:
 	rm -f *.o libpim.a pim_full_program

@@ -1,4 +1,8 @@
-#include "pim_core.h"
+#ifdef __x86_64__
+	#include "pim_core_x86.h"
+#else
+	#include "pim_core_riscv.h"
+#endif
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
