@@ -830,6 +830,7 @@ SyscallDescTable<SEWorkload::SyscallABI64> EmuLinux::syscallDescs64 = {
     { 448,  "process_mrelease" },
     { 449,  "futex_waitv" },
     { 450,  "set_mempolicy_home_node" },
+    { 500, "mmap_pim_func", mmapPimFunc<RiscvLinux64>},
     { 1024, "open", openFunc<RiscvLinux64> },
     { 1025, "link", linkFunc },
     { 1026, "unlink", unlinkFunc },
