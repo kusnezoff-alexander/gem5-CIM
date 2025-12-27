@@ -46,11 +46,13 @@
 #ifndef __MEM_ABSTRACT_MEMORY_HH__
 #define __MEM_ABSTRACT_MEMORY_HH__
 
+#include "base/types.hh"
 #include "mem/backdoor.hh"
 #include "mem/port.hh"
 #include "params/AbstractMemory.hh"
 #include "sim/clocked_object.hh"
 #include "sim/stats.hh"
+#include <unordered_map>
 
 namespace gem5
 {
@@ -208,8 +210,18 @@ class AbstractMemory : public ClockedObject
         statistics::Formula bwWrite;
         /** Total bandwidth from this memory */
         statistics::Formula bwTotal;
+        /** Number of total bytes read from this memory */
+        statistics::Vector pimBytesRead;
+        /** Number of bytes written to this memory */
+        statistics::Vector pimBytesWritten;
+        /** Number of read requests */
+        statistics::Vector numPimReads;
+        /** Number of write requests */
+        statistics::Vector numPimWrites;
     } stats;
 
+	/** Tracks object's (size,elem_size) by their start address */
+	std::unordered_map<Addr, std::pair<int,int>>  objTracker;
 
   private:
 

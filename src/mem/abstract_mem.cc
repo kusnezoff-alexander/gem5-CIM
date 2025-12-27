@@ -40,6 +40,8 @@
 
 #include "mem/abstract_mem.hh"
 
+#include <algorithm>
+#include <utility>
 #include <vector>
 
 #include "base/loader/memory_image.hh"
@@ -49,7 +51,9 @@
 #include "debug/MemoryAccess.hh"
 #include "debug/RowOp.hh"
 #include "mem/packet_access.hh"
+#include "mem/request.hh"
 #include "sim/system.hh"
+#include "mem/pim.hh"
 
 namespace gem5
 {
@@ -241,6 +245,38 @@ AbstractMemory::MemStats::regStats()
         bwTotal.subname(i, sys->getRequestorName(i));
     }
 
+   pimBytesRead
+        .init(max_requestors)
+        .flags(total | nozero | nonan)
+        ;
+    for (int i = 0; i < max_requestors; i++) {
+        bytesRead.subname(i, sys->getRequestorName(i));
+    }
+
+   pimBytesWritten
+        .init(max_requestors)
+        .flags(total | nozero | nonan)
+        ;
+    for (int i = 0; i < max_requestors; i++) {
+        bytesRead.subname(i, sys->getRequestorName(i));
+    }
+
+    numPimReads
+        .init(max_requestors)
+        .flags(total | nozero | nonan)
+        ;
+    for (int i = 0; i < max_requestors; i++) {
+        numReads.subname(i, sys->getRequestorName(i));
+    }
+
+    numPimWrites
+        .init(max_requestors)
+        .flags(total | nozero | nonan)
+        ;
+    for (int i = 0; i < max_requestors; i++) {
+        numReads.subname(i, sys->getRequestorName(i));
+    }
+
     bwRead = bytesRead / simSeconds;
     bwInstRead = bytesInstRead / simSeconds;
     bwWrite = bytesWritten / simSeconds;
@@ -399,20 +435,30 @@ AbstractMemory::access(PacketPtr pkt)
         const Request::RowOpPayload* addrs =
             pkt->getConstPtr<Request::RowOpPayload>();
 
+		assert(system()->hugePagePoolrange().contains(addrs->dest));
+
 		// address of data inside gem5 simulator is different from the one used in the simulated program
         uint64_t *dest = (uint64_t*)(pmemAddr + addrs->dest - range.start());
         uint64_t *src1 = (uint64_t*)(pmemAddr + addrs->src1 - range.start());
 
 		uint64_t *src2 = nullptr;
-		if(addrs->op != Request::ROWMAJ3)
+		// if(addrs->op != Request::ROWMAJ3) // just don't use src2 for unary operations
 			src2 = (uint64_t*)(pmemAddr + addrs->src2 - range.start());
-
 
         DPRINTF(RowOp, "Performing rowop %d on %p (%x) and %p (%x), previously (dst=0x%x, src1=0x%x, src2=0x%x)\n",
             addrs->op, src1, *src1, src2, src2 == NULL? 0 : *src2,
 			addrs->dest, addrs->src1, addrs->src2);
 
+		size_t size, elem_size;
+		if (addrs->op != Request::ROWTRSP_INIT) {
+			// assert(objTracker.find(addrs->dest) != objTracker.end());
+			size = objTracker[addrs->dest].first;
+			elem_size = objTracker[addrs->dest].first;
+		}
+
         // perform actual ROWOP in memory
+		// NOTE: process sees data in horizontal (=normal) data layout
+		// - so let's keep it that way in the simulator..
         switch (addrs->op) {
             case Request::ROWAND:
                 for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
@@ -435,6 +481,7 @@ AbstractMemory::access(PacketPtr pkt)
                 }
                 break;
             case Request::ROWMAJ3:
+				// TODO: check that `dst`,`src1`,`src2` are all in B-group (and are addressable by TRA)
 				for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
 					uint64_t a = *dest++;
 					uint64_t b = *src1++;
@@ -447,6 +494,49 @@ AbstractMemory::access(PacketPtr pkt)
 					*dest++ = *src1++;
 				}
 				break;
+			case Request::ROWTRSP_INIT: {
+				auto size = addrs->src1;
+				auto elem_size = addrs->src2;
+				// TODO: register in object tracker
+				objTracker[addrs->dest] = std::make_pair(size, elem_size);
+				break;
+
+				}
+			case Request::ROWSUB: {
+				PIM::perform_bitwise_operation(PIM::Operation::SUB, dest, src1, src2, elem_size, size/elem_size);
+                // for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                //     *dest++ = *src1++ - *src2++;
+                // }
+                break;
+			}
+			case Request::ROWADD:
+				PIM::perform_bitwise_operation(PIM::Operation::ADD, dest, src1, src2, elem_size, size/elem_size);
+                // for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                //     *dest++ = *src1++ + *src2++;
+                // }
+                break;
+			case Request::ROWMIN:
+                for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                    *dest++ = std::min(*src1++, *src2++);
+                }
+                break;
+			case Request::ROWMAX:
+                for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                    *dest++ = std::max(*src1++, *src2++);
+                }
+                break;
+			case Request::ROWRIGHT_SHIFT:
+				PIM::perform_bitwise_operation(PIM::Operation::RSHIFT, dest, src1, src2, elem_size, size/elem_size);
+                // for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                //     *dest++ = *src1++ >> 1;
+                // }
+                break;
+			case Request::ROWLEFT_SHIFT:
+				PIM::perform_bitwise_operation(PIM::Operation::LSHIFT, dest, src1, src2, elem_size, size/elem_size);
+                // for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                //     *dest++ = *src1++ << 1;
+                // }
+                break;
 			default:
                 assert(false);
                 break;
@@ -507,9 +597,11 @@ AbstractMemory::access(PacketPtr pkt)
         assert(!pkt->isWrite());
 
 
-		if (system()->hugePagePoolrange().contains(pkt->getAddr()))
+		if (system()->hugePagePoolrange().contains(pkt->getAddr())) {
+
 			DPRINTF(RowOp, "%s READ into PIM region due to %s\n",
 					__func__, pkt->print());
+		}
 
         if (pkt->isLLSC()) {
             assert(!pkt->fromCache());
@@ -536,23 +628,35 @@ AbstractMemory::access(PacketPtr pkt)
         // no need to do anything
     } else if (pkt->isWrite()) {
 
-		if (system()->hugePagePoolrange().contains(pkt->getAddr()))
-			DPRINTF(RowOp, "%s WRITE into PIM region due to %s\n",
-					__func__, pkt->print());
-
-
         if (writeOK(pkt)) {
-            if (pmemAddr) {
-                pkt->writeData(host_addr);
-                DPRINTF(MemoryAccess, "%s write due to %s\n",
-                        __func__, pkt->print());
-            }
-            assert(!pkt->req->isInstFetch());
-            TRACE_PACKET("Write");
-            if (collectStats) {
-                stats.numWrites[pkt->req->requestorId()]++;
-                stats.bytesWritten[pkt->req->requestorId()] += pkt->getSize();
-            }
+
+			if (system()->hugePagePoolrange().contains(pkt->getAddr())) {
+				DPRINTF(RowOp, "%s WRITE into PIM region due to %s\n",
+						__func__, pkt->print());
+
+				assert(!pkt->req->isInstFetch());
+				if (pmemAddr) {
+					// TODO!
+					pkt->writeDataVertically(host_addr);
+				}
+				if (collectStats) {
+					stats.numPimWrites[pkt->req->requestorId()]++;
+					stats.pimBytesWritten[pkt->req->requestorId()] += pkt->getSize();
+				}
+			} else {
+				if (pmemAddr) {
+					pkt->writeData(host_addr);
+					DPRINTF(MemoryAccess, "%s write due to %s\n",
+							__func__, pkt->print());
+				}
+				assert(!pkt->req->isInstFetch());
+				TRACE_PACKET("Write");
+				if (collectStats) {
+					stats.numWrites[pkt->req->requestorId()]++;
+					stats.bytesWritten[pkt->req->requestorId()] += pkt->getSize();
+				}
+			}
+
         }
     } else {
         panic("Unexpected packet %s", pkt->print());

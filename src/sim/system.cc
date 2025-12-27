@@ -311,7 +311,7 @@ System::isMemAddr(Addr addr) const
 bool
 System::isHugePagePoolAddr(Addr addr) const
 {
-	hugePagePoolrange().contains(addr);
+	return hugePagePoolrange().contains(addr);
 }
 
 void

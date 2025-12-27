@@ -375,14 +375,23 @@ class Request : public Extensible<Request>
         ROWNOT,
         ROWXOR,
         ROWCLONE,
-        ROWMAJ3
+        ROWMAJ3,
+		ROWTRSP_INIT,
+		ROWSUB,
+		ROWADD,
+		ROWMIN,
+		ROWMAX,
+		ROWRIGHT_SHIFT,
+		ROWLEFT_SHIFT,
     };
 
     struct RowOpPayload
     {
         Request::RowOp op;
         Addr dest;
+		// for ROWTRSP: stores size
         Addr src1;
+		// for ROWTRSP: stores size_elems
         Addr src2;
     };
 

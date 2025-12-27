@@ -1317,6 +1317,30 @@ class Packet : public Printable, public Extensible<Packet>
         setData(blk_data + getOffset(blkSize));
     }
 
+
+    /**
+     * Copy data from the packet to the memory at the provided pointer
+	 * using Object Tracker.
+     * @param p Pointer to which data will be copied.
+     */
+    void
+    writeDataVertically(uint8_t *p) const
+    {
+        if (!isMaskedWrite()) {
+            std::memcpy(p, getConstPtr<uint8_t>(), getSize());
+        } else {
+            assert(req->getByteEnable().size() == getSize());
+            // Write only the enabled bytes
+            const uint8_t *base = getConstPtr<uint8_t>();
+            for (unsigned int i = 0; i < getSize(); i++) {
+                if (req->getByteEnable()[i]) {
+                    p[i] = *(base + i);
+                }
+                // Disabled bytes stay untouched
+            }
+        }
+    }
+
     /**
      * Copy data from the packet to the memory at the provided pointer.
      * @param p Pointer to which data will be copied.

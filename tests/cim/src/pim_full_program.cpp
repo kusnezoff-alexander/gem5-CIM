@@ -1,4 +1,4 @@
-#include "pim_core.h"
+#include "libpim/pim_core.h"
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -19,6 +19,8 @@ void test_every_rowop()
 	auto array1 = static_cast<uint16_t*>(pim_malloc(N_ELEMS, 0));
 	auto array2 = static_cast<uint16_t*>(pim_malloc(N_ELEMS, 0));
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
+	// rowtrsp_init(array1, N_ELEMS*sizeof(uint16_t), sizeof(uint16_t));
+	// rowtrsp_init(array2, N_ELEMS*sizeof(uint16_t), sizeof(uint16_t));
 
 	// 1. Write data
 	for(int i=0; i<N_ELEMS; ++i) {
@@ -32,8 +34,7 @@ void test_every_rowop()
 #endif
 	}
 
-	// TODO: perform ROWAND !
-	// rowand(array1, array2, array1);
+	rowand(array1, array2, array1);
 	// rowand(array1, array2, array1);
 	// rowand(array1, array2, array1);
 

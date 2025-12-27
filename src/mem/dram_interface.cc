@@ -487,6 +487,12 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
                         0, true);
                 cmd_at = bank_ref.actAllowedAt;
                 break;
+			case Request::ROWTRSP_INIT:
+				{
+
+				// TODO: some paper indicated that data transposition might have no performance overhead (TODO: include paper reference)
+				break;
+				}
             default:
                 assert(false);
                 break;

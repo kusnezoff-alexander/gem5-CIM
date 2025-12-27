@@ -152,6 +152,13 @@
             0x45: RowOp::ROWXOR();
             0x46: RowOp::ROWMAJ3(); 	// formerly `RowOp::ROWAP`
             0x47: RowOp::ROWCLONE();	// formerly `RowOp::AAP`
+            0x48: RowOp::ROWTRSP_INIT();
+            0x49: RowOp::ROWSUB();
+            0x4a: RowOp::ROWADD();
+            0x4b: RowOp::ROWMIN();
+            0x4c: RowOp::ROWMAX();
+            0x4d: RowOp::ROWRIGHT_SHIFT();
+            0x4e: RowOp::ROWLEFT_SHIFT();
             default: Inst::UD2();
         }
         default: decode LEGACY_REPNE {
