@@ -149,9 +149,8 @@ TLB::lookup(Addr va, bool update_lru)
 	}
 
     TlbEntry *entry = trie.lookup(va);
-    if (entry && update_lru) {
+    if (entry && update_lru)
         entry->lruSeq = nextSeq();
-	}
 
 
 	if(entry!=nullptr && hugePagePoolRange.contains(va)) {

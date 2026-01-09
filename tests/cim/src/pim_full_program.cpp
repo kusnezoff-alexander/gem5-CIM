@@ -11,17 +11,19 @@
 using namespace pim_core;
 
 #define VERIFY 1
-const size_t N_ELEMS = 3;
+const size_t N_ELEMS = 4096;
+using dtype = uint32_t;
+
 
 void test_every_rowop()
 {
 
 #ifdef VERIFY
-	auto array1_initial_val = static_cast<uint16_t*>(malloc(N_ELEMS));
-	auto array2_initial_val = static_cast<uint16_t*>(malloc(N_ELEMS));
+	auto array1_initial_val = static_cast<dtype*>(malloc(N_ELEMS));
+	auto array2_initial_val = static_cast<dtype*>(malloc(N_ELEMS));
 #endif
-	auto array1 = static_cast<uint16_t*>(pim_malloc(N_ELEMS, 0));
-	auto array2 = static_cast<uint16_t*>(pim_malloc(N_ELEMS, 0));
+	auto array1 = static_cast<dtype*>(pim_malloc(N_ELEMS, 0));
+	auto array2 = static_cast<dtype*>(pim_malloc(N_ELEMS, 0));
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
 
 	// 1. Write data
@@ -59,25 +61,28 @@ void test_every_rowop()
 
 }
 
-using dtype = uint16_t;
-
 int main(int argc, char* argv[])
 {
 
 	auto array1 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
 	auto array2 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
+	auto array3 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
 	// 1. Write data
-	for(uint16_t i=0; i<N_ELEMS; ++i) {
+	for(uint32_t i=0; i<N_ELEMS; ++i) {
 		// array1[i] = 1;
 		array1[i] = i;
 		array2[i] = ~i;
 	}
 
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
-	rowand(array1, array2, array1);
+	rowand(array3, array2, array1);
+	std::printf("Ran rowand and got ptr array1=%p, array2=%p\n", array1, array2);
 
-	for(uint16_t i=0; i<N_ELEMS; ++i) {
-		std::printf("%d, %d\n", array1[i], array2[i]);
+	for(uint32_t i=0; i<N_ELEMS; ++i) {
+		auto elem1 = array1[i];
+		auto elem2 = array2[i];
+		auto elem3 = array3[i];
+		std::printf("%d: %d & %d = %d\n", i, elem1, elem2, elem3);
 	}
 	return 0;
 }

@@ -109,7 +109,7 @@ namespace X86ISA
 
         AddrRange m5opRange;
         AddrRange hugePagePoolRange;
-		Addr hugePageAddrMask = 0x1FFFFF; // TODO: adjust for 2GiB pages (based on given config)
+        Addr hugePageAddrMask = 0x1FFFFF; // TODO: adjust for 2GiB pages (based on given config)
 
         struct TlbStats : public statistics::Group
         {

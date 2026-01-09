@@ -47,6 +47,8 @@
 #include "base/str.hh"
 #include "base/trace.hh"
 #include "cpu/thread_context.hh"
+#include "debug/HugePage.hh"
+#include "debug/RowOp.hh"
 #include "debug/TLB.hh"
 #include "debug/TLBVerbose.hh"
 #include "mem/page_table.hh"
@@ -79,7 +81,7 @@ buildKey(Addr vpn, uint16_t asid)
 
 TLB::TLB(const Params &p) :
     BaseTLB(p), size(p.size), tlb(size),
-    lruSeq(0), stats(this), pma(p.pma_checker),
+    lruSeq(0), hugePagePoolRange(p.system->hugePagePoolrange()), stats(this), pma(p.pma_checker),
     pmp(p.pmp)
 {
     for (size_t x = 0; x < size; x++) {
@@ -115,6 +117,9 @@ TLB::evictLRU()
 TlbEntry *
 TLB::lookup(Addr vpn, uint16_t asid, BaseMMU::Mode mode, bool hidden)
 {
+    if(hugePagePoolRange.contains(vpn))
+        DPRINTF(HugePage, "TLB lookup inside hugePagePool for va=0x%x\n",vpn);
+
     TlbEntry *entry = trie.lookup(buildKey(vpn, asid));
 
     DPRINTF(TLBVerbose, "lookup(vpn=%#x, asid=%#x, key=%#x): "
@@ -122,6 +127,12 @@ TLB::lookup(Addr vpn, uint16_t asid, BaseMMU::Mode mode, bool hidden)
             vpn, asid, buildKey(vpn, asid), entry ? "hit" : "miss",
             entry ? entry->paddr : 0, entry ? entry->size() : 0,
             hidden ? "hidden" : "");
+
+    if(entry!=nullptr && hugePagePoolRange.contains(vpn)) {
+        // QUICKFIX (bc we are not touching `trie` for huge pages I guess?
+        // entry->paddr = entry->paddr | (va & hugePageAddrMask);
+        DPRINTF(HugePage, "TLB lookup inside hugePagePool found paddr=0x%x for va=0x%x\n", entry->paddr, vpn);
+    }
 
     if (!hidden) {
         if (entry)

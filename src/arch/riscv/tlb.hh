@@ -94,6 +94,9 @@ class TLB : public BaseTLB
     EntryList freeList;         // free entries
     uint64_t lruSeq;
 
+    AddrRange hugePagePoolRange;
+		Addr hugePageAddrMask = 0x1FFFFF; // TODO: adjust for 2GiB pages (based on given config)
+
     Walker *walker;
 
     struct TlbStats : public statistics::Group

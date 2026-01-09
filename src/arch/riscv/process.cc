@@ -45,6 +45,7 @@
 #include "base/loader/object_file.hh"
 #include "base/logging.hh"
 #include "cpu/thread_context.hh"
+#include "debug/HugePage.hh"
 #include "debug/Stack.hh"
 #include "mem/page_table.hh"
 #include "params/Process.hh"
@@ -62,7 +63,9 @@ using namespace RiscvISA;
 RiscvProcess::RiscvProcess(const ProcessParams &params,
         loader::ObjectFile *objFile) :
         Process(params,
-                new EmulationPageTable(params.name, params.pid, PageBytes),
+                new EmulationPageTable(params.name, params.pid,
+                                       PageBytes, params.system->hugePageSize(),
+										   params.system->hugePagePoolrange()),
                 objFile)
 {
     fatal_if(params.useArchPT, "Arch page tables not implemented.");
@@ -258,6 +261,9 @@ RiscvProcess::argsInit(int pageSize)
     tc->pcState(getStartPC());
 
     memState->setStackMin(roundDown(memState->getStackMin(), pageSize));
+
+    DPRINTF(HugePage, "Mapping the Huge Page Pool: 0x%x %dB\n", system->hugePagePoolrange().start(), system->hugePagePoolrange().size());
+    memState->mapHugePageRegion(system->hugePagePoolrange().start(), system->hugePagePoolrange().size(), "huge page pool");
 }
 
 } // namespace gem5

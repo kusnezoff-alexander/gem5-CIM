@@ -5,7 +5,7 @@ target/x86/pim_core.o: pim_core.cpp
 	g++ -Wall -Wextra -O2 -c pim_core.cpp -o target/x86/pim_core.o
 
 target/riscv/pim_core.o: pim_core.cpp
-	riscv64-linux-gnu-g++ -Wall -Wextra -O2 -c pim_core.cpp -o target/riscv/pim_core.o
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 -c pim_core.cpp -o target/riscv/pim_core.o
 
 # Create the static library
 target/x86/libpim.a: target/x86/pim_core.o
@@ -25,10 +25,10 @@ target/x86/pim_full_program: target/x86/pim_full_program.o target/x86/libpim.a
 
 # Cross compile to rsicv
 target/riscv/pim_full_program.o: pim_full_program.cpp pim_core_riscv.h
-	riscv64-linux-gnu-g++ -Wall -Wextra -c pim_full_program.cpp -o target/riscv/pim_full_program.o
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 -c pim_full_program.cpp -o target/riscv/pim_full_program.o
 
 target/riscv/pim_full_program: target/riscv/pim_full_program.o target/riscv/libpim.a
-	riscv64-linux-gnu-g++ -Wall -Wextra target/riscv/pim_full_program.o -static -Ltarget/riscv -lpim -o target/riscv/pim_full_program
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 target/riscv/pim_full_program.o -static -Ltarget/riscv -lpim -o target/riscv/pim_full_program
 
 clean:
 	rm -f target/riscv/* target/x86/*

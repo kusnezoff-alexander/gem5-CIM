@@ -370,6 +370,14 @@ class Request : public Extensible<Request>
     // mem/request.hh#L202)
     enum RowOp
     {
+        ROWADD8,
+        ROWADD16,
+        ROWADD32,
+        ROWADD64,
+        ROWSUB8,
+        ROWSUB16,
+        ROWSUB32,
+        ROWSUB64,
         ROWAND,
         ROWOR,
         ROWNOT,

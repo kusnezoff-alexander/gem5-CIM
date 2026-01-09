@@ -34,6 +34,9 @@ def template RowOpConstructor {{
     {
         %(set_reg_idx_arr)s;
         %(constructor)s;
+
+        this->flags[IsRowOp] = true;
+        this->flags[IsStore] = true;
     }
 }};
 
@@ -46,7 +49,7 @@ def template RowOpExecute {{
         %(op_rd)s;
         %(rowop_data)s;
 
-        std::vector<bool> byte_enable(sizeof(Request::RowOpPayload), false);
+        std::vector<bool> byte_enable(sizeof(Request::RowOpPayload), true);
 
         Fault fault = xc->writeMem(
                           (uint8_t*)&data,
@@ -70,7 +73,7 @@ def template RowOpInitiateAcc {{
         %(op_rd)s;
         %(rowop_data)s;
 
-        std::vector<bool> byte_enable(sizeof(Request::RowOpPayload), false);
+        std::vector<bool> byte_enable(sizeof(Request::RowOpPayload), true);
 
         Fault fault = xc->writeMem(
                           (uint8_t*)&data,

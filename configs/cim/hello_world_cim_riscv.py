@@ -39,6 +39,7 @@ system.cpu.createInterruptController()
 system.mem_ctrl = MemCtrl()
 system.mem_ctrl.dram = DDR3_1600_8x8()
 system.mem_ctrl.dram.range = system.mem_ranges[0]
+system.mem_ctrl.dram.addr_mapping = "RaBaMaRoCh"
 system.mem_ctrl.port = system.membus.mem_side_ports
 # system.mem_ctrl.turnPolicy = QoSTurnaroundPolicyIdeal() # Switch BusState depending on which of ReadQueue/WriteQueue have still elements inside
 # system.mem_ctrl.turnPolicy = None
@@ -47,7 +48,8 @@ system.mem_ctrl.port = system.membus.mem_side_ports
 system.system_port = system.membus.cpu_side_ports
 
 # allocate 40MiB of DRAM memory for huge page pool (we will be using for PIM Space)
-system.huge_page_pool_base = 0x0F7000000
+# system.huge_page_pool_base = 0x0F7000000
+system.huge_page_pool_base = 0x10000000
 system.huge_pages_nr = 20
 system.huge_page_size = "2MiB"
 
@@ -57,7 +59,7 @@ system.huge_page_size = "2MiB"
 thispath = os.path.dirname(os.path.realpath(__file__))
 binary = os.path.join(
     thispath,
-    "../tests/cim/src/target/riscv/pim_full_program",
+    "../../tests/cim/src/target/riscv/pim_full_program",
     # "./test"
     # "tests/cim/pim_malloc_syscall",
     # "tests/cim/test_my_add42",

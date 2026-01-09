@@ -435,19 +435,22 @@ AbstractMemory::access(PacketPtr pkt)
                 }
                 break;
             case Request::ROWMAJ3:
-				for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
-					uint64_t a = *dest++;
-					uint64_t b = *src1++;
-					uint64_t c = *src2++;
-					*dest++ = (a & b) | (a & c) | (b & c);
-				}
+                for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                    uint64_t a = *dest++;
+                    uint64_t b = *src1++;
+                    uint64_t c = *src2++;
+                    *dest++ = (a & b) | (a & c) | (b & c);
+                }
                 break;
             case Request::ROWCLONE:
-				for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
-					*dest++ = *src1++;
-				}
-				break;
-			default:
+                for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                    *dest++ = *src1++;
+                }
+                break;
+            case Request::ROWADD16:
+                assert(false);
+                break;
+            default:
                 assert(false);
                 break;
         }

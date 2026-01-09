@@ -59,7 +59,7 @@ system.system_port = system.membus.cpu_side_ports
 # system.huge_page_pool_base = 0x0F7000000
 system.huge_page_pool_base = 0x10000000
 system.huge_pages_nr = 20
-system.huge_page_size = '2MiB'
+system.huge_page_size = "2MiB"
 
 
 # Here we set the X86 "hello world" binary. With other ISAs you must specify
@@ -70,7 +70,7 @@ binary = os.path.join(
     thispath,
     "../../",
     # "tests/cim/pim_malloc_syscall",
-    "tests/cim/src/pim_full_program",
+    "tests/cim/src/target/x86/pim_full_program",
     # "tests/cim/test_my_add42",
     # "workloads/MIMDRAM-microworkloads/bitweave-buddy_gem5-CIM.exe",
     # "workloads/MIMDRAM-microworkloads/00_addition-baseline_gem5-CIM.exe",
