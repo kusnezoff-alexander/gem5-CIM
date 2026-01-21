@@ -442,6 +442,11 @@ AbstractMemory::access(PacketPtr pkt)
                     *dest++ = (a & b) | (a & c) | (b & c);
                 }
                 break;
+            case Request::ROWNOR:
+                for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                    *dest++ = ~(*src1++ | *src2++);
+                }
+                break;
             case Request::ROWCLONE:
                 for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
                     *dest++ = *src1++;

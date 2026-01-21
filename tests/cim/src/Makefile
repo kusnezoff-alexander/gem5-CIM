@@ -30,5 +30,25 @@ target/riscv/pim_full_program.o: pim_full_program.cpp pim_core_riscv.h
 target/riscv/pim_full_program: target/riscv/pim_full_program.o target/riscv/libpim.a
 	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 target/riscv/pim_full_program.o -static -Ltarget/riscv -lpim -o target/riscv/pim_full_program
 
+target/riscv/pim_and_reduce.o: microworkloads/pim_and_reduce.cpp pim_core_riscv.h
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 -c microworkloads/pim_and_reduce.cpp -o target/riscv/pim_and_reduce.o
+
+target/riscv/pim_and_reduce: target/riscv/pim_and_reduce.o target/riscv/libpim.a
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 target/riscv/pim_and_reduce.o -static -Ltarget/riscv -lpim -o target/riscv/pim_and_reduce
+
+target/riscv/baseline_and_reduce.o: microworkloads/baseline_and_reduce.cpp pim_core_riscv.h
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 -c microworkloads/baseline_and_reduce.cpp -o target/riscv/baseline_and_reduce.o
+
+target/riscv/baseline_and_reduce: target/riscv/baseline_and_reduce.o target/riscv/libpim.a
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 target/riscv/baseline_and_reduce.o -static -Ltarget/riscv -lpim -o target/riscv/baseline_and_reduce
+
+target/riscv/pim_primitive_and_reduce.o: microworkloads/pim_primitive_and_reduce.cpp pim_core_riscv.h
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 -c microworkloads/pim_primitive_and_reduce.cpp -o target/riscv/pim_primitive_and_reduce.o
+
+target/riscv/pim_primitive_and_reduce: target/riscv/pim_primitive_and_reduce.o target/riscv/libpim.a
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 target/riscv/pim_primitive_and_reduce.o -static -Ltarget/riscv -lpim -o target/riscv/pim_primitive_and_reduce
+
+microworkloads: target/riscv/baseline_and_reduce target/riscv/pim_and_reduce target/riscv/pim_primitive_and_reduce
+
 clean:
 	rm -f target/riscv/* target/x86/*

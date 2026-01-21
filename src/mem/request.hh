@@ -383,7 +383,8 @@ class Request : public Extensible<Request>
         ROWNOT,
         ROWXOR,
         ROWCLONE,
-        ROWMAJ3
+        ROWMAJ3,
+        ROWNOR
     };
 
     struct RowOpPayload

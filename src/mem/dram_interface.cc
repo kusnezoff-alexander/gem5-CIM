@@ -483,8 +483,8 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
             case Request::ROWCLONE:
                 //[comment from MIMDRAM]: TODO replace NULLs with
                 //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
+                aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
+                        mem_pkt->row, true);
                 cmd_at = bank_ref.actAllowedAt;
                 break;
             default:

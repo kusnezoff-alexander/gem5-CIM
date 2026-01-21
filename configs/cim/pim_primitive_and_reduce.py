@@ -23,7 +23,7 @@ system.mem_ranges = [AddrRange("512MiB")]  # Create an address range
 # Create a simple CPU
 # You can use ISA-specific CPU models for different workloads:
 # `RiscvTimingSimpleCPU`, `ArmTimingSimpleCPU`.
-system.cpu = RiscvTimingSimpleCPU()
+system.cpu = RiscvO3CPU()
 
 # Create a memory bus, a system crossbar, in this case
 system.membus = SystemXBar()
@@ -61,7 +61,8 @@ binary = os.path.join(
     thispath,
     # "../../tests/cim/src/target/riscv/pim_full_program",
     # "../../tests/cim/src/target/riscv/pim_and_reduce",
-    "../../tests/cim/src/target/riscv/baseline_and_reduce",
+    "../../tests/cim/src/target/riscv/pim_primitive_and_reduce",
+    # "../../tests/cim/src/target/riscv/baseline_and_reduce",
     # "./test"
     # "tests/cim/pim_malloc_syscall",
     # "tests/cim/test_my_add42",

@@ -23,7 +23,7 @@ system.mem_ranges = [AddrRange("512MiB")]  # Create an address range
 # Create a simple CPU
 # You can use ISA-specific CPU models for different workloads:
 # `RiscvTimingSimpleCPU`, `ArmTimingSimpleCPU`.
-system.cpu = RiscvTimingSimpleCPU()
+system.cpu = RiscvO3CPU()
 
 # Create a memory bus, a system crossbar, in this case
 system.membus = SystemXBar()

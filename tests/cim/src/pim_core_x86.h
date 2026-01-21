@@ -68,13 +68,13 @@ static inline void rowmaj3(T* dst, const T* src1, const T* src2) {
     );
 }
 template<typename T>
-static inline void rowclone(T* dst, const T* src1, const T* src2) {
+static inline void rowclone(T* dst, const T* src1) {
     // dst, src1, src2 are just placeholders for registers or memory operands
     // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x47\n"
         :
-        : "D"(dst), "S"(src1), "d"(src2)  // Example: dst->RDI, src1->RSI, src2->RDX
+        : "D"(dst), "S"(src1)  // Example: dst->RDI, src1->RSI, src2->RDX
         : "memory"
     );
 }
