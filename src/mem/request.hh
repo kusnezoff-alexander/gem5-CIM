@@ -374,16 +374,34 @@ class Request : public Extensible<Request>
         ROWOR,
         ROWNOT,
         ROWXOR,
-        ROWCLONE,
-        ROWMAJ3
+		ROWABS,
+		ROWRELU,
+		ROWTRSP_INIT,
+		ROWSUB,
+		ROWADD,
+		ROWMIN,
+		ROWMAX,
+		ROWEQUAL,
+		ROWGREATER,
+		ROWGREATER_EQUAL,
+		ROWIF_ELSE,
+		ROWBITCOUNT,
+		ROWMULT,
+		ROWDIV,
     };
 
     struct RowOpPayload
     {
         Request::RowOp op;
         Addr dest;
+		// for ROWTRSP: stores size
         Addr src1;
+		// for ROWTRSP: stores size_elems
         Addr src2;
+		// "number of elements to move from source to the destination array" (see MIMDRAM paper)
+		size_t size;
+		// "number of bits in each array element" (see MIMDRAM paper)
+		size_t n;
     };
 
   private:
@@ -690,16 +708,10 @@ class Request : public Extensible<Request>
         req_dest = std::make_shared<Request>(*this);
         req_dest->_vaddr = addrs->dest;
 
-        if (addrs->op == ROWMAJ3) {
-            // AP operations have no second operand
-            req_src1 = NULL;
-        } else {
-            // req_src1 = new Request(*this);
-            req_src1 = std::make_shared<Request>(*this);
-            req_src1->_vaddr = addrs->src1;
-        }
+		req_src1 = std::make_shared<Request>(*this);
+		req_src1->_vaddr = addrs->src1;
 
-        if (addrs->op == ROWNOT || addrs->op == ROWMAJ3 || addrs->op == ROWCLONE) {
+        if (addrs->op == ROWNOT) {
             // NOT, AAP and AP operations have no third operand
             req_src2 = NULL;
         } else {

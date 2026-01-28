@@ -71,7 +71,7 @@ void* mmapPim(void* addr,
         perror("mmapPim syscall failed");
     } else {
 		// store newly available mats and remember the virtual address they are mapped to (`ret`=start address of newly allocated huge page)
-		for(int i=0; i<MATS_PER_HUGE_PAGE; ++i) {
+		for(size_t i=0; i<MATS_PER_HUGE_PAGE; ++i) {
 			auto vaddr_of_mat = (char*) ret + MAT_SIZE_BYTES*i;
 			mats.push_back(MatMeta(vaddr_of_mat));
 		}
@@ -140,7 +140,7 @@ void* pim_malloc(const size_t size, const size_t mat_label) {
 	}
 	pim_pages_allocated++;
 
-	for(int i=0; i<MATS_PER_HUGE_PAGE; ++i){
+	for(size_t i=0; i<MATS_PER_HUGE_PAGE; ++i){
 		auto virt_addr = (char*) next_hugepage_start + MAT_SIZE_BYTES * i;
 		mats.push_back(MatMeta(virt_addr));
 	}

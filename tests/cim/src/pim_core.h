@@ -9,74 +9,274 @@ void* mmapPim(void* addr, size_t length, size_t mat_label);
 void* pim_malloc(size_t size, size_t mat_label);
 
 template<typename T>
-static inline void rowand(T* dst, const T* src1, const T* src2) {
-    // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
-    asm volatile(
-        ".byte 0x66, 0x0F, 0x38, 0x42\n"
-        :
-        : "D"(dst), "S"(src1), "d"(src2)  // Example: dst->RDI, src1->RSI, src2->RDX
-        : "memory"
-    );
+static inline void rowand(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x42\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
 }
 
 template<typename T>
-static inline void rowor(T* dst, const T* src1, const T* src2) {
-    // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
-    asm volatile(
-        ".byte 0x66, 0x0F, 0x38, 0x43\n"
-        :
-        : "D"(dst), "S"(src1), "d"(src2)  // Example: dst->RDI, src1->RSI, src2->RDX
-        : "memory"
-    );
+static inline void rowor(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x43\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
 }
 
 template<typename T>
-static inline void rownot(T* dst, const T* src1, const T* src2) {
-    // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
-    asm volatile(
-        ".byte 0x66, 0x0F, 0x38, 0x44\n"
-        :
-        : "D"(dst), "S"(src1), "d"(src2)  // Example: dst->RDI, src1->RSI, src2->RDX
-        : "memory"
-    );
+static inline void rownot(T* dst, const T* src, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x44\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
 }
 
+template<typename T>
+static inline void rowxor(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x45\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
 
 template<typename T>
-static inline void rowxor(T* dst, const T* src1, const T* src2) {
-    // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
-    asm volatile(
-        ".byte 0x66, 0x0F, 0x38, 0x45\n"
-        :
-        : "D"(dst), "S"(src1), "d"(src2)  // Example: dst->RDI, src1->RSI, src2->RDX
-        : "memory"
-    );
+static inline void rowadd(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x46\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
 }
+
 template<typename T>
-static inline void rowmaj3(T* dst, const T* src1, const T* src2) {
-    // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
-    asm volatile(
-        ".byte 0x66, 0x0F, 0x38, 0x46\n"
-        :
-        : "D"(dst), "S"(src1), "d"(src2)  // Example: dst->RDI, src1->RSI, src2->RDX
-        : "memory"
-    );
+static inline void rowsub(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x47\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
 }
+
 template<typename T>
-static inline void rowclone(T* dst, const T* src1, const T* src2) {
-    // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
-    asm volatile(
-        ".byte 0x66, 0x0F, 0x38, 0x47\n"
-        :
-        : "D"(dst), "S"(src1), "d"(src2)  // Example: dst->RDI, src1->RSI, src2->RDX
-        : "memory"
-    );
+static inline void rowmult(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x48\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowdiv(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x49\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowmin(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x4a\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowmax(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x4b\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowequal(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x4c\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowgreater(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x4d\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowgreater_equal(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x4e\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowif_else(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x4f\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowbitcount(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x5a\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowabs(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x5b\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
+}
+
+template<typename T>
+static inline void rowtrsp_init(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)dst;
+	register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+	register uint64_t rcx asm("rcx") = size;
+	register uint64_t r8 asm("r8") = n;
+
+	asm volatile(
+		".byte 0x66, 0x0F, 0x38, 0x5c\n"
+		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		:
+		: "memory"
+	);
 }
 
 }

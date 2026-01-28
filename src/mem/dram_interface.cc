@@ -403,11 +403,11 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         // Do sequence of activate-activate-precharge operations
 		// - this code corresponds to the translation into μPrograms
 		// (done by a *Control Unit*) described in Chap4.1 of the MIMDRAM Paper
-        assert(mem_pkt->row_op); // ensure `row_op` is set
         DPRINTF(RowOp, "DRAMCtrl recieved RowOp=%d Packet to rank=%d, bank=%d \n",
                 *mem_pkt->row_op, mem_pkt->rank, mem_pkt->bank);
         switch (*mem_pkt->row_op) {
 			// TODO: Control Unit should take over here (see [#Issue 7](https://github.com/kusnezoff-alexander/gem5-CIM/issues/7))
+			// - issue AP&AAPs for every row which is spanned by the operand
 			// TODO: extract into new function ("PIMDRAMInterface"-function or sth like that)
             case Request::ROWAND:
 				// 1) Copy src1 to `T0`
@@ -474,19 +474,37 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
                         mem_pkt->row,    true);
                 cmd_at = bank_ref.actAllowedAt;
                 break;
-            case Request::ROWMAJ3:
+            case Request::ROWSUB:
                 //[comment from MIMDRAM]: TODO replace Bank::B_T0_T1_T2
                 //with correct bank_ref
                 apBank (rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2);
                 cmd_at = bank_ref.actAllowedAt;
                 break;
-            case Request::ROWCLONE:
+            case Request::ROWADD:
                 //[comment from MIMDRAM]: TODO replace NULLs with
                 //correct bank_refs
                 aapBank(rank_ref, bank_ref, cmd_at, 0,
                         0, true);
                 cmd_at = bank_ref.actAllowedAt;
                 break;
+			case Request::ROWMIN:
+				break;
+			case Request::ROWMAX:
+				break;
+			case Request::ROWEQUAL:
+				break;
+			case Request::ROWGREATER:
+				break;
+            case Request::ROWGREATER_EQUAL:
+                break;
+            case Request::ROWIF_ELSE:
+				break;
+			case Request::ROWBITCOUNT:
+				break;
+			case Request::ROWMULT:
+				break;
+			case Request::ROWDIV:
+				break;
             default:
                 assert(false);
                 break;

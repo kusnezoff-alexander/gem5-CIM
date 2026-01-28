@@ -695,6 +695,8 @@ class DRAMInterface : public MemInterface
     void aapBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick, uint32_t row1,
         uint32_t row2, bool act_overlapped);
 
+	void executeAmbitMicroprogram();
+
     /*
      * @return time to send a burst of data without gaps
      */

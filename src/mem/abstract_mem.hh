@@ -208,6 +208,14 @@ class AbstractMemory : public ClockedObject
         statistics::Formula bwWrite;
         /** Total bandwidth from this memory */
         statistics::Formula bwTotal;
+        /** Number of total bytes read from this memory using PIM */
+        statistics::Vector pimBytesRead;
+        /** Number of bytes written to this memory using PIM */
+        statistics::Vector pimBytesWritten;
+        /** Number of read requests to PIM region */
+        statistics::Vector numPimReads;
+        /** Number of write requests to PIM region */
+        statistics::Vector numPimWrites;
     } stats;
 
 
@@ -359,6 +367,8 @@ class AbstractMemory : public ClockedObject
      * @param pkt Packet performing the access
      */
     void functionalAccess(PacketPtr pkt);
+
+	void perform_rowop(uint64_t* dst, const uint64_t* src1, const uint64_t* src2, size_t num_elements, size_t elem_bitwidth, Request::RowOp op);
 };
 
 } // namespace memory

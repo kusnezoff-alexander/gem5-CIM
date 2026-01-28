@@ -144,14 +144,24 @@
             // take NO register arguments (row-addresses are expected to be
             // placed in %rdi (dst), %rsi (src1), %rdx (src2)
 
-            0x42: decode MODRM_MOD {
-                default: RowOp::ROWAND();
-            }
+            0x42: RowOp::ROWAND();
             0x43: RowOp::ROWOR();
             0x44: RowOp::ROWNOT();
             0x45: RowOp::ROWXOR();
-            0x46: RowOp::ROWMAJ3(); 	// formerly `RowOp::ROWAP`
-            0x47: RowOp::ROWCLONE();	// formerly `RowOp::AAP`
+            0x46: RowOp::ROWADD();
+            0x47: RowOp::ROWSUB();
+			0x48: RowOp::ROWMULT();
+			0x49: RowOp::ROWDIV();
+            0x4a: RowOp::ROWMIN();
+            0x4b: RowOp::ROWMAX();
+            0x4c: RowOp::ROWEQUAL();
+            0x4d: RowOp::ROWGREATER();
+            0x4e: RowOp::ROWGREATER_EQUAL();
+			0x4f: RowOp::ROWIF_ELSE();
+			// 0x5a: RowOp::ROWBITCOUNT();
+			// 0x5b: RowOp::ROWABS();
+			// // 0x47: RowOp::ROWRELU(); // implemented using ROWMAX
+            // 05cx: RowOp::ROWTRSP_INIT();
             default: Inst::UD2();
         }
         default: decode LEGACY_REPNE {

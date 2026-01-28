@@ -361,10 +361,10 @@ TLB::translate(const RequestPtr &req,
     Addr vaddr = req->getVaddr();
     DPRINTF(TLB, "Translating vaddr %#x.\n", vaddr);
 
-	// FIXME: ILLEGAL QUICKFIX
+	// FIXME: ILLEGAL (DIRTY) QUICKFIX - to not deal with trie lookups (into which huge page entries would have to be inserted)
 	// RowOps will go right through TLB (NOTE: this is a functionality which is not actually performed by the TLB,
 	// this is just a temporal workaround to map physical addresses=virtual addresses). Else the requests would have to go
-	// through the OS page-table walker due to TLB misses. For CIM another computer architecture, like the one proposed by
+	// through the OS page-table walker due to TLB misses. For CIM another computer architecture (instead of TLB), like the one proposed by
 	// "The Virtual Block Interface: A Flexible Alternative to the Conventional Virtual Memory Framework (2020)" might be suited better
     if(hugePagePoolRange.contains(vaddr)) {
 		// TODO: assert the vaddr is in the preallocated address range for CIM operations

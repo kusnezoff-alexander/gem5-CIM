@@ -7,7 +7,7 @@
 using namespace pim_core;
 
 #define VERIFY 1
-const size_t N_ELEMS = 3;
+const size_t N_ELEMS = 30;
 
 void test_every_rowop()
 {
@@ -33,7 +33,7 @@ void test_every_rowop()
 	}
 
 	// TODO: perform ROWAND !
-	// rowand(array1, array2, array1);
+	rowand(array1, array2, array1, N_ELEMS, sizeof(uint16_t));
 	// rowand(array1, array2, array1);
 	// rowand(array1, array2, array1);
 
@@ -67,10 +67,11 @@ int main(int argc, char* argv[])
 		// array1[i] = 1;
 		array1[i] = i;
 		array2[i] = ~i;
+		// array2[i] = -1;
 	}
 
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
-	rowand(array1, array2, array1);
+	rowand(array1, array2, array1, N_ELEMS, sizeof(uint16_t));
 
 	for(uint16_t i=0; i<N_ELEMS; ++i) {
 		std::printf("%d, %d\n", array1[i], array2[i]);

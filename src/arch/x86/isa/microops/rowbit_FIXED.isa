@@ -53,13 +53,16 @@ def template RowOpExecute {{
         DPRINTF(RowOp, "Value of Rsi (src1): %d\n", src1);
         uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
         DPRINTF(RowOp, "Value of Rdx (src2): %d\n", src2);
+		uint64_t size = xc->tcBase()->getReg(X86ISA::int_reg::Rcx);
+		DPRINTF(RowOp, "Value of Rcx (size): %lu\n", size);
+		uint64_t n = xc->tcBase()->getReg(X86ISA::int_reg::R8);
+		DPRINTF(RowOp, "Value of R8 (n): %lu\n", n);
 
-        // store operands inside the Request
-        // previously `<PERCENT>(rowop_data)s;`
-        Request::RowOpPayload data =
-            {Request::%(op)s, dst, src1, src2};
-        DPRINTF(X86, "%s: %x <- %x %(op)s %x executing\n", mnemonic, dst,
-            src1, src2);
+		// store operands inside the Request
+		// previously `<PERCENT>(rowop_data)s;`
+        Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2, size, n};
+        DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated (with size=%zu, n=%zu)\n", mnemonic, dst,
+            src1, src2, size, n);
 
         // NOTE: `byte_enable` is a mask indicating which
         // of the bytes in `data` are valid (for *partial writes*)
@@ -92,10 +95,14 @@ def template RowOpInitiateAcc {{
         DPRINTF(RowOp, "Value of Rsi (src1): %d\n", src1);
         uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
         DPRINTF(RowOp, "Value of Rdx (src2): %d\n", src2);
+		uint64_t size = xc->tcBase()->getReg(X86ISA::int_reg::Rcx);
+		DPRINTF(RowOp, "Value of Rcx (size): %lu\n", size);
+		uint64_t n = xc->tcBase()->getReg(X86ISA::int_reg::R8);
+		DPRINTF(RowOp, "Value of R8 (n): %lu\n", n);
 
-        Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2};
-        DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated\n", mnemonic, dst,
-            src1, src2);
+        Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2, size, n};
+        DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated (with size=%zu, n=%zu)\n", mnemonic, dst,
+            src1, src2, size, n);
 
         // TODO: check `byteEnable`, sth seems to be wrong here
         std::vector<bool> byteEnable(sizeof(data));

@@ -133,8 +133,8 @@ class MemPacket
      * @note Taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
      * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/dram_ctrl.hh#L462)
      * */
-    uint32_t src1_row;
-    uint32_t src2_row;
+    uint32_t src1_row;	// start row of 1st SIMD operand (spans `elem_size` rows in vertical data layout)
+    uint32_t src2_row;  // start row of 2nd SIMD operand (spans `elem_size` rows in vertical data layout)
     bool is_row_op;
     std::optional<Request::RowOp> row_op;
 
