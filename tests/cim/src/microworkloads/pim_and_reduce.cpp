@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <sys/types.h>
 #include "dims.h"
+#include "../../../../include/gem5/m5ops.h"
 
 using namespace pim_core;
 
@@ -16,12 +17,8 @@ using dtype = uint32_t;
 
 int main(int argc, char* argv[])
 {
-	// srand(123456);
+	srand(123456);
 
-	auto T0 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
-	auto T1 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
-	auto T2 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
-	auto C0 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
 
 	dtype* list_arrays[N_ARRAYS];
 	for(uint32_t i=0; i<N_ARRAYS; ++i) {
@@ -30,16 +27,18 @@ int main(int argc, char* argv[])
 	}
 
 	// 1. Write data
-	// for(uint32_t i=0; i<N_ARRAYS; ++i) {
-	// 	for(uint32_t j=0; j<N_ELEMS; ++j) {
-	// 		list_arrays[i][j] = rand();
-	// 	}
-	// 		std::printf("randomised array #%d\n", i);
-	// }
+	for(uint32_t i=0; i<N_ARRAYS; ++i) {
+		for(uint32_t j=0; j<N_ELEMS; ++j) {
+			list_arrays[i][j] = rand();
+		}
+	}
 
+	m5_reset_stats(0, 0);
+	m5_work_begin(0,0);
 	for(uint32_t i=1; i<N_ARRAYS; ++i) {
 		rowand(list_arrays[0], list_arrays[0], list_arrays[i]);
-		// std::printf("reduced array #%d\n",  i);
 	}
+	m5_work_end(0,0);
+	m5_dump_stats(0,0);
 	return 0;
 }

@@ -452,9 +452,9 @@ AbstractMemory::access(PacketPtr pkt)
                     *dest++ = *src1++;
                 }
                 break;
-            case Request::ROWADD16:
-                assert(false);
-                break;
+            // case Request::ROWADD16:
+            //     assert(false);
+            //     break;
             default:
                 assert(false);
                 break;

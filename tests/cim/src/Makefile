@@ -34,19 +34,42 @@ target/riscv/pim_and_reduce.o: microworkloads/pim_and_reduce.cpp pim_core_riscv.
 	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 -c microworkloads/pim_and_reduce.cpp -o target/riscv/pim_and_reduce.o
 
 target/riscv/pim_and_reduce: target/riscv/pim_and_reduce.o target/riscv/libpim.a
-	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 target/riscv/pim_and_reduce.o -static -Ltarget/riscv -lpim -o target/riscv/pim_and_reduce
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 \
+	target/riscv/pim_and_reduce.o \
+	-static \
+	-Ltarget/riscv \
+	-lpim \
+	-L../../../util/m5/build/riscv/out \
+	-lm5 \
+	-o target/riscv/pim_and_reduce
+
+	# -I../../../include \
 
 target/riscv/baseline_and_reduce.o: microworkloads/baseline_and_reduce.cpp pim_core_riscv.h
 	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 -c microworkloads/baseline_and_reduce.cpp -o target/riscv/baseline_and_reduce.o
 
 target/riscv/baseline_and_reduce: target/riscv/baseline_and_reduce.o target/riscv/libpim.a
-	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 target/riscv/baseline_and_reduce.o -static -Ltarget/riscv -lpim -o target/riscv/baseline_and_reduce
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 \
+	target/riscv/baseline_and_reduce.o \
+	-static \
+	-Ltarget/riscv \
+	-lpim \
+	-L../../../util/m5/build/riscv/out \
+	-lm5 \
+	-o target/riscv/baseline_and_reduce
 
 target/riscv/pim_primitive_and_reduce.o: microworkloads/pim_primitive_and_reduce.cpp pim_core_riscv.h
 	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 -c microworkloads/pim_primitive_and_reduce.cpp -o target/riscv/pim_primitive_and_reduce.o
 
 target/riscv/pim_primitive_and_reduce: target/riscv/pim_primitive_and_reduce.o target/riscv/libpim.a
-	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 target/riscv/pim_primitive_and_reduce.o -static -Ltarget/riscv -lpim -o target/riscv/pim_primitive_and_reduce
+	riscv64-linux-gnu-g++ -Wall -Wextra -g -O0 \
+	target/riscv/pim_primitive_and_reduce.o \
+	-static \
+	-Ltarget/riscv \
+	-lpim \
+	-L../../../util/m5/build/riscv/out \
+	-lm5 \
+	-o target/riscv/pim_primitive_and_reduce
 
 microworkloads: target/riscv/baseline_and_reduce target/riscv/pim_and_reduce target/riscv/pim_primitive_and_reduce
 

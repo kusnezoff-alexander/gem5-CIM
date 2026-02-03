@@ -76,18 +76,18 @@ void CommandAnalysis::handleAct(unsigned bank, int64_t timestamp)
     bank_state[bank] = BANK_ACTIVE;
     latest_act_cycle = timestamp;
   } else {
-    printWarning("Bank is already active!", MemCommand::ACT, timestamp, bank);
+    // printWarning("Bank is already active!", MemCommand::ACT, timestamp, bank);
   }
 }
 
 void CommandAnalysis::handleRd(unsigned bank, int64_t timestamp)
 {
-  printWarningIfPoweredDown("Command issued while in power-down mode.", MemCommand::RD, timestamp, bank);
+  // printWarningIfPoweredDown("Command issued while in power-down mode.", MemCommand::RD, timestamp, bank);
   // If command is RD - update number of reads and read cycle. Check
   // for active idle cycles (if any).
-  if (isPrecharged(bank)) {
-    printWarning("Bank is not active!", MemCommand::RD, timestamp, bank);
-  }
+  // if (isPrecharged(bank)) {
+  //   printWarning("Bank is not active!", MemCommand::RD, timestamp, bank);
+  // }
   numberofreadsBanks[bank]++;
   idle_act_update(latest_read_cycle, latest_write_cycle, latest_act_cycle, timestamp);
   latest_read_cycle = timestamp;
@@ -95,12 +95,12 @@ void CommandAnalysis::handleRd(unsigned bank, int64_t timestamp)
 
 void CommandAnalysis::handleWr(unsigned bank, int64_t timestamp)
 {
-  printWarningIfPoweredDown("Command issued while in power-down mode.", MemCommand::WR, timestamp, bank);
+  // printWarningIfPoweredDown("Command issued while in power-down mode.", MemCommand::WR, timestamp, bank);
   // If command is WR - update number of writes and write cycle. Check
   // for active idle cycles (if any).
-  if (isPrecharged(bank)) {
-    printWarning("Bank is not active!", MemCommand::WR, timestamp, bank);
-  }
+  // if (isPrecharged(bank)) {
+  //   printWarning("Bank is not active!", MemCommand::WR, timestamp, bank);
+  // }
   numberofwritesBanks[bank]++;
   idle_act_update(latest_read_cycle, latest_write_cycle, latest_act_cycle, timestamp);
   latest_write_cycle = timestamp;

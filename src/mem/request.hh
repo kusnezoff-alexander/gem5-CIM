@@ -370,21 +370,40 @@ class Request : public Extensible<Request>
     // mem/request.hh#L202)
     enum RowOp
     {
-        ROWADD8,
-        ROWADD16,
-        ROWADD32,
-        ROWADD64,
-        ROWSUB8,
-        ROWSUB16,
-        ROWSUB32,
-        ROWSUB64,
+        // ROWADD8,
+        // ROWADD16,
+        // ROWADD32,
+        // ROWADD64,
+
+        // ROWSUB8,
+        // ROWSUB16,
+        // ROWSUB32,
+        // ROWSUB64,
+
+        // ROWMUL8,
+        // ROWMUL16,
+        // ROWMUL32,
+        // ROWMUL64,
+
+        // ROWReLU8,
+        // ROWReLU16,
+        // ROWReLU32,
+        // ROWReLU64,
+
+        // ROWABS8,
+        // ROWABS16,
+        // ROWABS32,
+        // ROWABS64,
+
         ROWAND,
         ROWOR,
         ROWNOT,
         ROWXOR,
+        ROWNAND,
+        ROWNOR,
+
         ROWCLONE,
         ROWMAJ3,
-        ROWNOR
     };
 
     struct RowOpPayload

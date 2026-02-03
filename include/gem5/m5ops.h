@@ -35,7 +35,7 @@ extern "C" {
 
 #include <stdint.h>
 
-#include <gem5/asm/generic/m5ops.h>
+#include "asm/generic/m5ops.h"
 
 void m5_arm(uint64_t address);
 void m5_quiesce(void);

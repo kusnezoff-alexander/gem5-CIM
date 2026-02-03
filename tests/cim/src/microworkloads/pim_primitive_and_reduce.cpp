@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <sys/types.h>
 #include "dims.h"
+#include "../../../../include/gem5/m5ops.h"
 
 using namespace pim_core;
 
@@ -17,7 +18,7 @@ using dtype = uint32_t;
 
 int main(int argc, char* argv[])
 {
-	// srand(123456);
+	srand(123456);
 
 	auto T0 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
 	auto T1 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
@@ -32,13 +33,15 @@ int main(int argc, char* argv[])
 	}
 
 	// 1. Write data
-	// for(uint32_t i=0; i<N_ARRAYS; ++i) {
-	// 	for(uint32_t j=0; j<N_ELEMS; ++j) {
-	// 		list_arrays[i][j] = rand();
-			// std::printf("randomised int #%d of array #%d\n", j, i);
-	// 	}
-	// }
+	for(uint32_t i=0; i<N_ARRAYS; ++i) {
+		for(uint32_t j=0; j<N_ELEMS; ++j) {
+			list_arrays[i][j] = rand();
+	// std::printf("randomised int #%d of array #%d\n", j, i);
+		}
+	}
 
+	m5_reset_stats(0, 0);
+	m5_work_begin(0,0);
 	for(uint32_t i=1; i<N_ARRAYS; ++i) {
 		// 1) Copy src1 to `T0`
 		rowclone(T0, list_arrays[0]);
@@ -49,5 +52,7 @@ int main(int argc, char* argv[])
 		// TRA (due to `ACT` to `B_T0_T1_T2`) & copy result to dst-row (`mem_pkt->row`)
 		rowclone(list_arrays[0], T0);
 	}
+	m5_work_end(0,0);
+	m5_dump_stats(0, 0);
 	return 0;
 }
