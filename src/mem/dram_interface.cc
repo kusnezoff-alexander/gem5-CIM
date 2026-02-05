@@ -49,6 +49,7 @@
 #include "debug/RowOp.hh"
 #include "enums/AddrMap.hh"
 #include "sim/system.hh"
+#include <cmath>
 
 namespace gem5
 {
@@ -786,7 +787,7 @@ DRAMInterface::DRAMInterface(const DRAMInterfaceParams &_p)
     : MemInterface(_p),
       bankGroupsPerRank(_p.bank_groups_per_rank),
       bankGroupArch(_p.bank_groups_per_rank > 0),
-	  rowsPerMat(0), matsPerBank(_p.mats_per_bank),
+	  rowsPerMat(_p.rows_per_mat), colsPerMat(_p.cols_per_mat), matsPerBank(0),
       tRL(_p.tCL),
       tWL(_p.tCWL),
       tBURST_MIN(_p.tBURST_MIN),
@@ -815,6 +816,8 @@ DRAMInterface::DRAMInterface(const DRAMInterfaceParams &_p)
 
     fatal_if(!isPowerOf2(burstSize), "DRAM burst size %d is not allowed, "
              "must be a power of two\n", burstSize);
+
+	// assert(rowsPerMat, rowsPerBank / matsPerBank); // TODO
 
     // sanity check the ranks since we rely on bit slicing for the
     // address decoding
@@ -846,7 +849,7 @@ DRAMInterface::DRAMInterface(const DRAMInterfaceParams &_p)
             rowBufferSize, burstsPerRowBuffer);
 
     rowsPerBank = capacity / (rowBufferSize * banksPerRank * ranksPerChannel);
-	rowsPerMat = rowsPerBank / matsPerBank;
+	matsPerBank = capacity / (rowsPerMat*colsPerMat/8);
 
     // some basic sanity checks
     if (tREFI <= tRP || tREFI <= tRFC) {
@@ -1006,16 +1009,6 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
     // a specific buffer, row, bank, rank and channel
     addr = addr / burstSize;
 
-	// Address Translation of RowOps requires extra care. This is sth the DRAM-Controller would probably need to take care of
-	if(pkt->isRowOp()) {
-		// TODO: mapping that ensures that operands end up in same subarray ?
-
-		// see MIMDRAM Paper Chap4.1
-		// "the memory controller specifies the logical address of the first and last DRAM mats that the PUD operation targets"
-		// NOTE: these are just logical addresses which are then translated into "appropriate physical mat range, which is used as input for the mat selector"
-		uint16_t first_mat, last_mat; // ignored for now, could be  used when implementing fine-grained MIMDRAM (that is PIM on mat-level) Programming Model
-	}
-
     // we have removed the lowest order address bits that denote the
     // position within the column
 	if (addrMapping == enums::RoRaBaChCo || addrMapping == enums::RoRaBaCoCh) {
@@ -1074,30 +1067,34 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
 		// gem5 seems to model each channel behind a separate Memory Controller (so basically /1)
 		// - see https://github.com/orgs/gem5/discussions/2747#discussioncomment-14971006
 
-        // the lowest order bits denote the column to ensure that
-        // sequential cache lines occupy the same row
-        addr = addr / burstsPerRowBuffer;
+		// Address decomposition order (LSB to MSB): Channel, Column(Byte), Row, Mat, Bank, Rank
+		// Since allocations are mat-by-mat, addresses are laid out as:
+		// [byte_within_row][row_within_mat][mat][bank][rank]
 
-		// get row bits: ensures contiguous data remains in same mat (instead of being
-		// in the same row but being split across banks/ranks/mats)
-		auto rowsPerMat = rowsPerBank / matsPerBank;
-        row = addr % rowsPerMat;
+		// Channel bits (assumed to be handled by separate memory controllers)
+		// Skip channel extraction
+
+		const int BYTES_PER_MAT_ROW = colsPerMat / 8;
+		// Extract byte/column offset within row (LSB after channel)
+		Addr _ = addr % BYTES_PER_MAT_ROW;  // byteoffset
+		addr = addr / BYTES_PER_MAT_ROW;
+
+		// Extract Row bits (which row within the mat)
+		row = addr % rowsPerMat;
 		addr = addr / rowsPerMat;
 
+		// Extract Mat bits
 		mat = addr % matsPerBank;
 		addr = addr / matsPerBank;
 
-        // after the channel bits, get the bank bits to interleave
-        // over the banks
-        bank = addr % banksPerRank;
-        addr = addr / banksPerRank;
+		// Extract Bank bits
+		bank = addr % banksPerRank;
+		addr = addr / banksPerRank;
 
-        // lastly, get the rank, no need to remove them from addr
-        // after the bank, we get the rank bits which thus interleaves
-        // over the ranks
-        rank = addr % ranksPerChannel;
+		// Extract Rank bits (MSB)
+		rank = addr % ranksPerChannel;
 	} else
-        panic("Unknown address mapping policy chosen!");
+		panic("Unknown address mapping policy chosen!");
 
 
     if(pkt->isRowOp())

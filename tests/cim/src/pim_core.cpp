@@ -1,5 +1,4 @@
 #include "pim_core.h"
-#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
@@ -9,6 +8,8 @@
 #include <unistd.h>
 #include <unordered_map>
 #include <vector>
+
+using namespace std;
 
 namespace pim_core {
 
@@ -20,11 +21,14 @@ static void *PIM_BASE_ADDR = (void*) 0x10000000;
 static const size_t HUGE_PAGE_SIZE = 2 * 1024 * 1024; 	// 2 MiB
 static size_t pim_pages_allocated = 0;
 
+// see /gem5-CIM-fix/src/mem/DRAMInterface.py for config
 static const size_t NR_COLS_IN_MAT = 1024;
 static const size_t BYTES_PER_MAT_ROW = NR_COLS_IN_MAT / 8;
 static const size_t NR_ROWS_IN_MAT = 2048;
 static const size_t MAT_SIZE_BYTES = NR_COLS_IN_MAT * NR_ROWS_IN_MAT / 8; // mat size in bytes
 static const size_t MATS_PER_HUGE_PAGE = HUGE_PAGE_SIZE / MAT_SIZE_BYTES;
+static const size_t NR_HUGEPAGES = 20;
+static const size_t NR_MATS = NR_HUGEPAGES * MATS_PER_HUGE_PAGE;
 
 /** Tracks <u>contiguous</u> free space inside a mat */
 struct FreeMatBlock {
@@ -49,6 +53,12 @@ class MatMeta {
 	{};
 };
 
+/** For freeing allocated rows. */
+struct AllocationHeader {
+    size_t num_rows;      // Number of rows allocated (including header)
+    MatMeta* mat;         // Which mat this belongs to
+};
+
 // track available mats
 std::vector<MatMeta> mats;
 using Mat = uint64_t;
@@ -67,28 +77,22 @@ void* mmapPim(void* addr,
                                 length,
                                 mat_label);
 
-    if (ret == MAP_FAILED) {
+    if (ret == MAP_FAILED)
         perror("mmapPim syscall failed");
-    } else {
-		// store newly available mats and remember the virtual address they are mapped to (`ret`=start address of newly allocated huge page)
-		for(size_t i=0; i<MATS_PER_HUGE_PAGE; ++i) {
-			auto vaddr_of_mat = (char*) ret + MAT_SIZE_BYTES*i;
-			mats.push_back(MatMeta(vaddr_of_mat));
-		}
-	}
     return ret;
 }
 
 void *find_free_space_in_mat(MatMeta* mat, const size_t size, const size_t mat_label)
 {
-	const size_t num_rows = ((size + BYTES_PER_MAT_ROW -1 ) / BYTES_PER_MAT_ROW) * BYTES_PER_MAT_ROW;
+	const size_t num_rows = (size + BYTES_PER_MAT_ROW - 1 ) / BYTES_PER_MAT_ROW;
 	auto block = &(mat->free_blocks_head);
 	while(block!=nullptr) {
-		size_t free_size_bytes = (block->nr_free_rows_in_block * NR_COLS_IN_MAT) / 8;
-		if (free_size_bytes >= size) {
+		if (block->nr_free_rows_in_block >= num_rows) {
 			// always choose the first `num_rows` inside this contiguous block
+			auto allocated_addr = block->virt_addr;
+			block->virt_addr = ((char*) block->virt_addr) + num_rows * BYTES_PER_MAT_ROW; // update addr to next free row
+
 			block->nr_free_rows_in_block -= num_rows;
-			block->virt_addr = ((char*) block->virt_addr) + num_rows * BYTES_PER_MAT_ROW;
 			if (block->nr_free_rows_in_block==0) {
 				// delete block from list of free blocks
 				if (block->prev_free_mat_block)
@@ -99,8 +103,9 @@ void *find_free_space_in_mat(MatMeta* mat, const size_t size, const size_t mat_l
 			}
 
 			mat_label_to_mat[mat_label] = mat;
-			return block->virt_addr;
+			return allocated_addr;
 		}
+		block = block->next_free_mat_block;
 	}
 	return nullptr;
 }
@@ -114,14 +119,25 @@ void* pim_malloc(const size_t size, const size_t mat_label) {
 		return nullptr;
 	}
 
-	// 1. TODO NEXT: Check if `mat_label` refers to an already allocated mat
-	// - if the mat referred to by `mat_label` doesn't have enough space available anymore: OOM ?
-	if (auto mat = mat_label_to_mat[mat_label]) {
-		auto vaddr = find_free_space_in_mat(mat, size, mat_label);
-		if (!vaddr)
-			perror("PIM OOM");
-		return vaddr;
+    auto it = mat_label_to_mat.find(mat_label);
+	if (mat_label_to_mat.size() >= NR_MATS && it == mat_label_to_mat.end()) {
+		cerr << "ERROR: out of mats (have " << mat_label_to_mat.size()
+			<< " labels, max is " << NR_MATS << ")" << endl;
+		abort();
 	}
+
+   	// 1. Check if `mat_label` refers to an already allocated mat
+	// - if the mat referred to by `mat_label` doesn't have enough space available anymore: OOM
+    if (it != mat_label_to_mat.end()) {
+        // Mat with this label already exists
+        auto mat = it->second;
+        auto vaddr = find_free_space_in_mat(mat, size, mat_label);
+        if (!vaddr) {
+            perror("PIM OOM");
+            return nullptr;
+        }
+        return vaddr;
+    }
 
 	// Else check if there is some space in the already allocated PIM mats
 	for(auto& mat: mats) {
@@ -151,8 +167,34 @@ void* pim_malloc(const size_t size, const size_t mat_label) {
 
 /// Frees the memory previously allocated with `pim_malloc()`
 void pim_free(void* ptr) {
-	// 1. Determine mat to which this physical address belongs
-	// and update free blocks accordingly
+    if (!ptr) {
+        return;  // Freeing nullptr is a no-op (like standard free)
+    }
+
+    // 1. Find which mat this address belongs to
+    MatMeta* target_mat = nullptr;
+    size_t row_offset = 0;
+
+    for (auto& mat : mats) {
+        void* mat_start = mat.virt_addr;
+        void* mat_end = (char*)mat_start + MAT_SIZE_BYTES;
+
+        if (ptr >= mat_start && ptr < mat_end) {
+            target_mat = &mat;
+            // Calculate which row this address corresponds to
+            row_offset = ((char*)ptr - (char*)mat_start) / BYTES_PER_MAT_ROW;
+            break;
+        }
+    }
+
+    if (!target_mat) {
+        cerr << "ERROR: pim_free called with invalid pointer " << ptr << endl;
+        return;
+    }
+
+    // 2. TODO: We need to know how many rows to free
+
+    cerr << "ERROR: pim_free not fully implemented - need allocation size tracking" << endl;
 }
 
 }

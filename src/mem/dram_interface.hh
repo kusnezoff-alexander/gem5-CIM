@@ -499,8 +499,8 @@ class DRAMInterface : public MemInterface
     const uint32_t bankGroupsPerRank;
     const bool bankGroupArch;
 
-    uint32_t rowsPerMat; // TODO: set in config
-	// calculated based on `rowsPerBank` and `rowsPerMat`
+    uint32_t rowsPerMat;
+    uint32_t colsPerMat;
 	uint32_t matsPerBank;
 
     /**

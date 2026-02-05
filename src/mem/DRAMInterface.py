@@ -69,10 +69,9 @@ class DRAMInterface(MemInterface):
     # Subarray/Mat Level. These are used to compute `subarraysPerBank`
     # see MIMDRAM paper for common parameters (mats_per_subarray \in [32,128],
     # rows_per_mat \in [512,1024], cols_per_mat \in [512,1024]\)
-    mats_per_bank = Param.Unsigned(512, "Number of mats inside a DRAM bank")
-    mats_per_subarray = Param.Unsigned(32, "Number of mats inside a DRAM subarray")
     rows_per_mat = Param.Unsigned(1024, "Number of columns inside a DRAM mat")
-    cols_per_mat = Param.Unsigned(1024, "Number of columns inside a DRAM mat")
+    cols_per_mat = Param.Unsigned(2048, "Number of columns inside a DRAM mat")
+    # mats_per_bank = Param.Unsigned(512, "Number of mats inside a DRAM bank") # determined by total capacity / capacity per mat
 
     # Enable DRAM powerdown states if True. This is False by default due to
     # performance being lower when enabled
@@ -316,7 +315,6 @@ class DDR3_1600_8x8(DRAMInterface):
 
     # DDR3 has 8 banks in all configurations
     banks_per_rank = 8
-    mats_per_bank = 512
 
     # 800 MHz
     tCK = "1.25ns"
@@ -420,7 +418,6 @@ class HMC_2500_1x32(DDR3_1600_8x8):
     # Each layer represents a rank. With 4 layers and 8 banks in total, each
     # layer has 2 banks; thus 2 banks per rank.
     banks_per_rank = 2
-    mats_per_bank = 512
 
     # 1250 MHz [2]
     tCK = "0.8ns"
@@ -547,7 +544,6 @@ class DDR4_2400_16x4(DRAMInterface):
     # configurations). Currently we do not capture the additional
     # constraints incurred by the bank groups
     banks_per_rank = 16
-    mats_per_bank = 512
 
     # override the default buffer sizes and go for something larger to
     # accommodate the larger bank count
@@ -686,7 +682,6 @@ class DDR4_2400_4x16(DDR4_2400_16x4):
     # configurations). Currently we do not capture the additional
     # constraints incurred by the bank groups
     banks_per_rank = 8
-    mats_per_bank = 512
 
     # RRD_S (different bank group) for 2K page is MAX(4 CK, 5.3ns)
     tRRD = "5.3ns"
@@ -735,7 +730,6 @@ class LPDDR2_S4_1066_1x32(DRAMInterface):
 
     # LPDDR2-S4 has 8 banks in all configurations
     banks_per_rank = 8
-    mats_per_bank = 512
 
     # 533 MHz
     tCK = "1.876ns"
@@ -836,7 +830,6 @@ class WideIO_200_1x128(DRAMInterface):
 
     # WideIO has 4 banks in all configurations
     banks_per_rank = 4
-    mats_per_bank = 512
 
     # 200 MHz
     tCK = "5ns"
@@ -907,7 +900,6 @@ class LPDDR3_1600_1x32(DRAMInterface):
 
     # LPDDR3 has 8 banks in all configurations
     banks_per_rank = 8
-    mats_per_bank = 512
 
     # 800 MHz
     tCK = "1.25ns"
@@ -1008,7 +1000,6 @@ class GDDR5_4000_2x32(DRAMInterface):
 
     # GDDR5 has 16 banks with 4 bank groups
     banks_per_rank = 16
-    mats_per_bank = 512
 
     # 1000 MHz
     tCK = "1ns"
@@ -1098,7 +1089,6 @@ class HBM_1000_4H_1x128(DRAMInterface):
     # HBM has 8 or 16 banks depending on capacity
     # 2Gb dies have 8 banks
     banks_per_rank = 8
-    mats_per_bank = 512
 
     # depending on frequency, bank groups may be required
     # will always have 4 bank groups when enabled
@@ -1185,7 +1175,6 @@ class HBM_1000_4H_1x64(HBM_1000_4H_1x128):
     # HBM has 8 or 16 banks depending on capacity
     # Starting with 4Gb dies, 16 banks are defined
     banks_per_rank = 16
-    mats_per_bank = 512
 
     # reset tRFC for larger, 8Gb device
     # use HBM1 4Gb value as a starting point
@@ -1228,7 +1217,6 @@ class HBM_2000_4H_1x64(DRAMInterface):
 
     banks_per_rank = 16
     bank_groups_per_rank = 4
-    mats_per_bank = 512
 
     # 1000 MHz for 2Gbps DDR data rate
     tCK = "1ns"
@@ -1318,7 +1306,6 @@ class DDR5_4400_4x8(DRAMInterface):
     # 4 banks per bank group and 32 banks in total
     bank_groups_per_rank = 8
     banks_per_rank = 32
-    mats_per_bank = 512
 
     write_buffer_size = 64
     read_buffer_size = 64
@@ -1590,7 +1577,6 @@ class LPDDR5_5500_1x16_BG_BL32(DRAMInterface):
     # to maximim resources and enable higher data rates
     banks_per_rank = 16
     bank_groups_per_rank = 4
-    mats_per_bank = 512
 
     # 5.5Gb/s DDR with 4:1 WCK:CK ratio for 687.5 MHz CK
     tCK = "1.455ns"
@@ -1714,7 +1700,6 @@ class LPDDR5_5500_1x16_8B_BL32(LPDDR5_5500_1x16_BG_BL32):
     # Select 8B
     banks_per_rank = 8
     bank_groups_per_rank = 0
-    mats_per_bank = 512
 
     # For Bstof32 with 8B mode, 4 CK @ 687.5 MHz with 4:1 clock ratio
     tBURST = "5.82ns"
@@ -1819,7 +1804,6 @@ class LPDDR5_6400_1x16_8B_BL32(LPDDR5_6400_1x16_BG_BL32):
     # Select 8B
     banks_per_rank = 8
     bank_groups_per_rank = 0
-    mats_per_bank = 512
 
     # For Bstof32 with 8B mode, 4 CK @ 800 MHz with 4:1 clock ratio
     tBURST = "5ns"

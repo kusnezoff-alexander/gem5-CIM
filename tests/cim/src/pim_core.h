@@ -6,8 +6,15 @@ namespace pim_core {
 
 /** Allocates a new huge page if current huge page pool is not enough to fulfill request */
 void* mmapPim(void* addr, size_t length, size_t mat_label);
+/**
+ * @param size in BYTES !!
+ */
 void* pim_malloc(size_t size, size_t mat_label);
+void pim_free(void* ptr);
 
+/**
+ * @oaram n in **BITS** (since we also allow for <1byte, eg 4bit operands are supported
+ */
 template<typename T>
 static inline void rowand(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
 	register uint64_t rdi asm("rdi") = (uint64_t)dst;

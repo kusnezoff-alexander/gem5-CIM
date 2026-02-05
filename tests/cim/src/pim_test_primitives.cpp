@@ -11,9 +11,9 @@
 using namespace pim_core;
 using namespace std;
 
-#define VERIFY 1
-const size_t N_ELEMS = 30;
+const size_t N_ELEMS = 3000;
 const size_t N_ROWOPS = 7;
+size_t next_mat = 0;
 
 void init_data(uint16_t*& array1, uint16_t*& array2, uint16_t*& array1_initial_val, uint16_t*& array2_initial_val)
 {
@@ -68,13 +68,25 @@ bool check_result(T* res, T* array1_initial_val, T* array2_initial_val, Op op)
 }
 
 using dtype = uint16_t;
-void test_every_rowop()
+bool test_every_rowop()
 {
 	size_t nr_correct = 0;
 	auto array1_initial_val = static_cast<uint16_t*>(malloc(N_ELEMS*sizeof(dtype)));
 	auto array2_initial_val = static_cast<uint16_t*>(malloc(N_ELEMS*sizeof(dtype)));
 	auto array1 = static_cast<uint16_t*>(pim_malloc(N_ELEMS*sizeof(dtype), 0));
+	if (!array1) {
+		printf("NOTE: Not enough space left in current mat \n");
+		next_mat++;
+		return false;
+	}
+
 	auto array2 = static_cast<uint16_t*>(pim_malloc(N_ELEMS*sizeof(dtype), 0));
+	if (!array2) {
+		printf("NOTE: Not enough space left in current mat \n");
+		pim_free(array1); // TODO !!
+		next_mat++;
+		return false;
+	}
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
 
 	cout << "AND..." << endl;
@@ -115,6 +127,7 @@ void test_every_rowop()
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, max_op);
 
 	cout << "Passed " << nr_correct << "/" << N_ROWOPS << endl;
+	return true;
 }
 
 
@@ -123,8 +136,20 @@ size_t fuzzy_testing()
 	size_t nr_correct = 0;
 	auto array1_initial_val = static_cast<uint16_t*>(malloc(N_ELEMS*sizeof(dtype)));
 	auto array2_initial_val = static_cast<uint16_t*>(malloc(N_ELEMS*sizeof(dtype)));
-	auto array1 = static_cast<uint16_t*>(pim_malloc(N_ELEMS*sizeof(dtype), 1));
-	auto array2 = static_cast<uint16_t*>(pim_malloc(N_ELEMS*sizeof(dtype), 1));
+	auto array1 = static_cast<uint16_t*>(pim_malloc(N_ELEMS*sizeof(dtype), 0));
+	if (!array1) {
+		printf("NOTE: Not enough space left in current mat \n");
+		next_mat++;
+		return 0;
+	}
+
+	auto array2 = static_cast<uint16_t*>(pim_malloc(N_ELEMS*sizeof(dtype), 0));
+	if (!array2) {
+		printf("NOTE: Not enough space left in current mat \n");
+		pim_free(array1); // TODO !!
+		next_mat++;
+		return 0;
+	}
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
 
 	cout << "AND..." << endl;
@@ -169,15 +194,20 @@ size_t fuzzy_testing()
 
 int main()
 {
-	test_every_rowop();
+	while(!test_every_rowop()) ;
 
 	// also try with random data
-	int nr_tests = 2;
+	int nr_fuzzy_tests = 5;
 	size_t nr_correct = 0;
-	for (int i=0; i<nr_tests; ++i) {
-		nr_correct += fuzzy_testing();
+	for (int i=0; i<nr_fuzzy_tests; ++i) {
+		auto c =  fuzzy_testing();
+		if (c==0) {
+			next_mat++;
+			i--; // try again
+		}
+		nr_correct += c;
 	}
-	cout << "Passed " << nr_correct << "/" << nr_tests*N_ROWOPS << endl;
+	cout << "Passed " << nr_correct << "/" << nr_fuzzy_tests*N_ROWOPS << endl;
 
 	return 0;
 }
