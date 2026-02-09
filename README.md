@@ -1,3 +1,13 @@
+This repository aims to add full support for simulating PIM programs (starting with the Ambit [1] Processing-using-DRAM technology).
+The implementation is heavily based on [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/tree/23495f10950d891a95a0b8a05d0a6a88e92de154/gem5), which used a (much) older gem5 version.
+Compared to MIMDRAM, most notably our simulator implementation adds full support for the entire SIMDRAM [2] instruction set, supports PIM operand allocation in a reserved huge page pool (following the approach described in SIMDRAM)
+and provides what we call the *pim standard library*. The pim-stdlib includes C++ wrappers around supported PIM x86 instructions and a custom PIM memory allocator.
+
+[1] Hoon Shin, Rihae Park, and Jae W. Lee. 2025. A Processingusing-Memory Architecture for Commodity DRAM Devices with Enhanced Compatibility and Reliability. In Proceedings of the 43rd IEEE/ACM International Conference on ComputerAided Design (ICCAD ’24), 1–10. https://doi.org/10.1145/ 3676536.3676771
+[2] Nastaran Hajinazar, Geraldo F. Oliveira, Sven Gregorio, João Dinis Ferreira, Nika Mansouri Ghiasi, Minesh Patel, Mohammed Alser, Saugata Ghose, Juan Gómez-Luna, and Onur Mutlu. 2021. SIMDRAM: a framework for bit-serial SIMD processing using DRAM. In Proceedings of the 26th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS ’21), 329–345. https://doi.org/10.1145/3445814.3446749
+
+**Current limitations**: Simulating PIM workloads in the O3 CPU Model is not working reliably (yet).
+
 # The gem5 Simulator
 
 This is the repository for the gem5 simulator. It contains the full source code

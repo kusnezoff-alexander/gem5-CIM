@@ -441,7 +441,7 @@ AbstractMemory::access(PacketPtr pkt)
 		size_t elem_bitwidth = addrs->n;
 
 		uint64_t *src2 = nullptr;
-		if(addrs->op != Request::ROWNOT)
+		if(!Request::is_unary_rowop(addrs->op))
 			src2 = (uint64_t*)(pmemAddr + addrs->src2 - range.start());
 
         DPRINTF(RowOp, "Performing rowop %d on %p (%x) and %p (%x), previously (dst=0x%x, src1=0x%x, src2=0x%x)\n",
@@ -449,25 +449,26 @@ AbstractMemory::access(PacketPtr pkt)
 			addrs->dest, addrs->src1, addrs->src2);
 
         // perform actual ROWOP in memory
+		int num_bytes=(num_elements*elem_bitwidth)/8;
         switch (addrs->op) {
 			// TODO: AND,OR,XOR are actually *reductions* !
             case Request::ROWAND:
-                for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                for (int i = 0; i < num_bytes; i += sizeof(uint64_t)) {
                     *dest++ = *src1++ & *src2++;
                 }
                 break;
             case Request::ROWOR:
-                for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                for (int i = 0; i < num_bytes; i += sizeof(uint64_t)) {
                     *dest++ = *src1++ | *src2++;
                 }
                 break;
             case Request::ROWNOT:
-                for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                for (int i = 0; i < num_bytes; i += sizeof(uint64_t)) {
                     *dest++ = ~*src1++;
                 }
                 break;
             case Request::ROWXOR:
-                for (int i = 0; i < ROW_SIZE; i += sizeof(uint64_t)) {
+                for (int i = 0; i < num_bytes; i += sizeof(uint64_t)) {
                     *dest++ = *src1++ ^ *src2++;
                 }
                 break;
@@ -641,7 +642,10 @@ AbstractMemory::perform_rowop(uint64_t* dst, const uint64_t* src1, const uint64_
 
     for (size_t i = 0; i < num_words; ++i) {
         uint64_t a = src1[i];
-        uint64_t b = src2[i];
+
+        uint64_t b;
+		if (!Request::is_unary_rowop(op))
+			b = src2[i];
         uint64_t out = 0;
 
         for (size_t lane = 0; lane < lanes_per_word; ++lane) {
@@ -651,6 +655,18 @@ AbstractMemory::perform_rowop(uint64_t* dst, const uint64_t* src1, const uint64_
             uint64_t va = (a >> shift) & mask;
             uint64_t vb = (b >> shift) & mask;
             uint64_t r = 0;
+
+            // Helper: sign-extend value from elem_bitwidth to int64_t
+            auto to_signed = [elem_bitwidth, mask](uint64_t val) -> int64_t {
+                if (elem_bitwidth == 64) {
+                    return static_cast<int64_t>(val);
+                } else {
+                    uint64_t sign_bit = 1ULL << (elem_bitwidth - 1);
+                    return (val & sign_bit)
+                        ? static_cast<int64_t>(val | (~mask))
+                        : static_cast<int64_t>(val);
+                }
+            };
 
             switch(op) {
                 case Request::ROWADD:
@@ -663,27 +679,48 @@ AbstractMemory::perform_rowop(uint64_t* dst, const uint64_t* src1, const uint64_
                     r = (va * vb) & mask;
                     break;
                 case Request::ROWDIV:
-                    if (vb != 0) {
-						r = (va / vb) & mask;
-                    } else {
-                        r = 0;
+                    {
+                        if (vb == 0) {
+                            r = 0;
+                            break;
+                        }
+                        int64_t sa = to_signed(va);
+                        int64_t sb = to_signed(vb);
+                        int64_t sr = sa / sb;   // truncates toward zero
+                        r = static_cast<uint64_t>(sr) & mask;
+                        break;
                     }
-                    break;
                 case Request::ROWMIN:
-                    r = (va < vb) ? va : vb;
-                    break;
+                    {
+                        int64_t sa = to_signed(va);
+                        int64_t sb = to_signed(vb);
+                        r = static_cast<uint64_t>((sa < sb) ? sa : sb) & mask;
+                        break;
+                    }
                 case Request::ROWMAX:
-                    r = (va > vb) ? va : vb;
-                    break;
+                    {
+                        int64_t sa = to_signed(va);
+                        int64_t sb = to_signed(vb);
+                        r = static_cast<uint64_t>((sa > sb) ? sa : sb) & mask;
+                        break;
+                    }
                 case Request::ROWEQUAL:
                     r = (va == vb) ? mask : 0;
                     break;
                 case Request::ROWGREATER:
-                    r = (va > vb) ? mask : 0;
-                    break;
+                    {
+                        int64_t sa = to_signed(va);
+                        int64_t sb = to_signed(vb);
+                        r = (sa > sb) ? mask : 0;
+                        break;
+                    }
                 case Request::ROWGREATER_EQUAL:
-                    r = (va >= vb) ? mask : 0;
-                    break;
+                    {
+                        int64_t sa = to_signed(va);
+                        int64_t sb = to_signed(vb);
+                        r = (sa >= sb) ? mask : 0;
+                        break;
+                    }
                 case Request::ROWIF_ELSE:
                     r = (va != 0) ? vb : 0;
                     break;
@@ -693,6 +730,13 @@ AbstractMemory::perform_rowop(uint64_t* dst, const uint64_t* src1, const uint64_
                         r = static_cast<uint64_t>(count) & mask;
                     }
                     break;
+                case Request::ROWABS:
+                    {
+                        int64_t sva = to_signed(va);
+                        int64_t abs_val = (sva < 0) ? -sva : sva;
+                        r = static_cast<uint64_t>(abs_val) & mask;
+                        break;
+                    }
                 default:
                     r = 0;
                     break;

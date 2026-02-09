@@ -3,7 +3,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <sys/types.h>
+#include <iostream>
 
+using namespace std;
 using namespace pim_core;
 
 #define VERIFY 1
@@ -60,6 +62,7 @@ using dtype = uint16_t;
 int main(int argc, char* argv[])
 {
 
+	cout << "Running pim_full_program.cpp" << endl;
 	auto array1 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
 	auto array2 = static_cast<dtype*>(pim_malloc(sizeof(dtype)*N_ELEMS, 0));
 	// 1. Write data

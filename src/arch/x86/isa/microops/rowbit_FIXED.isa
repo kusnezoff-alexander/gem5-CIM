@@ -142,8 +142,8 @@ def format RowOp() {{
 
     params = {
         'dst': 'Rdi',
-        'src1': '0' if Name == 'ROWAP' else 'Rsi',
-        'src2': '0' if Name in {'ROWNOT', 'ROWAP', 'ROWAAP'} else 'Rdx',
+        'src1': 'Rsi',
+        'src2': '0' if Name in {'ROWNOT', 'ROWABS'} else 'Rdx',
         'op': Name,
         'unused': 'Mem = 0'
     }

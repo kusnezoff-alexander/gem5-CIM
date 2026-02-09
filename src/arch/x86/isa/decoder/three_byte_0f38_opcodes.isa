@@ -158,10 +158,9 @@
             0x4d: RowOp::ROWGREATER();
             0x4e: RowOp::ROWGREATER_EQUAL();
 			0x4f: RowOp::ROWIF_ELSE();
-			// 0x5a: RowOp::ROWBITCOUNT();
-			// 0x5b: RowOp::ROWABS();
-			// // 0x47: RowOp::ROWRELU(); // implemented using ROWMAX
-            // 05cx: RowOp::ROWTRSP_INIT();
+			0x5a: RowOp::ROWBITCOUNT();
+			0x5b: RowOp::ROWABS();
+            0x5c: RowOp::ROWTRSP_INIT();
             default: Inst::UD2();
         }
         default: decode LEGACY_REPNE {

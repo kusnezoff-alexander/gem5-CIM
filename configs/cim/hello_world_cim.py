@@ -71,10 +71,8 @@ binary = os.path.join(
     "../../",
     # "tests/cim/pim_malloc_syscall",
     # "tests/cim/src/pim_full_program",
-    "tests/cim/src/pim_test_primitives",
-    # "tests/cim/test_my_add42",
-    # "workloads/MIMDRAM-microworkloads/bitweave-buddy_gem5-CIM.exe",
-    # "workloads/MIMDRAM-microworkloads/00_addition-baseline_gem5-CIM.exe",
+    "tests/test-progs/cim/bin/pim_test_primitives",
+    # "tests/test-progs/cim/bin/pim_test_pimmalloc",
 )
 
 system.workload = SEWorkload.init_compatible(binary)

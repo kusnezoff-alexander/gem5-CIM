@@ -11,7 +11,7 @@
 using namespace pim_core;
 using namespace std;
 
-const size_t N_ELEMS = 3000;
+const size_t N_ELEMS = 300'000;
 const size_t N_ROWOPS = 7;
 size_t next_mat = 0;
 
@@ -194,12 +194,13 @@ size_t fuzzy_testing()
 
 int main()
 {
-	while(!test_every_rowop()) ;
+	cout << "Running pim_test_pimmalloc.cpp" << endl;
+	while(next_mat < NR_MATS && !test_every_rowop()) ;
 
 	// also try with random data
 	int nr_fuzzy_tests = 5;
 	size_t nr_correct = 0;
-	for (int i=0; i<nr_fuzzy_tests; ++i) {
+	for (int i=0; i<nr_fuzzy_tests && next_mat < NR_MATS; ++i) {
 		auto c =  fuzzy_testing();
 		if (c==0) {
 			next_mat++;

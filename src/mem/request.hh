@@ -375,7 +375,6 @@ class Request : public Extensible<Request>
         ROWNOT,
         ROWXOR,
 		ROWABS,
-		ROWRELU,
 		ROWTRSP_INIT,
 		ROWSUB,
 		ROWADD,
@@ -692,6 +691,10 @@ class Request : public Extensible<Request>
     }
 
 
+	static bool is_unary_rowop(Request::RowOp op) {
+		return op == Request::ROWNOT || op == Request::ROWABS;
+	}
+
     /**
      * @brief Sets row-operands `req_dest`,`req_src1`,`req_src2` based
      * on executed Row-Operation (and supplied addresses)
@@ -711,7 +714,7 @@ class Request : public Extensible<Request>
 		req_src1 = std::make_shared<Request>(*this);
 		req_src1->_vaddr = addrs->src1;
 
-        if (addrs->op == ROWNOT) {
+        if (is_unary_rowop(addrs->op)) {
             // NOT, AAP and AP operations have no third operand
             req_src2 = NULL;
         } else {

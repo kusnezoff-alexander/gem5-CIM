@@ -13,23 +13,6 @@ using namespace std;
 
 namespace pim_core {
 
-#define __NR_mmapPim 500
-
-// in practice all these parameters would be read from the device tree exposed by the modified OS
-// (for which one would need to create a custom OS image with `mmapPim` syscall implemented
-static void *PIM_BASE_ADDR = (void*) 0x10000000;
-static const size_t HUGE_PAGE_SIZE = 2 * 1024 * 1024; 	// 2 MiB
-static size_t pim_pages_allocated = 0;
-
-// see /gem5-CIM-fix/src/mem/DRAMInterface.py for config
-static const size_t NR_COLS_IN_MAT = 1024;
-static const size_t BYTES_PER_MAT_ROW = NR_COLS_IN_MAT / 8;
-static const size_t NR_ROWS_IN_MAT = 2048;
-static const size_t MAT_SIZE_BYTES = NR_COLS_IN_MAT * NR_ROWS_IN_MAT / 8; // mat size in bytes
-static const size_t MATS_PER_HUGE_PAGE = HUGE_PAGE_SIZE / MAT_SIZE_BYTES;
-static const size_t NR_HUGEPAGES = 20;
-static const size_t NR_MATS = NR_HUGEPAGES * MATS_PER_HUGE_PAGE;
-
 /** Tracks <u>contiguous</u> free space inside a mat */
 struct FreeMatBlock {
 	void * virt_addr;
@@ -45,12 +28,21 @@ class MatMeta {
 	// Virtual address that maps to this DRAM mat
 	void *virt_addr = nullptr; // TODO
 	// Number of rows that are free in this mat
-	FreeMatBlock free_blocks_head;
+	FreeMatBlock* free_blocks_head;
 
 	// newly created mats are considered to be fully free
 	MatMeta(void *virt_addr):
-		virt_addr(virt_addr), free_blocks_head( FreeMatBlock{ virt_addr, NR_ROWS_IN_MAT, nullptr, nullptr})
-	{};
+		// TODO: store all `NR_MATS` here !!
+		virt_addr(virt_addr)
+	{
+		FreeMatBlock* block = new FreeMatBlock{ virt_addr, NR_ROWS_IN_MAT, nullptr, nullptr};
+		free_blocks_head = block;
+		for (size_t i=0; i<NR_MATS-1; ++i) {
+			auto next_block = new FreeMatBlock{ virt_addr, NR_ROWS_IN_MAT, nullptr, block};
+			block -> next_free_mat_block = next_block;
+			block = next_block;
+		}
+	};
 };
 
 /** For freeing allocated rows. */
@@ -85,7 +77,7 @@ void* mmapPim(void* addr,
 void *find_free_space_in_mat(MatMeta* mat, const size_t size, const size_t mat_label)
 {
 	const size_t num_rows = (size + BYTES_PER_MAT_ROW - 1 ) / BYTES_PER_MAT_ROW;
-	auto block = &(mat->free_blocks_head);
+	auto block = mat->free_blocks_head;
 	while(block!=nullptr) {
 		if (block->nr_free_rows_in_block >= num_rows) {
 			// always choose the first `num_rows` inside this contiguous block
@@ -106,6 +98,11 @@ void *find_free_space_in_mat(MatMeta* mat, const size_t size, const size_t mat_l
 			return allocated_addr;
 		}
 		block = block->next_free_mat_block;
+
+		if (!block) {
+			cerr << "No free mats left" << endl;
+			return nullptr;
+		}
 	}
 	return nullptr;
 }
@@ -133,6 +130,7 @@ void* pim_malloc(const size_t size, const size_t mat_label) {
         auto mat = it->second;
         auto vaddr = find_free_space_in_mat(mat, size, mat_label);
         if (!vaddr) {
+			cout << "Mat: " << mat << ", Mat Label: " << mat_label << ", Size: " << size << endl;
             perror("PIM OOM");
             return nullptr;
         }

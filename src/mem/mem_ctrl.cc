@@ -333,8 +333,8 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
 		assert(mem_pkt->subarray== mem_pkt1->subarray);
 		assert(mem_pkt->mat == mem_pkt1->mat);
         // Make sure `dest`&`src2` address the same bank&rank
-        // Only care about dram_pkt2 if it's a binary op
-        if (addrs->op != Request::ROWNOT) {
+        // Only care about dram_pkt2 if it's a binary (=not a unary) op
+        if (!Request::is_unary_rowop(addrs->op)) {
           assert(mem_pkt->rank == mem_pkt2->rank);
           assert(mem_pkt->bank == mem_pkt2->bank);
 		  assert(mem_pkt->subarray== mem_pkt2->subarray);
@@ -347,7 +347,7 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
 
         DPRINTF(RowOp, "Src2 valid?: %d Note that src2 is not needed for \
             ROWNOT/ROWAAP/ROWAP)\n",
-        addrs->op != Request::ROWNOT);
+        !Request::is_unary_rowop(addrs->op));
         DPRINTF(RowOp,
                 "Adding to write queue: RowOp in rank %d bank %d subarray %d mat %d, rows \
                 %d <-- %d (*) %d\n",

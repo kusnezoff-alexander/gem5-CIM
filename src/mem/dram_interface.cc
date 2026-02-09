@@ -488,6 +488,10 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
                         0, true);
                 cmd_at = bank_ref.actAllowedAt;
                 break;
+			case Request::ROWMULT:
+				break;
+			case Request::ROWDIV:
+				break;
 			case Request::ROWMIN:
 				break;
 			case Request::ROWMAX:
@@ -502,9 +506,7 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
 				break;
 			case Request::ROWBITCOUNT:
 				break;
-			case Request::ROWMULT:
-				break;
-			case Request::ROWDIV:
+			case Request::ROWABS:
 				break;
             default:
                 assert(false);
