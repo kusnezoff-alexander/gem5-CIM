@@ -72,7 +72,10 @@ binary = os.path.join(
     # "tests/cim/pim_malloc_syscall",
     # "tests/cim/src/pim_full_program",
     "tests/test-progs/cim/bin/pim_test_primitives",
+    # "tests/test-progs/cim/bin/pim_workloads",
     # "tests/test-progs/cim/bin/pim_test_pimmalloc",
+    # "tests/test-progs/cim/bin/combined_knn",
+    # "tests/test-progs/cim/bin/hello_world",
 )
 
 system.workload = SEWorkload.init_compatible(binary)

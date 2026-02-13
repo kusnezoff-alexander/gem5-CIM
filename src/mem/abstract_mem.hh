@@ -368,7 +368,7 @@ class AbstractMemory : public ClockedObject
      */
     void functionalAccess(PacketPtr pkt);
 
-	void perform_rowop(uint64_t* dst, const uint64_t* src1, const uint64_t* src2, size_t num_elements, size_t elem_bitwidth, Request::RowOp op);
+	void perform_rowop(uint64_t* dst, const uint64_t* src1, const uint64_t* src2, const uint64_t* mask, size_t num_elements, size_t elem_bitwidth, Request::RowOp op);
 };
 
 } // namespace memory

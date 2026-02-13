@@ -135,6 +135,7 @@ class MemPacket
      * */
     uint32_t src1_row;	// start row of 1st SIMD operand (spans `elem_size` rows in vertical data layout)
     uint32_t src2_row;  // start row of 2nd SIMD operand (spans `elem_size` rows in vertical data layout)
+    uint32_t mask_row;  // only for ROW_IFELSE
     bool is_row_op;
     std::optional<Request::RowOp> row_op;
 

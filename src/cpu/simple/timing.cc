@@ -581,12 +581,12 @@ TimingSimpleCPU::writeMem(uint8_t *data, unsigned size,
     } else if (flags & Request::ROWOP) {
         // TODO: change `PseudoInst` to `CIM` ?
         DPRINTF(DRAM, "[TimingSimpleCPU::writeMem] RowOp writeMem\n");
-        RequestPtr req_dest, req_src1, req_src2;
+        RequestPtr req_dest, req_src1, req_src2, req_mask;
         req->splitRowOp((Request::RowOpPayload*)newData, req_dest,
-                req_src1, req_src2);
+                req_src1, req_src2, req_mask);
 
         WholeTranslationState *state =
-            new WholeTranslationState(req, req_dest, req_src1, req_src2,
+            new WholeTranslationState(req, req_dest, req_src1, req_src2, req_mask,
                                       newData, NULL, mode);
 
         auto *payload = reinterpret_cast<Request::RowOpPayload*>(newData);
@@ -612,6 +612,14 @@ TimingSimpleCPU::writeMem(uint8_t *data, unsigned size,
             DataTranslation<TimingSimpleCPU *> *trans3 =
                 new DataTranslation<TimingSimpleCPU *>(this, state, 2);
             thread->mmu->translateTiming(req_src2, thread->getTC(), trans3,
+                    mode);
+        }
+
+        // Only relevant for ROW_IFELSE
+        if (req_mask != NULL) {
+            DataTranslation<TimingSimpleCPU *> *trans4 =
+                new DataTranslation<TimingSimpleCPU *>(this, state, 3);
+            thread->mmu->translateTiming(req_mask, thread->getTC(), trans4,
                     mode);
         }
 

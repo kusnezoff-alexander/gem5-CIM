@@ -15,6 +15,25 @@ const size_t N_ELEMS = 3000;
 const size_t N_ROWOPS = 12;
 size_t next_mat = 0;
 
+template<typename T>
+T* pim_alloc_safe(size_t size_bytes, size_t& next_mat) {
+    T* ptr = nullptr;
+
+    do {
+        ptr = static_cast<T*>(pim_malloc(size_bytes, next_mat));
+        if (ptr != nullptr) break;
+        next_mat++;
+    } while (next_mat < NR_MATS);
+
+    if (ptr == nullptr) {
+        cerr << "ERROR: not enough PIM space for "
+             << size_bytes << " bytes\n";
+        exit(1);
+    }
+
+    return ptr;
+}
+
 template<std::integral T>
 void init_data(T*& array1, T*& array2, T*& array1_initial_val, T*& array2_initial_val)
 {
@@ -59,7 +78,7 @@ void init_data_fuzzy(T*& array1, T*& array2,
 }
 
 /**
- * @returns Whether check was correct
+ * @returns Whether check was correct (2-operand version)
  */
 template<std::integral T, typename Op>
 bool check_result(T* res, T* array1_initial_val, T* array2_initial_val, Op op)
@@ -68,11 +87,30 @@ bool check_result(T* res, T* array1_initial_val, T* array2_initial_val, Op op)
 	// 2. Read result data back in (and check that it is true)
 	for(size_t i=0; i<N_ELEMS; ++i) {
 		// make sure both arrays have now the correct results stored inside
-
 		auto res_should = op(array1_initial_val[i], array2_initial_val[i]);
 		if(res[i] != res_should) {
 			std::printf("WRONG: array1[%zu]=%d but should be %d (values: %d / %d)\n", i, res[i], res_should,
 					array1_initial_val[i], array2_initial_val[i]);
+			is_correct = false;
+		}
+	}
+	return is_correct;
+}
+
+/**
+ * @returns Whether check was correct (3-operand version for IF_ELSE)
+ */
+template<std::integral T, typename Op>
+bool check_result(T* res, T* array1_initial_val, T* array2_initial_val, T* mask_initial_val, Op op)
+{
+	bool is_correct = true;
+	for(size_t i=0; i<N_ELEMS; ++i) {
+		auto res_should = op(mask_initial_val[i], array1_initial_val[i], array2_initial_val[i]);
+		if(res[i] != res_should) {
+			std::printf("WRONG: array1[%zu]=%d but should be %d (mask=%d, src1=%d, src2=%d)\n",
+					i, res[i], res_should,
+					mask_initial_val[i], array1_initial_val[i], array2_initial_val[i]);
+			is_correct = false;
 		}
 	}
 	return is_correct;
@@ -163,11 +201,19 @@ bool test_every_rowop()
 
 	cout << "ROWIFELSE..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
-	auto row_ifelse = [](dtype a, dtype b) -> dtype {
-		return (a != 0) ? b : static_cast<dtype>(0);
+
+	auto mask = pim_alloc_safe<dtype>(N_ELEMS * sizeof(dtype), next_mat);
+	auto mask_initial_val = new dtype[N_ELEMS];
+	for (size_t i = 0; i < N_ELEMS; ++i) {
+		// Mask pattern: use array1's value as mask (nonzero picks src1, zero picks src2)
+		mask[i] = mask_initial_val[i] = array1_initial_val[i];
+	}
+	// Lambda: dst[i] = (mask[i] != 0) ? src1[i] : src2[i]
+	auto row_ifelse = [](dtype mask_val, dtype a, dtype b) -> dtype {
+		return (mask_val != 0) ? a : b;
 	};
-	rowif_else(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
-	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, row_ifelse);
+	rowif_else(array1, array1, array2, mask, N_ELEMS, sizeof(dtype) * 8);
+	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, mask_initial_val, row_ifelse);
 
 	cout << "ROWABS..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
@@ -268,11 +314,18 @@ size_t fuzzy_testing()
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, row_greater_equal);
 
 	cout << "ROWIFELSE..." << endl;
-	auto row_ifelse = [](dtype a, dtype b) -> dtype {
-		return (a != 0) ? b : static_cast<dtype>(0);
+	auto mask = pim_alloc_safe<dtype>(N_ELEMS * sizeof(dtype), next_mat);
+	auto mask_initial_val = new dtype[N_ELEMS];
+	for (size_t i = 0; i < N_ELEMS; ++i) {
+		// Mask pattern: use array1's value as mask (nonzero picks src1, zero picks src2)
+		mask[i] = mask_initial_val[i] = array1_initial_val[i];
+	}
+	// Lambda: dst[i] = (mask[i] != 0) ? src1[i] : src2[i]
+	auto row_ifelse = [](dtype mask_val, dtype a, dtype b) -> dtype {
+		return (mask_val != 0) ? a : b;
 	};
-	rowif_else(array_res, array1, array2, N_ELEMS, sizeof(dtype) * 8);
-	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, row_ifelse);
+	rowif_else(array1, array1, array2, mask, N_ELEMS, sizeof(dtype) * 8);
+	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, mask_initial_val, row_ifelse);
 
 	cout << "ROWABS..." << endl;
 	auto row_abs = [](dtype a, dtype _) -> dtype {
@@ -290,7 +343,7 @@ int main()
 	while(next_mat < NR_MATS && !test_every_rowop()) ;
 
 	// also try with random data
-	int nr_fuzzy_tests = 1;
+	int nr_fuzzy_tests = 5;
 	size_t nr_correct = 0;
 	for (int i=0; i<nr_fuzzy_tests && next_mat < NR_MATS; ++i) {
 		auto c =  fuzzy_testing();

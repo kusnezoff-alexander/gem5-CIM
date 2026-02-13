@@ -23,7 +23,6 @@ static inline void rowand(T* dst, const T* src1, const T* src2) {
 template<typename T>
 static inline void rowor(T* dst, const T* src1, const T* src2) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x43\n"
         :
@@ -35,7 +34,6 @@ static inline void rowor(T* dst, const T* src1, const T* src2) {
 template<typename T>
 static inline void rownot(T* dst, const T* src1) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x44\n"
         :
@@ -47,7 +45,6 @@ static inline void rownot(T* dst, const T* src1) {
 template<typename T>
 static inline void rowxor(T* dst, const T* src1, const T* src2) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x45\n"
         :
@@ -58,7 +55,6 @@ static inline void rowxor(T* dst, const T* src1, const T* src2) {
 template<typename T>
 static inline void rowmaj3(T* dst, const T* src1, const T* src2) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x46\n"
         :
@@ -70,7 +66,6 @@ static inline void rowmaj3(T* dst, const T* src1, const T* src2) {
 template<typename T>
 static inline void rowclone(T* dst, const T* src1) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x47\n"
         :
@@ -82,7 +77,6 @@ static inline void rowclone(T* dst, const T* src1) {
 template<typename T>
 static inline void rowtrsp_init(T* dst, const size_t size, const size_t elem_size) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x48\n"
         :
@@ -94,7 +88,6 @@ static inline void rowtrsp_init(T* dst, const size_t size, const size_t elem_siz
 template<typename T>
 static inline void rowsub(T* dst, const T* src1, const T* src2) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x49\n"
         :
@@ -107,7 +100,6 @@ static inline void rowsub(T* dst, const T* src1, const T* src2) {
 template<typename T>
 static inline void rowmin(T* dst, const T* src1, const T* src2) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x4a\n"
         :
@@ -119,7 +111,6 @@ static inline void rowmin(T* dst, const T* src1, const T* src2) {
 template<typename T>
 static inline void rowmax(T* dst, const T* src1, const T* src2) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x4b\n"
         :
@@ -131,7 +122,6 @@ static inline void rowmax(T* dst, const T* src1, const T* src2) {
 template<typename T>
 static inline void rowright_shift(T* dst, const T* src1) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x4c\n"
         :
@@ -143,7 +133,6 @@ static inline void rowright_shift(T* dst, const T* src1) {
 template<typename T>
 static inline void rowleft_shift(T* dst, const T* src1) {
     // dst, src1, src2 are just placeholders for registers or memory operands
-    // This emits the raw ROWAND opcode (0x66 0x0F 0x38 0x42)
     asm volatile(
         ".byte 0x66, 0x0F, 0x38, 0x4d\n"
         :

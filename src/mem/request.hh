@@ -393,10 +393,10 @@ class Request : public Extensible<Request>
     {
         Request::RowOp op;
         Addr dest;
-		// for ROWTRSP: stores size
         Addr src1;
-		// for ROWTRSP: stores size_elems
         Addr src2;
+		// only set for row_ifelse
+		Addr mask;
 		// "number of elements to move from source to the destination array" (see MIMDRAM paper)
 		size_t size;
 		// "number of bits in each array element" (see MIMDRAM paper)
@@ -703,7 +703,7 @@ class Request : public Extensible<Request>
      * 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/request.hh#L449)
      */
     void splitRowOp(Request::RowOpPayload* addrs, RequestPtr &req_dest,
-            RequestPtr &req_src1, RequestPtr &req_src2)
+            RequestPtr &req_src1, RequestPtr &req_src2, RequestPtr &req_mask)
     {
         assert(hasVaddr());
         assert(!hasPaddr());
@@ -721,6 +721,13 @@ class Request : public Extensible<Request>
             req_src2 = std::make_shared<Request>(*this);
             req_src2->_vaddr = addrs->src2;
         }
+
+		if (addrs->op != Request::ROWIF_ELSE) {
+			req_mask = NULL;
+		} else {
+            req_mask = std::make_shared<Request>(*this);
+            req_mask->_vaddr = addrs->mask;
+		}
     }
 
     /**

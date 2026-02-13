@@ -1,3 +1,0 @@
-menuconfig BUILD_CIM
-    bool "Build the cim model"
-    default n

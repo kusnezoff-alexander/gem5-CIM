@@ -1,12 +1,30 @@
+# gem5-PIM
+
 This repository aims to add full support for simulating PIM programs (starting with the Ambit [1] Processing-using-DRAM technology).
 The implementation is heavily based on [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/tree/23495f10950d891a95a0b8a05d0a6a88e92de154/gem5), which used a (much) older gem5 version.
 Compared to MIMDRAM, most notably our simulator implementation adds full support for the entire SIMDRAM [2] instruction set, supports PIM operand allocation in a reserved huge page pool (following the approach described in SIMDRAM)
 and provides what we call the *pim standard library*. The pim-stdlib includes C++ wrappers around supported PIM x86 instructions and a custom PIM memory allocator.
 
-[1] Hoon Shin, Rihae Park, and Jae W. Lee. 2025. A Processingusing-Memory Architecture for Commodity DRAM Devices with Enhanced Compatibility and Reliability. In Proceedings of the 43rd IEEE/ACM International Conference on ComputerAided Design (ICCAD ’24), 1–10. https://doi.org/10.1145/ 3676536.3676771
-[2] Nastaran Hajinazar, Geraldo F. Oliveira, Sven Gregorio, João Dinis Ferreira, Nika Mansouri Ghiasi, Minesh Patel, Mohammed Alser, Saugata Ghose, Juan Gómez-Luna, and Onur Mutlu. 2021. SIMDRAM: a framework for bit-serial SIMD processing using DRAM. In Proceedings of the 26th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS ’21), 329–345. https://doi.org/10.1145/3445814.3446749
+- [1] Hoon Shin, Rihae Park, and Jae W. Lee. 2025. A Processingusing-Memory Architecture for Commodity DRAM Devices with Enhanced Compatibility and Reliability. In Proceedings of the 43rd IEEE/ACM International Conference on ComputerAided Design (ICCAD ’24), 1–10. https://doi.org/10.1145/ 3676536.3676771
+- [2] Nastaran Hajinazar, Geraldo F. Oliveira, Sven Gregorio, João Dinis Ferreira, Nika Mansouri Ghiasi, Minesh Patel, Mohammed Alser, Saugata Ghose, Juan Gómez-Luna, and Onur Mutlu. 2021. SIMDRAM: a framework for bit-serial SIMD processing using DRAM. In Proceedings of the 26th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS ’21), 329–345. https://doi.org/10.1145/3445814.3446749
 
 **Current limitations**: Simulating PIM workloads in the O3 CPU Model is not working reliably (yet).
+
+## Usage
+
+We provide several example programs under `tests/test-progs/cim/src`. You can build them (alongside our pim standard library) using:
+```sh
+cd test-progs/cim/src
+
+make                            # build everything
+make test TEST=workloads        # build only PIM workloads
+make test TEST=primitives       # build only PIM primitives
+make test TEST=all              # build all tests
+```
+
+Then run: `build/X86/gem5.debug --debug-flags=X86 --debug-start=0 --debug-file=/tmp/dprint.log  configs/cim/hello_world_cim.py 2>&1 |  grep -Ev '^(Command|WARN)'`
+(the simulator might put out lots of warnings, we filter them out for now). Make sure to set the appropriate binary (that you build previously into `tests/test-progrs/cim/bin`) inside
+`configs/cim/cim.py`.
 
 # The gem5 Simulator
 

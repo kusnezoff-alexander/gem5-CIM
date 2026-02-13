@@ -323,6 +323,8 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
                 false);
         MemPacket* mem_pkt2 = mem_intr->decodePacket(pkt, addrs->src2, 0,
                 false);
+        MemPacket* mem_pkt3 = mem_intr->decodePacket(pkt, addrs->mask, 0,
+                false);
         mem_pkt->is_row_op = true;
         mem_pkt->row_op = addrs->op;
 
@@ -342,18 +344,20 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
         }
         mem_pkt->src1_row = mem_pkt1->row;
         mem_pkt->src2_row = mem_pkt2->row;
+        mem_pkt->mask_row = mem_pkt3->row;
         delete mem_pkt1;
         delete mem_pkt2;
+        delete mem_pkt3;
 
         DPRINTF(RowOp, "Src2 valid?: %d Note that src2 is not needed for \
             ROWNOT/ROWAAP/ROWAP)\n",
         !Request::is_unary_rowop(addrs->op));
         DPRINTF(RowOp,
                 "Adding to write queue: RowOp in rank %d bank %d subarray %d mat %d, rows \
-                %d <-- %d (*) %d\n",
+                %d <-- %d (*) %d (mask select: %d) \n",
                 mem_pkt->rank, mem_pkt->bank, mem_pkt->subarray,
 				mem_pkt->mat, mem_pkt->row,
-                mem_pkt->src1_row, mem_pkt->src2_row);
+                mem_pkt->src1_row, mem_pkt->src2_row, mem_pkt->mask_row);
 
         // Add to write queue, and set rowop counter to signal that we must
         // flush the write queue
@@ -372,7 +376,7 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
         stats.avgWrQLen = totalWriteQueueSize;
 
         pendingRowOps++;
-
+        DPRINTF(RowOp, "pendingRowOps: %d\n", pendingRowOps);
     } else {
         // if the request size is larger than burst size, the pkt is split into
         // multiple packets
@@ -508,22 +512,6 @@ MemCtrl::recvTimingReq(PacketPtr pkt)
 
     // run the QoS scheduler and assign a QoS priority value to the packet
     qosSchedule( { &readQueue, &writeQueue }, burst_size, pkt);
-
-	// TODO: handle RowOps completely separately
-	if (pkt->isRowOp()) {
-		DPRINTF(MemCtrl, "Sending CIM-Op to MIMDRAM Control Unit\n");
-		DPRINTF(RowOp, "Got request for RowOp, sending to MIMDRAM Control Unit\n");
-		mimdram_control_unit.addToBbopBuffer(pkt, pkt_count, dram);
-
-
-        if (mimdram_control_unit.bbopBufferFull(pkt_count)) {
-            DPRINTF(RowOp, "Bbop Buffer full, not accepting\n");
-            // remember that we have to retry this port
-            retryCimReq = true;
-            stats.numCimRetry++;
-            return false;
-		}
-	}
 
     // check local buffers and do not accept if full
     if (pkt->isWrite()) {

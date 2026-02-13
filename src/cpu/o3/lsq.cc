@@ -797,7 +797,7 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
 
             request = new SingleDataRequest(&thread[tid], inst, false, addr,
                     size, flags, data, res, std::move(amo_op));
-            RequestPtr req_dest, req_src1, req_src2;
+            RequestPtr req_dest, req_src1, req_src2, req_mask;
 
             // If this is being executed speculatively, we might get wacky
             // addresses, so round down
@@ -805,17 +805,18 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
             addrs->dest = addrs->dest / ROW_SIZE * ROW_SIZE;
             addrs->src1 = addrs->src1 / ROW_SIZE * ROW_SIZE;
             addrs->src2 = addrs->src2 / ROW_SIZE * ROW_SIZE;
+            addrs->mask = addrs->mask / ROW_SIZE * ROW_SIZE;
 
 
             // request->initiateTranslation();
             request->addReq(addr, size, byte_enable);
-            request->mainReq()->splitRowOp(addrs, req_dest, req_src1, req_src2);
+            request->mainReq()->splitRowOp(addrs, req_dest, req_src1, req_src2, req_mask);
 
             // TODO: when
             inst->translationStarted(true);
 
             WholeTranslationState *state =
-                new WholeTranslationState(request->req(), req_dest, req_src1, req_src2,
+                new WholeTranslationState(request->req(), req_dest, req_src1, req_src2, req_mask,
                         data, res, BaseMMU::Write);
 
             // FIXME: can we really issue 3 translations in Out-of-order Exec ?? (this is done in MIMDRAM)

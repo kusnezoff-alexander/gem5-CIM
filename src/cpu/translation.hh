@@ -67,7 +67,8 @@ class WholeTranslationState
     // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/cpu/
     // translation.hh#L65)
     // Fault faults[2];
-    Fault faults[3];
+	// one for {dest,src1,src2,mask} (mask only used for ROW_IFELSE)
+    Fault faults[4];
 
   public:
     bool delay;
@@ -85,6 +86,7 @@ class WholeTranslationState
     RequestPtr sreqDest;
     RequestPtr sreqSrc1;
     RequestPtr sreqSrc2;
+    RequestPtr sreqMask;
     uint8_t *data;
     uint64_t *res;
     BaseMMU::Mode mode;
@@ -98,9 +100,9 @@ class WholeTranslationState
         : outstanding(1), delay(false), isSplit(false),
           isRowOp(false), mainReq(_req),
           sreqLow(NULL), sreqHigh(NULL), sreqDest(NULL),
-          sreqSrc1(NULL), sreqSrc2(NULL), data(_data), res(_res), mode(_mode)
+          sreqSrc1(NULL), sreqSrc2(NULL), sreqMask(NULL), data(_data), res(_res), mode(_mode)
     {
-        faults[0] = faults[1] = faults[2] = NoFault;
+        faults[0] = faults[1] = faults[2] = faults[3] = NoFault;
         assert(mode == BaseMMU::Read || mode == BaseMMU::Write);
     }
 
@@ -115,10 +117,10 @@ class WholeTranslationState
         : outstanding(2), delay(false), isSplit(true),
           isRowOp(false), mainReq(_req),
           sreqLow(_sreqLow), sreqHigh(_sreqHigh), sreqDest(NULL),
-          sreqSrc1(NULL), sreqSrc2(NULL), data(_data), res(_res),
+          sreqSrc1(NULL), sreqSrc2(NULL), sreqMask(NULL), data(_data), res(_res),
           mode(_mode)
     {
-        faults[0] = faults[1] = faults[2] = NoFault;
+        faults[0] = faults[1] = faults[2] = faults[3] = NoFault;
         assert(mode == BaseMMU::Read || mode == BaseMMU::Write);
     }
 
@@ -131,15 +133,19 @@ class WholeTranslationState
      */
     WholeTranslationState(RequestPtr _req, RequestPtr _sreqDest,
                           RequestPtr _sreqSrc1, RequestPtr _sreqSrc2,
+						  RequestPtr _sreqMask,
                           uint8_t *_data, uint64_t *_res,
                           BaseMMU::Mode _mode)
-        : outstanding(_sreqSrc1 == NULL? 1 : (_sreqSrc2 == NULL? 2 : 3)),
+        : outstanding(_sreqSrc1 == NULL? 1 : (_sreqSrc2 == NULL? 2 :
+				(_sreqMask == NULL ? 3 : 4)
+					)),
           delay(false), isSplit(false),
           isRowOp(true), mainReq(_req), sreqLow(NULL), sreqHigh(NULL),
           sreqDest(_sreqDest), sreqSrc1(_sreqSrc1), sreqSrc2(_sreqSrc2),
+		  sreqMask(_sreqMask),
           data(_data), res(_res), mode(_mode)
     {
-        faults[0] = faults[1] = faults[2] = NoFault;
+        faults[0] = faults[1] = faults[2] = faults[3] = NoFault;
         assert(mode == BaseMMU::Write);
     }
 
@@ -186,6 +192,12 @@ class WholeTranslationState
                 }
                 mainReq->setFlags(sreqSrc2->getFlags());
             }
+            if (sreqMask != NULL) {
+                if (faults[3] == NoFault) {
+                    addrs->mask = sreqMask->getPaddr();
+                }
+                mainReq->setFlags(sreqMask->getFlags());
+            }
             mainReq->setPaddr(0);
         }
         return outstanding == 0;
@@ -206,6 +218,8 @@ class WholeTranslationState
             return faults[1];
         else if (faults[2] != NoFault)
             return faults[2];
+        else if (faults[3] != NoFault)
+            return faults[3];
         else
             return NoFault;
     }
@@ -214,7 +228,7 @@ class WholeTranslationState
     void
     setNoFault()
     {
-        faults[0] = faults[1] = faults[2] = NoFault;
+        faults[0] = faults[1] = faults[2] = faults[3] = NoFault;
     }
 
     /**
@@ -274,6 +288,7 @@ class WholeTranslationState
             sreqDest.reset();
             sreqSrc1.reset();
             sreqSrc2.reset();
+            sreqMask.reset();
         }
     }
 };
@@ -296,7 +311,7 @@ class DataTranslation : public BaseMMU::Translation
     int index;
 
   public:
-    WholeTranslationState *state; // this fix should be ILLEGAL !! (2025-11-04)
+    WholeTranslationState *state; // HOTFIX (was protected previously)
 
     DataTranslation(ExecContextPtr _xc, WholeTranslationState* _state)
         : xc(_xc), state(_state), index(0)

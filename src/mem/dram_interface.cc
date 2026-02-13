@@ -489,24 +489,84 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
                 cmd_at = bank_ref.actAllowedAt;
                 break;
 			case Request::ROWMULT:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
 				break;
 			case Request::ROWDIV:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
 				break;
 			case Request::ROWMIN:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
 				break;
 			case Request::ROWMAX:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
 				break;
 			case Request::ROWEQUAL:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
 				break;
 			case Request::ROWGREATER:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
 				break;
             case Request::ROWGREATER_EQUAL:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
                 break;
             case Request::ROWIF_ELSE:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
 				break;
 			case Request::ROWBITCOUNT:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
 				break;
 			case Request::ROWABS:
+                //[comment from MIMDRAM]: TODO replace NULLs with
+                //correct bank_refs
+                aapBank(rank_ref, bank_ref, cmd_at, 0,
+                        0, true);
+                cmd_at = bank_ref.actAllowedAt;
+                break;
 				break;
             default:
                 assert(false);
