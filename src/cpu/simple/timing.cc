@@ -591,8 +591,8 @@ TimingSimpleCPU::writeMem(uint8_t *data, unsigned size,
 
         auto *payload = reinterpret_cast<Request::RowOpPayload*>(newData);
         DPRINTF(DRAM, "[TimingSimpleCPU::writeMem] RowOpPayload: "
-                      "src1=0x%lx src2=0x%lx dst=0x%lx op=%u\n",
-                payload->src1, payload->src2, payload->dest, payload->op);
+                      "src1=0x%lx src2=0x%lx dst=0x%lx op=%u\n (size=%lu, n=%lu)",
+                payload->src1, payload->src2, payload->dest, payload->op, payload->size, payload->n);
         DataTranslation<TimingSimpleCPU *> *trans1 =
             new DataTranslation<TimingSimpleCPU *>(this, state, 0);
         thread->mmu->translateTiming(req_dest, thread->getTC(), trans1, mode);

@@ -49,7 +49,11 @@
 #include "debug/RowOp.hh"
 #include "enums/AddrMap.hh"
 #include "sim/system.hh"
+#include <algorithm>
 #include <cmath>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 namespace gem5
 {
@@ -401,11 +405,13 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         cmd_at = std::max(cmd_at, bank_ref.actAllowedAt);
         Tick issue_tick = cmd_at; // store tick at which pkt has been issued
 
+		uint64_t size = mem_pkt->num_elements;
+		uint64_t n = mem_pkt->elem_bitwidth;
         // Do sequence of activate-activate-precharge operations
 		// - this code corresponds to the translation into μPrograms
 		// (done by a *Control Unit*) described in Chap4.1 of the MIMDRAM Paper
-        DPRINTF(RowOp, "DRAMCtrl recieved RowOp=%d Packet to rank=%d, bank=%d \n",
-                *mem_pkt->row_op, mem_pkt->rank, mem_pkt->bank);
+        DPRINTF(RowOp, "DRAMCtrl recieved RowOp=%d Packet to rank=%d, bank=%d, size=%lu, n=%lu \n",
+                *mem_pkt->row_op, mem_pkt->rank, mem_pkt->bank, size, n);
         switch (*mem_pkt->row_op) {
 			// TODO: Control Unit should take over here (see [#Issue 7](https://github.com/kusnezoff-alexander/gem5-CIM/issues/7))
 			// - issue AP&AAPs for every row which is spanned by the operand
@@ -476,98 +482,24 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
                 cmd_at = bank_ref.actAllowedAt;
                 break;
             case Request::ROWSUB:
-                //[comment from MIMDRAM]: TODO replace Bank::B_T0_T1_T2
-                //with correct bank_ref
-                apBank (rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
             case Request::ROWADD:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-			case Request::ROWMULT:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-				break;
-			case Request::ROWDIV:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-				break;
-			case Request::ROWMIN:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-				break;
-			case Request::ROWMAX:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-				break;
-			case Request::ROWEQUAL:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-				break;
-			case Request::ROWGREATER:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-				break;
+            case Request::ROWMULT:
+            case Request::ROWDIV:
+            case Request::ROWMIN:
+            case Request::ROWMAX:
+            case Request::ROWEQUAL:
+            case Request::ROWGREATER:
             case Request::ROWGREATER_EQUAL:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-                break;
             case Request::ROWIF_ELSE:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
+            case Request::ROWBITCOUNT:
+            case Request::ROWABS:
+            {
+                // Read AP/AAP microprogram from the corresponding text file
+                // in src/mem/ambit_microprograms/
+                executeAmbitMicroprogram(rank_ref, bank_ref, cmd_at,
+                                         *mem_pkt->row_op, n);
                 break;
-				break;
-			case Request::ROWBITCOUNT:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-				break;
-			case Request::ROWABS:
-                //[comment from MIMDRAM]: TODO replace NULLs with
-                //correct bank_refs
-                aapBank(rank_ref, bank_ref, cmd_at, 0,
-                        0, true);
-                cmd_at = bank_ref.actAllowedAt;
-                break;
-				break;
+            }
             default:
                 assert(false);
                 break;
@@ -1136,6 +1068,7 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
 		// Channel bits (assumed to be handled by separate memory controllers)
 		// Skip channel extraction
 
+		Addr addr = getCtrlAddr(pkt_addr); // our address allocation doesn't work with bursts
 		const int BYTES_PER_MAT_ROW = colsPerMat / 8;
 		// Extract byte/column offset within row (LSB after channel)
 		Addr _ = addr % BYTES_PER_MAT_ROW;  // byteoffset
@@ -1467,6 +1400,333 @@ DRAMInterface::aapBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick,
     prechargeBank(rank_ref, bank_ref, bank_ref.preAllowedAt);
 }
 
+/**
+ * Map a single microprogram row token (e.g. "T0", "~DCC0", "C1", "I3", "O1",
+ * "S5") to the corresponding Bank constant (uint32_t).
+ *
+ * For input (I), output (O), and scratch (S) rows, we return a dummy row
+ * value (0) because the actual row identity is not yet wired up — only the
+ * AP/AAP timing matters at this stage.
+ */
+static uint32_t
+parseRowToken(const std::string &tok)
+{
+    using Bank = MemInterface::Bank;
+
+    if (tok == "T0")    return Bank::B_T0;
+    if (tok == "T1")    return Bank::B_T1;
+    if (tok == "T2")    return Bank::B_T2;
+    if (tok == "T3")    return Bank::B_T3;
+    if (tok == "DCC0")  return Bank::B_DCC0;
+    if (tok == "~DCC0") return Bank::B_DCC0N;
+    if (tok == "DCC1")  return Bank::B_DCC1;
+    if (tok == "~DCC1") return Bank::B_DCC1N;
+    if (tok == "C0")    return Bank::C_0;
+    if (tok == "C1")    return Bank::C_1;
+
+    // Input / Output / Scratch rows — actual row doesn't matter for timing
+    if (tok.size() >= 2 && (tok[0] == 'I' || tok[0] == 'O' || tok[0] == 'S'))
+        return 0;
+
+    panic("parseRowToken: unrecognised microprogram token '%s'\n",
+          tok.c_str());
+    return 0;
+}
+
+/**
+ * Map a bracketed group of row tokens (e.g. "[~DCC0, T0]", "[T0, T1, T2]")
+ * to the corresponding combined Bank constant.
+ *
+ * The function strips the surrounding brackets, splits on commas, trims
+ * whitespace, sorts the resulting tokens and performs a lookup in a static
+ * table of known combinations.
+ *
+ * If the combination contains only I/O/S rows (no special Bank registers),
+ * we return a dummy row value (0) for timing purposes.
+ */
+static uint32_t
+parseBracketGroup(const std::string &group)
+{
+    using Bank = MemInterface::Bank;
+
+    // strip leading '[' and trailing ']'
+    std::string inner = group.substr(1, group.size() - 2);
+
+    // split on ','
+    std::vector<std::string> tokens;
+    std::istringstream ss(inner);
+    std::string item;
+    while (std::getline(ss, item, ',')) {
+        // trim whitespace
+        size_t start = item.find_first_not_of(" \t");
+        size_t end   = item.find_last_not_of(" \t");
+        if (start != std::string::npos)
+            tokens.push_back(item.substr(start, end - start + 1));
+    }
+
+    // Sort tokens so that order in the file doesn't matter for lookup
+    std::vector<std::string> sorted_tokens = tokens;
+    std::sort(sorted_tokens.begin(), sorted_tokens.end());
+
+    // Build a canonical key "tok1,tok2,..."
+    std::string key;
+    for (size_t i = 0; i < sorted_tokens.size(); i++) {
+        if (i > 0) key += ",";
+        key += sorted_tokens[i];
+    }
+
+    // Lookup known combined Bank constants
+    // (keys are sorted alphabetically)
+    if (key == "T0,~DCC0" || key == "~DCC0,T0") return Bank::B_DCC0N_T0;
+    if (key == "T1,~DCC1" || key == "~DCC1,T1") return Bank::B_DCC1N_T1;
+    if (key == "T2,T3")                          return Bank::B_T2_T3;
+    if (key == "T0,T3")                          return Bank::B_T0_T3;
+    if (key == "T0,T1,T2")                       return Bank::B_T0_T1_T2;
+    if (key == "T1,T2,T3")                       return Bank::B_T1_T2_T3;
+    if (key == "DCC0,T1,T2")                     return Bank::B_DCC0_T1_T2;
+    if (key == "DCC1,T0,T3")                     return Bank::B_DCC1_T0_T3;
+
+    // If all tokens are I/O/S rows, return dummy row for timing
+    bool all_data = true;
+    for (const auto &t : tokens) {
+        if (t.size() < 2 || (t[0] != 'I' && t[0] != 'O' && t[0] != 'S'))
+            all_data = false;
+    }
+    if (all_data)
+        return 0;
+
+    panic("parseBracketGroup: unrecognised combination '%s'\n", group.c_str());
+    return 0;
+}
+
+/**
+ * Return the microprogram file base-name prefix for a given RowOp.
+ * Returns an empty string for operations that have no microprogram file
+ * (handled by hardcoded sequences).
+ */
+static std::string
+rowOpToFilePrefix(Request::RowOp op)
+{
+    switch (op) {
+        case Request::ROWAND:            return "and";
+        case Request::ROWOR:             return "or";
+        case Request::ROWXOR:            return "xor";
+        case Request::ROWSUB:            return "sub";
+        case Request::ROWADD:            return "add";
+        case Request::ROWMULT:           return "mul";
+        case Request::ROWDIV:            return "div";
+        case Request::ROWMIN:            return "min";
+        case Request::ROWMAX:            return "max";
+        case Request::ROWEQUAL:          return "eq";
+        case Request::ROWGREATER:        return "gt";
+        case Request::ROWGREATER_EQUAL:  return "ge";
+        case Request::ROWIF_ELSE:        return "ifelse";
+        case Request::ROWBITCOUNT:       return "bitcount";
+        case Request::ROWABS:            return "abs";
+        default:                         return "";
+    }
+}
+
+/**
+ * Execute an AMBIT microprogram by reading the appropriate text file from
+ * src/mem/ambit_microprograms/ and issuing AP / AAP commands for each line.
+ *
+ * The microprogram file is determined by the RowOp type and the element
+ * bitwidth (n) carried in the RowOpPayload.  Each non-empty line in the
+ * file is either:
+ *   AP  [row1, row2, row3]        — triple-row activation (MAJ3)
+ *   AAP src dst                   — row clone (src → dst)
+ *   AAP src [dst1, dst2, ...]     — row clone (src → combined dst)
+ *
+ * For timing purposes, the actual row addresses of I/O/S tokens are
+ * irrelevant (mapped to 0).  Only the correct number and type of AP/AAP
+ * calls matters.
+ */
+
+Tick
+DRAMInterface::executeRefreshDuringMicroprogram(
+    Rank& rank_ref, Bank& bank_ref, Tick cmd_at)
+{
+    DPRINTF(DRAM, "Executing refresh during microprogram at tick %llu\n", cmd_at);
+
+    Tick pre_at = cmd_at;
+    for (auto &b : rank_ref.banks) {
+        pre_at = std::max(b.preAllowedAt, pre_at);
+    }
+
+    Tick act_allowed_at = pre_at + tRP;
+
+    for (auto &b : rank_ref.banks) {
+        if (b.openRow != Bank::NO_ROW) {
+            prechargeBank(rank_ref, b, pre_at, true, false);
+        } else {
+            b.actAllowedAt = std::max(b.actAllowedAt, act_allowed_at);
+            b.preAllowedAt = std::max(b.preAllowedAt, pre_at);
+        }
+    }
+
+    rank_ref.cmdList.push_back(Command(MemCommand::PREA, 0, pre_at));
+
+    cmd_at = std::max(cmd_at, act_allowed_at);
+
+    Tick ref_done_at = cmd_at + tRFC;
+    for (auto &b : rank_ref.banks) {
+        b.actAllowedAt = ref_done_at;
+    }
+
+    rank_ref.cmdList.push_back(Command(MemCommand::REF, 0, cmd_at));
+
+    rank_ref.transitionPowerStateForRefresh();
+
+    DPRINTF(DRAMPower, "%llu,REF,0,%d\n", divCeil(cmd_at, tCK) -
+            timeStampOffset, rank_ref.rank);
+
+    rank_ref.setRefreshDueAt(ref_done_at);
+    rank_ref.refreshState = RefreshState::REF_IDLE;
+
+    return ref_done_at;
+}
+
+void
+DRAMInterface::executeAmbitMicroprogram(
+    Rank& rank_ref, Bank& bank_ref, Tick& cmd_at,
+    Request::RowOp op, size_t n)
+{
+    std::string prefix = rowOpToFilePrefix(op);
+    if (prefix.empty()) {
+        panic("executeAmbitMicroprogram: no file prefix for RowOp %d\n", op);
+        return;
+    }
+
+    // Derive the ambit_microprograms directory from this source file's path.
+    // __FILE__ gives us something like ".../src/mem/dram_interface.cc"
+    // so we strip the filename to get ".../src/mem/" and append the subdir.
+    std::string thisFile(__FILE__);
+    std::string srcMemDir = thisFile.substr(0, thisFile.rfind('/') + 1);
+    std::string filename = srcMemDir + "ambit_microprograms/" +
+        prefix + std::to_string(n) + ".txt";
+
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        panic("executeAmbitMicroprogram: cannot open microprogram file '%s'\n",
+              filename.c_str());
+        return;
+    }
+
+    DPRINTF(RowOp, "Executing microprogram from '%s'\n", filename.c_str());
+
+    if (rank_ref.refreshEvent.scheduled()) {
+        rank_ref.deschedule(rank_ref.refreshEvent);
+    }
+
+    Tick microprogram_start_at = cmd_at;
+
+    if (rank_ref.refreshState != RefreshState::REF_IDLE) {
+        Tick refresh_needed_at = rank_ref.getRefreshDueAt();
+        if (cmd_at >= refresh_needed_at) {
+            cmd_at = executeRefreshDuringMicroprogram(rank_ref, bank_ref, cmd_at);
+            microprogram_start_at = cmd_at;
+        }
+    }
+
+    std::string line;
+    int line_num = 0;
+    while (std::getline(file, line)) {
+        line_num++;
+
+        // skip empty / whitespace-only lines
+        if (line.find_first_not_of(" \t\r\n") == std::string::npos)
+            continue;
+
+        // Determine instruction type: AP or AAP
+        if (line.substr(0, 3) == "AAP") {
+            // Parse: AAP <src> <dst>
+            // where <src> and <dst> can each be a bare token or [bracket group]
+            std::string rest = line.substr(4); // skip "AAP "
+
+            // trim leading whitespace
+            size_t pos = rest.find_first_not_of(" \t");
+            if (pos != std::string::npos) rest = rest.substr(pos);
+
+            uint32_t src_row, dst_row;
+
+            // Parse src operand
+            if (rest[0] == '[') {
+                size_t close = rest.find(']');
+                assert(close != std::string::npos);
+                src_row = parseBracketGroup(rest.substr(0, close + 1));
+                rest = rest.substr(close + 1);
+            } else {
+                size_t space = rest.find(' ');
+                assert(space != std::string::npos);
+                src_row = parseRowToken(rest.substr(0, space));
+                rest = rest.substr(space);
+            }
+
+            // trim whitespace between src and dst
+            pos = rest.find_first_not_of(" \t");
+            if (pos != std::string::npos) rest = rest.substr(pos);
+
+            // Parse dst operand
+            if (rest[0] == '[') {
+                size_t close = rest.find(']');
+                assert(close != std::string::npos);
+                dst_row = parseBracketGroup(rest.substr(0, close + 1));
+            } else {
+                // trim trailing whitespace
+                size_t end = rest.find_last_not_of(" \t\r\n");
+                std::string dst_tok = (end != std::string::npos) ?
+                    rest.substr(0, end + 1) : rest;
+                dst_row = parseRowToken(dst_tok);
+            }
+
+            DPRINTF(RowOp, "  [line %d] AAP src=%u dst=%u\n",
+                    line_num, src_row, dst_row);
+            aapBank(rank_ref, bank_ref, cmd_at, src_row, dst_row, true);
+            cmd_at = bank_ref.actAllowedAt;
+
+            if (cmd_at - microprogram_start_at >= tREFI) {
+                cmd_at = executeRefreshDuringMicroprogram(rank_ref, bank_ref, cmd_at);
+                microprogram_start_at = cmd_at;
+            }
+
+        } else if (line.substr(0, 2) == "AP") {
+            // Parse: AP [row1, row2, row3]
+            std::string rest = line.substr(2);
+            size_t bopen = rest.find('[');
+            size_t bclose = rest.find(']');
+            assert(bopen != std::string::npos && bclose != std::string::npos);
+
+            uint32_t row = parseBracketGroup(
+                rest.substr(bopen, bclose - bopen + 1));
+
+            DPRINTF(RowOp, "  [line %d] AP row=%u\n", line_num, row);
+            apBank(rank_ref, bank_ref, cmd_at, row);
+            cmd_at = bank_ref.actAllowedAt;
+
+            if (cmd_at - microprogram_start_at >= tREFI) {
+                cmd_at = executeRefreshDuringMicroprogram(rank_ref, bank_ref, cmd_at);
+                microprogram_start_at = cmd_at;
+            }
+
+        } else {
+            panic("executeAmbitMicroprogram: unrecognised instruction on "
+                  "line %d of '%s': %s\n", line_num, filename.c_str(),
+                  line.c_str());
+        }
+    }
+
+    file.close();
+    DPRINTF(RowOp, "Finished microprogram (%d lines processed)\n", line_num);
+
+    Tick next_refresh = rank_ref.getRefreshDueAt() - tRP;
+    if (next_refresh > cmd_at) {
+        rank_ref.schedule(rank_ref.refreshEvent, next_refresh);
+    } else {
+        rank_ref.schedule(rank_ref.refreshEvent, cmd_at);
+    }
+}
+
 DRAMInterface::Rank::Rank(const DRAMInterfaceParams &_p,
                          int _rank, DRAMInterface& _dram)
     : EventManager(&_dram), dram(_dram),
@@ -1553,6 +1813,15 @@ DRAMInterface::Rank::checkDrainDone()
         // hand control back to the refresh event loop
         schedule(refreshEvent, curTick());
     }
+}
+
+void
+DRAMInterface::Rank::transitionPowerStateForRefresh()
+{
+    pwrState = PWR_REF;
+    updatePowerStats();
+    pwrState = PWR_IDLE;
+    pwrStateTick = curTick();
 }
 
 void

@@ -448,9 +448,9 @@ AbstractMemory::access(PacketPtr pkt)
 		if(addrs->op==Request::ROWIF_ELSE)
 			mask = (uint64_t*)(pmemAddr + addrs->mask - range.start());
 
-        DPRINTF(RowOp, "Performing rowop %d on %p (%x) and %p (%x) with mask=0x%x, previously (dst=0x%x, src1=0x%x, src2=0x%x, mask=0x%x)\n",
+        DPRINTF(RowOp, "Performing rowop %d on %p (%x) and %p (%x) with mask=0x%x, previously (dst=0x%x, src1=0x%x, src2=0x%x, mask=0x%x) with size=%lu, n=%lu) \n",
             addrs->op, src1, *src1, src2, src2 == NULL? 0 : *src2, mask,
-			addrs->dest, addrs->src1, addrs->src2, addrs->mask);
+			addrs->dest, addrs->src1, addrs->src2, addrs->mask, addrs->size, addrs->n);
 
         // perform actual ROWOP in memory
 		int num_bytes=(num_elements*elem_bitwidth)/8;

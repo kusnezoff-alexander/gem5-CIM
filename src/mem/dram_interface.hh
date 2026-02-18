@@ -48,6 +48,7 @@
 
 #include "mem/drampower.hh"
 #include "mem/mem_interface.hh"
+#include "mem/request.hh"
 #include "params/DRAMInterface.hh"
 
 namespace gem5
@@ -424,6 +425,23 @@ class DRAMInterface : public MemInterface
         void checkDrainDone();
 
         /**
+         * Get when the next refresh is due
+         */
+        Tick getRefreshDueAt() const { return refreshDueAt; }
+
+        /**
+         * Set when the next refresh is due (used during long operations
+         * like microprograms to maintain tREFI timing)
+         */
+        void setRefreshDueAt(Tick time) { refreshDueAt = time; }
+
+        /**
+         * Execute power state transitions for refresh.
+         * Called during microprogram to maintain proper power stats.
+         */
+        void transitionPowerStateForRefresh();
+
+        /**
          * Push command out of cmdList queue that are scheduled at
          * or before curTick() to DRAMPower library
          * All commands before curTick are guaranteed to be complete
@@ -695,7 +713,32 @@ class DRAMInterface : public MemInterface
     void aapBank(Rank& rank_ref, Bank& bank_ref, Tick act_tick, uint32_t row1,
         uint32_t row2, bool act_overlapped);
 
-	void executeAmbitMicroprogram();
+    /**
+     * Execute an AMBIT microprogram by reading the appropriate text file
+     * from src/mem/ambit_microprograms/ and issuing AP / AAP commands for
+     * each line.
+     *
+     * @param rank_ref  The rank to issue commands to
+     * @param bank_ref  The bank to issue commands to
+     * @param cmd_at    Reference to current command tick (updated in-place)
+     * @param op        The RowOp type determining which microprogram file
+     * @param n         Element bitwidth (e.g. 4, 8, 16, 32, 64)
+     */
+    void executeAmbitMicroprogram(
+        Rank& rank_ref, Bank& bank_ref, Tick& cmd_at,
+        Request::RowOp op, size_t n);
+
+    /**
+     * Execute a refresh during microprogram execution (synchronously).
+     * Precharges all banks and executes the refresh command.
+     *
+     * @param rank_ref   The rank to refresh
+     * @param bank_ref  The bank currently being used (for timing)
+     * @param cmd_at    Current command time, will be updated
+     * @return          Updated command time after refresh
+     */
+    Tick executeRefreshDuringMicroprogram(
+        Rank& rank_ref, Bank& bank_ref, Tick cmd_at);
 
     /*
      * @return time to send a burst of data without gaps

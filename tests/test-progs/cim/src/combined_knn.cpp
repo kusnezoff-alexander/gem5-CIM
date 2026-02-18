@@ -162,7 +162,6 @@ int knn_predict(const Dataset& train, const int32_t* query, KNNWorkspace& ws) {
 	// Instead of rowxor, just zero on CPU:
 	for (size_t i = 0; i < n; ++i)
 		ws.distances[i] = 0;
-	cout << "done" << endl;
 
 	for (size_t f = 0; f < N_FEATURES; ++f) {
 		rowsub(ws.diff, train.features[f], ws.query_features[f], n, 32);
@@ -207,25 +206,8 @@ int main() {
 	// Allocate workspace ONCE for all predictions
 	KNNWorkspace workspace(train.n_samples);
 
-	// After all allocations in main(), print the addresses:
-	cout << "=== PIM Memory Layout ===" << endl;
-	cout << "BYTES_PER_MAT_ROW = " << BYTES_PER_MAT_ROW << endl;
-	cout << "MAT_SIZE_BYTES    = " << MAT_SIZE_BYTES << endl;
-
-	for (size_t f = 0; f < N_FEATURES; ++f) {
-		cout << "train.features[" << f << "] = " << (void*)train.features[f] << endl;
-		cout << "test.features["  << f << "] = " << (void*)test.features[f]  << endl;
-	}
-	cout << "ws.distances       = " << (void*)workspace.distances        << endl;
-	cout << "ws.diff            = " << (void*)workspace.diff             << endl;
-	cout << "ws.diff_sq         = " << (void*)workspace.diff_sq          << endl;
-	for (size_t f = 0; f < N_FEATURES; ++f)
-		cout << "ws.query_features[" << f << "] = " << (void*)workspace.query_features[f] << endl;
-
 	size_t correct = 0;
 	for (size_t i = 0; i < test.n_samples; ++i) {
-		cout << "Running test " << i << endl;
-
 		// Extract query features into contiguous array
 		int32_t query[N_FEATURES];
 		for (size_t f = 0; f < N_FEATURES; ++f) {

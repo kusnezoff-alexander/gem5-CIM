@@ -345,6 +345,8 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
         mem_pkt->src1_row = mem_pkt1->row;
         mem_pkt->src2_row = mem_pkt2->row;
         mem_pkt->mask_row = mem_pkt3->row;
+		mem_pkt->num_elements = addrs->size;
+		mem_pkt->elem_bitwidth = addrs->n;
         delete mem_pkt1;
         delete mem_pkt2;
         delete mem_pkt3;

@@ -73,7 +73,7 @@ namespace memory
  */
 class MemInterface : public AbstractMemory
 {
-  protected:
+  public:
     /**
      * A basic class to track the bank state, i.e. what row is
      * currently open (if any), when is the bank free to accept a new
@@ -138,6 +138,7 @@ class MemInterface : public AbstractMemory
         { }
     };
 
+  protected:
     /**
      * A pointer to the parent memory controller instance
      */
