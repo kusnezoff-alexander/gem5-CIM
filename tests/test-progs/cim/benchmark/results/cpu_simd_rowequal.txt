@@ -1,0 +1,16 @@
+Global frequency set at 1000000000000 ticks per second
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.0.0.1
+gem5 compiled Feb 23 2026 13:55:23
+gem5 started Feb 23 2026 16:10:53
+gem5 executing on edr23651.dip.tu-dresden.de, pid 771335
+command line: ./build/X86/gem5.debug --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results/cpu_simd_rowequal/gem5_debug.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results/cpu_simd_rowequal /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/configs/cim/cim.py --cmd=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/pim_test_cpu_simd --options=7
+
+Beginning simulation!
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+CPU SIMD: Running rowmax (op_id=7)
+Runtime: 288201 ns
+Exiting @ tick 214108474000 because exiting with last active thread context

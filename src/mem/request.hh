@@ -98,7 +98,8 @@ typedef uint16_t RequestorID;
 // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
 // request.hh#L86)
 // FIXME this should be an actual parameter
-#define ROW_SIZE 8192
+// Renamed to CIM_ROW_SIZE to avoid conflict with GPU ROW_SIZE
+#define CIM_ROW_SIZE 8192
 
 class Request : public Extensible<Request>
 {

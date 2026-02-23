@@ -1435,7 +1435,7 @@ LSQUnit::read(LSQRequest *request, ssize_t load_idx)
                 Addr ld_addr_low = request->mainReq()->getPaddr();
                 Addr ld_addr_high = ld_addr_low + request->mainReq()->getSize();
                 Addr st_addr_low = addrs->dest;
-                Addr st_addr_high = st_addr_low + ROW_SIZE;
+                Addr st_addr_high = st_addr_low + CIM_ROW_SIZE;
                 if (st_addr_low < ld_addr_high && ld_addr_low < st_addr_high) {
                     DPRINTF(LSQUnit, "Load of 0x%x overlaps with pending rowop to 0x%x\n", ld_addr_low, st_addr_low);
                     store_has_lower_limit = true;

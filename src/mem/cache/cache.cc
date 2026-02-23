@@ -178,7 +178,7 @@ Cache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
             // cache.cc#L306
             Request::RowOpPayload* addrs =
                 pkt->getPtr<Request::RowOpPayload>();
-            for (Addr i = 0; i < ROW_SIZE; i += blkSize) {
+            for (Addr i = 0; i < CIM_ROW_SIZE; i += blkSize) {
                 CacheBlk *old_blk(tags->findBlock({
                             addrs->dest + i,
                             pkt->isSecure()

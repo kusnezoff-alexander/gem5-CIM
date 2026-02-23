@@ -55,7 +55,7 @@ namespace gem5
 {
 
 struct GPUComputeDriverParams;
-class CIMMemoryDevice;
+class GPUCommandProcessor;
 class PortProxy;
 class ThreadContext;
 
@@ -146,7 +146,7 @@ class GPUComputeDriver final : public EmulatedDriver
     /**
      * GPU that is controlled by this driver.
      */
-    CIMMemoryDevice *device;
+    GPUCommandProcessor *device;
     uint32_t queueId;
     bool isdGPU;
     GfxVersion gfxVersion;

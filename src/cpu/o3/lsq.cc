@@ -802,10 +802,10 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
             // If this is being executed speculatively, we might get wacky
             // addresses, so round down
             Request::RowOpPayload* addrs = (Request::RowOpPayload*)data;
-            addrs->dest = addrs->dest / ROW_SIZE * ROW_SIZE;
-            addrs->src1 = addrs->src1 / ROW_SIZE * ROW_SIZE;
-            addrs->src2 = addrs->src2 / ROW_SIZE * ROW_SIZE;
-            addrs->mask = addrs->mask / ROW_SIZE * ROW_SIZE;
+            addrs->dest = addrs->dest / CIM_ROW_SIZE * CIM_ROW_SIZE;
+            addrs->src1 = addrs->src1 / CIM_ROW_SIZE * CIM_ROW_SIZE;
+            addrs->src2 = addrs->src2 / CIM_ROW_SIZE * CIM_ROW_SIZE;
+            addrs->mask = addrs->mask / CIM_ROW_SIZE * CIM_ROW_SIZE;
 
 
             // request->initiateTranslation();
