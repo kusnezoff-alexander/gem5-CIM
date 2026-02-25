@@ -7,6 +7,7 @@
 #include <concepts>
 #include <functional>
 #include <iostream>
+#include <gem5/m5ops.h>
 
 using namespace pim_core;
 using namespace std;
@@ -137,94 +138,133 @@ bool test_every_rowop()
 		return false;
 	}
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
+	rowtrsp_init(array1, N_ELEMS, sizeof(dtype));
+	rowtrsp_init(array2, N_ELEMS, sizeof(dtype));
 
-	cout << "AND..." << endl;
+	m5_reset_stats(0, 0);
+
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
+
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(1, 0);
 	rowand(array1, array2, array1, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(1, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, bit_and<dtype>{});
 
-	cout << "ADD..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
+
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(2, 0);
 	rowadd(array1, array2, array1, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(2, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, plus<dtype>{});
 
-	cout << "SUB..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
+
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(3, 0);
 	rowsub(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(3, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, minus<dtype>{});
 
-	cout << "MUL..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
+
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(4, 0);
 	rowmult(array1, array2, array1, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(4, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, multiplies<dtype>{});
 
-	cout << "DIV..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
-	rowdiv(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
-	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, divides<dtype>{});
 
-	cout << "MIN..." << endl;
-	init_data(array1, array2, array1_initial_val, array2_initial_val);
 	auto min_op = [](auto a, auto b) { return a < b ? a : b; };
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(5, 0);
 	rowmin(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(5, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, min_op);
 
-	cout << "MAX..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
+
 	auto max_op = [](auto a, auto b) { return a > b ? a : b; };
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(6, 0);
 	rowmax(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(6, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, max_op);
 
-	cout << "ROWEQUAL..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
+
 	auto row_equal = [](dtype a, dtype b) -> dtype {
 		return (a == b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
 	};
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(7, 0);
 	rowequal(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(7, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, row_equal);
 
-	cout << "ROWGREATER..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
+
 	auto row_greater = [](dtype a, dtype b) -> dtype {
 		return (a > b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
 	};
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(8, 0);
 	rowgreater(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(8, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, row_greater);
 
-	cout << "ROWGREATEREQUAL..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
+
 	auto row_greater_equal = [](dtype a, dtype b) -> dtype {
 		return (a >= b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
 	};
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(9, 0);
 	rowgreater_equal(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(9, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, row_greater_equal);
 
-	cout << "ROWIFELSE..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
 
 	auto mask = pim_alloc_safe<dtype>(N_ELEMS * sizeof(dtype), next_mat);
 	auto mask_initial_val = new dtype[N_ELEMS];
 	for (size_t i = 0; i < N_ELEMS; ++i) {
-		// Mask pattern: use array1's value as mask (nonzero picks src1, zero picks src2)
 		mask[i] = mask_initial_val[i] = array1_initial_val[i];
 	}
-	// Lambda: dst[i] = (mask[i] != 0) ? src1[i] : src2[i]
 	auto row_ifelse = [](dtype mask_val, dtype a, dtype b) -> dtype {
 		return (mask_val != 0) ? a : b;
 	};
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(10, 0);
 	rowif_else(array1, array1, array2, mask, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(10, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, mask_initial_val, row_ifelse);
 
-	cout << "ROWABS..." << endl;
 	init_data(array1, array2, array1_initial_val, array2_initial_val);
+
 	auto row_abs = [](dtype a, dtype _) -> dtype {
 		return (a < 0) ? static_cast<dtype>(-a) : a;
 	};
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(11, 0);
 	rowabs(array1, array1, N_ELEMS, sizeof(dtype) * 8);
+	m5_work_end(11, 0);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, row_abs);
 
-	// rowtrsp_init ?
-	cout << "Passed " << nr_correct << "/" << N_ROWOPS << endl;
+        cout << "Passed " << nr_correct << "/" << N_ROWOPS << endl;
 	return true;
 }
 
@@ -262,75 +302,97 @@ size_t fuzzy_testing()
 	std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
 	init_data_fuzzy(array1, array2, array1_initial_val, array2_initial_val);
 
-	cout << "AND..." << endl;
+	m5_reset_stats(0, 0);
+
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(1, 0);
 	rowand(array_res, array1, array2, N_ELEMS, sizeof(uint16_t) * 8);
+	m5_work_end(1, 0);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, bit_and<dtype>{});
 
-	cout << "ADD..." << endl;
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(2, 0);
 	rowadd(array_res, array1, array2, N_ELEMS, sizeof(uint16_t) * 8);
+	m5_work_end(2, 0);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, plus<dtype>{});
 
-	cout << "SUB..." << endl;
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(3, 0);
 	rowsub(array_res, array1, array2, N_ELEMS, sizeof(uint16_t) * 8);
+	m5_work_end(3, 0);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, minus<dtype>{});
 
-	cout << "MUL..." << endl;
+	m5_dump_reset_stats(0, 0);
+
+	m5_work_begin(4, 0);
 	rowmult(array_res, array1, array2, N_ELEMS, sizeof(uint16_t) * 8);
+	m5_work_end(4, 0);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, multiplies<dtype>{});
 
-	cout << "DIV..." << endl;
-	rowdiv(array_res, array1, array2, N_ELEMS, sizeof(uint16_t) * 8);
-	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, divides<dtype>{});
-
-	cout << "MIN..." << endl;
 	auto min_op = [](auto a, auto b) { return a < b ? a : b; };
+	m5_dump_reset_stats(0, 0);
+
+	cout << "ROWMIN..." << endl;
 	rowmin(array_res, array1, array2, N_ELEMS, sizeof(uint16_t) * 8);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, min_op);
 
-	cout << "MAX..." << endl;
 	auto max_op = [](auto a, auto b) { return a > b ? a : b; };
+	m5_dump_reset_stats(0, 0);
+
+	cout << "ROWMAX..." << endl;
 	rowmax(array_res, array1, array2, N_ELEMS, sizeof(uint16_t) * 8);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, max_op);
 
-	cout << "ROWEQUAL..." << endl;
 	auto row_equal = [](dtype a, dtype b) -> dtype {
 		return (a == b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
 	};
+	m5_dump_reset_stats(0, 0);
+
+	cout << "ROWEQUAL..." << endl;
 	rowequal(array_res, array1, array2, N_ELEMS, sizeof(dtype) * 8);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, row_equal);
 
-	cout << "ROWGREATER..." << endl;
 	auto row_greater = [](dtype a, dtype b) -> dtype {
 		return (a > b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
 	};
+	m5_dump_reset_stats(0, 0);
+
+	cout << "ROWGREATER..." << endl;
 	rowgreater(array_res, array1, array2, N_ELEMS, sizeof(dtype) * 8);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, row_greater);
 
-	cout << "ROWGREATEREQUAL..." << endl;
 	auto row_greater_equal = [](dtype a, dtype b) -> dtype {
 		return (a >= b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
 	};
+	m5_dump_reset_stats(0, 0);
+
+	cout << "ROWGREATEREQUAL..." << endl;
 	rowgreater_equal(array_res, array1, array2, N_ELEMS, sizeof(dtype) * 8);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, row_greater_equal);
 
-	cout << "ROWIFELSE..." << endl;
 	auto mask = pim_alloc_safe<dtype>(N_ELEMS * sizeof(dtype), next_mat);
 	auto mask_initial_val = new dtype[N_ELEMS];
 	for (size_t i = 0; i < N_ELEMS; ++i) {
-		// Mask pattern: use array1's value as mask (nonzero picks src1, zero picks src2)
 		mask[i] = mask_initial_val[i] = array1_initial_val[i];
 	}
-	// Lambda: dst[i] = (mask[i] != 0) ? src1[i] : src2[i]
 	auto row_ifelse = [](dtype mask_val, dtype a, dtype b) -> dtype {
 		return (mask_val != 0) ? a : b;
 	};
+	m5_dump_reset_stats(0, 0);
+
+	cout << "ROWIFELSE..." << endl;
 	rowif_else(array1, array1, array2, mask, N_ELEMS, sizeof(dtype) * 8);
 	nr_correct += check_result(array1, array1_initial_val, array2_initial_val, mask_initial_val, row_ifelse);
 
-	cout << "ROWABS..." << endl;
 	auto row_abs = [](dtype a, dtype _) -> dtype {
 		return (a < 0) ? static_cast<dtype>(-a) : a;
 	};
+	m5_dump_reset_stats(0, 0);
+
+	cout << "ROWABS..." << endl;
 	rowabs(array_res, array1, N_ELEMS, sizeof(dtype) * 8);
 	nr_correct += check_result(array_res, array1_initial_val, array2_initial_val, row_abs);
 
@@ -339,7 +401,6 @@ size_t fuzzy_testing()
 
 int main()
 {
-	cout << "Running pim_test_primitives.cpp" << endl;
 	while(next_mat < NR_MATS && !test_every_rowop()) ;
 
 	// also try with random data
@@ -354,6 +415,5 @@ int main()
 		nr_correct += c;
 	}
 	cout << "Passed " << nr_correct << "/" << nr_fuzzy_tests*N_ROWOPS << endl;
-
 	return 0;
 }

@@ -68,22 +68,22 @@ parser.add_argument(
     help="APU mode. Used to take care of problems in "
     "Ruby.py while running APU protocols",
 )
-parser.add_argument(
-    "-u",
-    "--num-compute-units",
-    type=int,
-    default=4,
-    help="number of GPU compute units",
-),
+(
+    parser.add_argument(
+        "-u",
+        "--num-compute-units",
+        type=int,
+        default=4,
+        help="number of GPU compute units",
+    ),
+)
 parser.add_argument(
     "--num-cp",
     type=int,
     default=0,
     help="Number of GPU Command Processors (CP)",
 )
-parser.add_argument(
-    "--benchmark-root", help="Root of benchmark directory tree"
-)
+parser.add_argument("--benchmark-root", help="Root of benchmark directory tree")
 
 # not super important now, but to avoid putting the number 4 everywhere, make
 # it an option/knob
@@ -99,9 +99,7 @@ parser.add_argument(
     default=4,
     help="Number of CUs sharing a scalar cache",
 )
-parser.add_argument(
-    "--simds-per-cu", type=int, default=4, help="SIMD unitsper CU"
-)
+parser.add_argument("--simds-per-cu", type=int, default=4, help="SIMD unitsper CU")
 parser.add_argument(
     "--cu-per-sa",
     type=int,
@@ -125,15 +123,13 @@ parser.add_argument(
     "--sp-bypass-path-length",
     type=int,
     default=4,
-    help="Number of stages of bypass path in vector ALU for "
-    "Single Precision ops",
+    help="Number of stages of bypass path in vector ALU for Single Precision ops",
 )
 parser.add_argument(
     "--dp-bypass-path-length",
     type=int,
     default=4,
-    help="Number of stages of bypass path in vector ALU for "
-    "Double Precision ops",
+    help="Number of stages of bypass path in vector ALU for Double Precision ops",
 )
 # issue period per SIMD unit: number of cycles before issuing another vector
 parser.add_argument(
@@ -402,7 +398,7 @@ parser.add_argument(
     type=str,
     default="TreePLRURP",
     choices=ObjectList.rp_list.get_names(),
-    help="cache replacement policy" "policy for tcp",
+    help="cache replacement policypolicy for tcp",
 )
 
 parser.add_argument(
@@ -410,7 +406,7 @@ parser.add_argument(
     type=str,
     default="TreePLRURP",
     choices=ObjectList.rp_list.get_names(),
-    help="cache replacement policy" "policy for tcc",
+    help="cache replacement policypolicy for tcc",
 )
 
 # sqc rp both changes sqc rp and scalar cache rp
@@ -419,7 +415,7 @@ parser.add_argument(
     type=str,
     default="TreePLRURP",
     choices=ObjectList.rp_list.get_names(),
-    help="cache replacement policy" "policy for sqc",
+    help="cache replacement policypolicy for sqc",
 )
 
 parser.add_argument(
@@ -575,9 +571,7 @@ for i in range(n_cu):
     srf_pool_mgrs = []
     for j in range(args.simds_per_cu):
         for k in range(shader.n_wf):
-            wavefronts.append(
-                Wavefront(simdId=j, wf_slot_id=k, wf_size=args.wf_size)
-            )
+            wavefronts.append(Wavefront(simdId=j, wf_slot_id=k, wf_size=args.wf_size))
 
         if args.reg_alloc_policy == "simple":
             vrf_pool_mgrs.append(
@@ -617,9 +611,7 @@ for i in range(n_cu):
             )
         )
         rfcs.append(
-            RegisterFileCache(
-                simd_id=j, cache_size=args.register_file_cache_size
-            )
+            RegisterFileCache(simd_id=j, cache_size=args.register_file_cache_size)
         )
 
     compute_units[-1].wavefronts = wavefronts
@@ -637,9 +629,7 @@ for i in range(n_cu):
 
     # attach the LDS and the CU to the bus (actually a Bridge)
     compute_units[-1].ldsPort = compute_units[-1].ldsBus.cpu_side_port
-    compute_units[-1].ldsBus.mem_side_port = compute_units[
-        -1
-    ].localDataStore.cuPort
+    compute_units[-1].ldsBus.mem_side_port = compute_units[-1].localDataStore.cuPort
 
 # Attach compute units to GPU
 shader.CUs = compute_units
@@ -664,8 +654,7 @@ shader.timing = True
 
 if args.fast_forward and args.fast_forward_pseudo_op:
     fatal(
-        "Cannot fast-forward based both on the number of instructions and"
-        " on pseudo-ops"
+        "Cannot fast-forward based both on the number of instructions and on pseudo-ops"
     )
 fast_forward = args.fast_forward or args.fast_forward_pseudo_op
 
@@ -831,6 +820,7 @@ for cpu in cpu_list:
     cpu.workload = process
 
 for cp in cp_list:
+    cp.createThreads()
     cp.workload = host_cpu.workload
 
 if fast_forward:
@@ -841,9 +831,7 @@ if fast_forward:
 ########################## Create the overall system ########################
 # List of CPUs that must be switched when moving between KVM and simulation
 if fast_forward:
-    switch_cpu_list = [
-        (cpu_list[i], future_cpu_list[i]) for i in range(args.num_cpus)
-    ]
+    switch_cpu_list = [(cpu_list[i], future_cpu_list[i]) for i in range(args.num_cpus)]
 
 # Other CPU strings cause bad addresses in ROCm. Revert back to M5 Simulator.
 for i, cpu in enumerate(cpu_list):
@@ -918,9 +906,7 @@ for i in range(args.num_cpus):
     system.cpu[i].interrupts[0].int_requestor = system.piobus.cpu_side_ports
     system.cpu[i].interrupts[0].int_responder = system.piobus.mem_side_ports
     if fast_forward:
-        system.cpu[i].mmu.connectWalkerPorts(
-            ruby_port.in_ports, ruby_port.in_ports
-        )
+        system.cpu[i].mmu.connectWalkerPorts(ruby_port.in_ports, ruby_port.in_ports)
 
 # attach CU ports to Ruby
 # Because of the peculiarities of the CP core, you may have 1 CPU but 2
@@ -943,9 +929,9 @@ gpu_port_idx = gpu_port_idx - args.num_cp * 2
 token_port_idx = 0
 for i in range(len(system.ruby._cpu_ports)):
     if isinstance(system.ruby._cpu_ports[i], VIPERCoalescer):
-        system.cpu[shader_idx].CUs[token_port_idx].gmTokenPort = (
-            system.ruby._cpu_ports[i].gmTokenPort
-        )
+        system.cpu[shader_idx].CUs[token_port_idx].gmTokenPort = system.ruby._cpu_ports[
+            i
+        ].gmTokenPort
         token_port_idx += 1
 
 wavefront_size = args.wf_size
@@ -986,12 +972,8 @@ for i in range(args.num_cp):
         gpu_port_idx + i * 2 + 1
     ].in_ports
     system.cpu[cp_idx].interrupts[0].pio = system.piobus.mem_side_ports
-    system.cpu[cp_idx].interrupts[
-        0
-    ].int_requestor = system.piobus.cpu_side_ports
-    system.cpu[cp_idx].interrupts[
-        0
-    ].int_responder = system.piobus.mem_side_ports
+    system.cpu[cp_idx].interrupts[0].int_requestor = system.piobus.cpu_side_ports
+    system.cpu[cp_idx].interrupts[0].int_responder = system.piobus.mem_side_ports
     cp_idx = cp_idx + 1
 
 ################# Connect the CPU and GPU via GPU Dispatcher ##################
@@ -1010,9 +992,7 @@ else:
 ########################## Start simulation ########################
 
 redirect_paths = [
-    RedirectPath(
-        app_path="/proc", host_paths=[f"{m5.options.outdir}/fs/proc"]
-    ),
+    RedirectPath(app_path="/proc", host_paths=[f"{m5.options.outdir}/fs/proc"]),
     RedirectPath(app_path="/sys", host_paths=[f"{m5.options.outdir}/fs/sys"]),
     RedirectPath(app_path="/tmp", host_paths=[f"{m5.options.outdir}/fs/tmp"]),
 ]

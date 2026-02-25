@@ -12,7 +12,6 @@ OP_NAMES = [
     "rowadd",
     "rowsub",
     "rowmult",
-    "rowdiv",
     "rowmin",
     "rowmax",
     "rowequal",

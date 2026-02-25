@@ -969,8 +969,17 @@ X86Process::argsInit(int pageSize,
     DPRINTF(Stack, "Mapping the stack: 0x%x %dB\n", stack_end, stack_size);
     memState->mapRegion(stack_end, stack_size, "stack");
 
-    DPRINTF(HugePage, "Mapping the Huge Page Pool: 0x%x %dB\n", system->hugePagePoolrange().start(), system->hugePagePoolrange().size());
-    memState->mapHugePageRegion(system->hugePagePoolrange().start(), system->hugePagePoolrange().size(), "huge page pool");
+    // Only map huge page pool if it's configured (size > 0)
+    if (system->hugePagePoolrange().size() > 0) {
+        DPRINTF(HugePage, "Mapping the Huge Page Pool: 0x%x %dB\n", 
+                system->hugePagePoolrange().start(), 
+                system->hugePagePoolrange().size());
+        memState->mapHugePageRegion(system->hugePagePoolrange().start(), 
+                                     system->hugePagePoolrange().size(), 
+                                     "huge page pool");
+    } else {
+        DPRINTF(HugePage, "Huge Page Pool not configured (size=0), skipping mapping\n");
+    }
 
     // map out initial stack contents
     IntType sentry_base = stack_base - sentry_size;

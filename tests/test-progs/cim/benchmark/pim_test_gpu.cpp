@@ -9,11 +9,12 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <gem5/m5ops.h>
 
 using namespace std;
 using namespace std::chrono;
 
-const size_t N_ELEMS = 3000;
+const size_t N_ELEMS = 30000;
 
 using dtype = int16_t;
 
@@ -23,7 +24,6 @@ extern "C" {
     void gpu_rowadd(dtype* dst, const dtype* src1, const dtype* src2, size_t size);
     void gpu_rowsub(dtype* dst, const dtype* src1, const dtype* src2, size_t size);
     void gpu_rowmult(dtype* dst, const dtype* src1, const dtype* src2, size_t size);
-    void gpu_rowdiv(dtype* dst, const dtype* src1, const dtype* src2, size_t size);
     void gpu_rowmin(dtype* dst, const dtype* src1, const dtype* src2, size_t size);
     void gpu_rowmax(dtype* dst, const dtype* src1, const dtype* src2, size_t size);
     void gpu_rowequal(dtype* dst, const dtype* src1, const dtype* src2, size_t size);
@@ -35,7 +35,7 @@ extern "C" {
 }
 
 const char* op_names[] = {
-    "rowand", "rowadd", "rowsub", "rowmult", "rowdiv",
+    "rowand", "rowadd", "rowsub", "rowmult",
     "rowmin", "rowmax", "rowequal", "rowgreater", "rowgreater_equal",
     "rowif_else", "rowabs", "bitcount"
 };
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    if (op_id < 1 || op_id > 13) {
+    if (op_id < 1 || op_id > 12) {
         cerr << "Invalid op_id: " << op_id << endl;
         return 1;
     }
@@ -142,6 +142,8 @@ int main(int argc, char* argv[])
     // Copy data to device
     HIP_CHECK(hipMemcpy(d_array1, array1_host, N_ELEMS * sizeof(dtype), hipMemcpyHostToDevice));
     HIP_CHECK(hipMemcpy(d_array2, array2_host, N_ELEMS * sizeof(dtype), hipMemcpyHostToDevice));
+
+    m5_reset_stats(0, 0);
 
     auto start = high_resolution_clock::now();
 
@@ -177,14 +179,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1_host, array1_initial_val, array2_initial_val, multiplies<dtype>{});
             break;
         }
-        case 5: { // rowdiv
-            gpu_rowdiv(d_array1, d_array1, d_array2, N_ELEMS);
-            HIP_CHECK(hipDeviceSynchronize());
-            HIP_CHECK(hipMemcpy(array1_host, d_array1, N_ELEMS * sizeof(dtype), hipMemcpyDeviceToHost));
-            if (run_checks) passed = check_result(array1_host, array1_initial_val, array2_initial_val, divides<dtype>{});
-            break;
-        }
-        case 6: { // rowmin
+        case 5: { // rowmin
             auto min_op = [](auto a, auto b) { return a < b ? a : b; };
             gpu_rowmin(d_array1, d_array1, d_array2, N_ELEMS);
             HIP_CHECK(hipDeviceSynchronize());
@@ -192,7 +187,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1_host, array1_initial_val, array2_initial_val, min_op);
             break;
         }
-        case 7: { // rowmax
+        case 6: { // rowmax
             auto max_op = [](auto a, auto b) { return a > b ? a : b; };
             gpu_rowmax(d_array1, d_array1, d_array2, N_ELEMS);
             HIP_CHECK(hipDeviceSynchronize());
@@ -200,7 +195,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1_host, array1_initial_val, array2_initial_val, max_op);
             break;
         }
-        case 8: { // rowequal
+        case 7: { // rowequal
             auto row_equal = [](dtype a, dtype b) -> dtype {
                 return (a == b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
@@ -210,7 +205,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1_host, array1_initial_val, array2_initial_val, row_equal);
             break;
         }
-        case 9: { // rowgreater
+        case 8: { // rowgreater
             auto row_greater = [](dtype a, dtype b) -> dtype {
                 return (a > b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
@@ -220,7 +215,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1_host, array1_initial_val, array2_initial_val, row_greater);
             break;
         }
-        case 10: { // rowgreater_equal
+        case 9: { // rowgreater_equal
             auto row_greater_equal = [](dtype a, dtype b) -> dtype {
                 return (a >= b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
@@ -230,7 +225,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1_host, array1_initial_val, array2_initial_val, row_greater_equal);
             break;
         }
-        case 11: { // rowif_else
+        case 10: { // rowif_else
             auto mask_initial_val = new dtype[N_ELEMS];
             for (size_t i = 0; i < N_ELEMS; ++i) {
                 mask_initial_val[i] = array1_initial_val[i];
@@ -245,7 +240,7 @@ int main(int argc, char* argv[])
             delete[] mask_initial_val;
             break;
         }
-        case 12: { // rowabs
+        case 11: { // rowabs
             auto row_abs = [](dtype a, dtype) -> dtype {
                 return (a < 0) ? static_cast<dtype>(-a) : a;
             };
@@ -255,7 +250,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1_host, array1_initial_val, array2_initial_val, row_abs);
             break;
         }
-        case 13: { // rowbitcount
+        case 12: { // rowbitcount
             auto row_bitcount = [](dtype a, dtype) -> dtype {
                 unsigned int count = 0;
                 unsigned int val = static_cast<unsigned int>(a);

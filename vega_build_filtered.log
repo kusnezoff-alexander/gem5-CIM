@@ -1,0 +1,1517 @@
+scons: Reading SConscript files ...
+Mkdir("/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/build/VEGA_X86/gem5.build")
+Checking for linker -Wl,--as-needed support... (cached) yes
+Warning: Detected GCC version 15.2.1 is not officially supported.
+         gem5 supports GCC v11 up to v14.2.
+Checking for compiler -gz support... (cached) yes
+Checking for linker -gz support... (cached) yes
+Info: Using Python config: python3-config
+Checking for C header file Python.h... (cached) yes
+Checking Python version... (cached) 3.13.11
+Checking for accept(0,0,0) in C++ library None... (cached) yes
+Checking for zlibVersion() in C++ library z... (cached) yes
+Checking for C library tcmalloc_minimal... (cached) yes
+Building in /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/build/VEGA_X86
+"build_tools/kconfig_base.py" "/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/build/VEGA_X86/gem5.build/Kconfig" "/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/src/Kconfig"
+Checking size of struct kvm_xsave ... (cached) yes
+Checking for C header file fenv.h... (cached) yes
+Checking for C header file png.h... (cached) yes
+Checking for clock_nanosleep(0,0,NULL,NULL) in C library None... (cached) yes
+Checking for C header file valgrind/valgrind.h... (cached) no
+Checking for pkg-config package hdf5-serial... (cached) no
+Checking for pkg-config package hdf5... (cached) no
+Checking for H5Fcreate("", 0, 0, 0) in C library hdf5... (cached) no
+Warning: Couldn't find HDF5 C++ libraries. Disabling HDF5 support.
+Checking for C header file capstone/capstone.h... (cached) yes
+Checking for C header file linux/kvm.h... (cached) yes
+Checking for timer_create(CLOCK_MONOTONIC, NULL, NULL) in C library None... (cached) yes
+Checking for member exclude_host in struct perf_event_attr...(cached) yes
+Checking for C header file linux/if_tun.h... (cached) yes
+Checking for shm_open("/test", 0, 0) in C library None... (cached) yes
+Checking for pkg-config package protobuf... (cached) yes
+Checking for backtrace_symbols_fd((void *)1, 0, 0) in C library None... (cached) yes
+Checking whether __i386__ is declared... (cached) no
+Checking whether __x86_64__ is declared... (cached) yes
+BUILD_TLM not set, not building CHI-TLM integration
+
+Checking for compiler -Wno-self-assign-overloaded support... (cached) yes
+Checking for linker -Wno-free-nonheap-object support... (cached) yes
+scons: done reading SConscript files.
+scons: Building targets ...
+ [EMBED PY] VEGA_X86/mem/ruby/protocol/GPU_VIPER/GPU_VIPER_TCP_Controller.py -> .cc
+ [EMBED PY] VEGA_X86/mem/ruby/protocol/GPU_VIPER/GPU_VIPER_CorePair_Controller.py -> .cc
+ [EMBED PY] VEGA_X86/mem/ruby/protocol/GPU_VIPER/GPU_VIPER_DMA_Controller.py -> .cc
+ [EMBED PY] VEGA_X86/mem/ruby/protocol/GPU_VIPER/GPU_VIPER_Directory_Controller.py -> .cc
+ [EMBED PY] VEGA_X86/mem/ruby/protocol/GPU_VIPER/GPU_VIPER_L3Cache_Controller.py -> .cc
+ [EMBED PY] VEGA_X86/mem/ruby/protocol/GPU_VIPER/GPU_VIPER_SQC_Controller.py -> .cc
+ [EMBED PY] VEGA_X86/mem/ruby/protocol/GPU_VIPER/GPU_VIPER_TCC_Controller.py -> .cc
+ [ TRACING]  -> VEGA_X86/debug/LooppointAnalysis.cc
+ [    LINK]  -> VEGA_X86/gem5py_m5
+ [     CXX] VEGA_X86/cpu/testers/directedtest/RubyDirectedTester.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/DirectedTest.hh
+ [     CXX] VEGA_X86/debug/LooppointAnalysis.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/DirectedTest.cc
+ [     CXX] VEGA_X86/cpu/testers/garnet_synthetic_traffic/GarnetSyntheticTraffic.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/GarnetSyntheticTraffic.hh
+ [ TRACING]  -> VEGA_X86/debug/GarnetSyntheticTraffic.cc
+ [     CXX] VEGA_X86/cpu/testers/gpu_ruby_test/ProtocolTester.py.cc -> .do
+ [     CXX] VEGA_X86/cpu/testers/gpu_ruby_test/CpuThread.py.cc -> .do
+ [     CXX] VEGA_X86/cpu/testers/gpu_ruby_test/DmaThread.py.cc -> .do
+ [     CXX] VEGA_X86/cpu/testers/gpu_ruby_test/GpuWavefront.py.cc -> .do
+ [     CXX] VEGA_X86/cpu/testers/gpu_ruby_test/TesterThread.py.cc -> .do
+ [     CXX] VEGA_X86/cpu/testers/gpu_ruby_test/TesterDma.py.cc -> .do
+ [     CXX] src/cpu/testers/gpu_ruby_test/address_manager.cc -> VEGA_X86/cpu/testers/gpu_ruby_test/address_manager.do
+ [ TRACING]  -> VEGA_X86/debug/EpisodeCount.hh
+ [ TRACING]  -> VEGA_X86/debug/ProtocolTest.hh
+ [     CXX] VEGA_X86/debug/DirectedTest.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/ProtocolTest.cc
+ [     CXX] VEGA_X86/debug/GarnetSyntheticTraffic.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EpisodeCount.cc
+ [     CXX] VEGA_X86/cpu/testers/memtest/MemTest.py.cc -> .do
+ [     CXX] VEGA_X86/debug/ProtocolTest.cc -> .do
+ [     CXX] VEGA_X86/debug/EpisodeCount.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/MemTest.hh
+ [ TRACING]  -> VEGA_X86/debug/MemTest.cc
+ [     CXX] VEGA_X86/cpu/testers/rubytest/RubyTester.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/RubyTest.hh
+ [     CXX] VEGA_X86/debug/MemTest.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/RubyTest.cc
+ [     CXX] VEGA_X86/cpu/testers/spatter_gen/SpatterGen.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/SpatterGen.hh
+ [     CXX] VEGA_X86/debug/RubyTest.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/SpatterKernel.hh
+ [ TRACING]  -> VEGA_X86/debug/SpatterGen.cc
+ [     CXX] VEGA_X86/debug/SpatterGen.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/SpatterKernel.cc
+ [     CXX] VEGA_X86/debug/SpatterKernel.cc -> .do
+ [CONFIG H] HAVE_PROTOBUF, 1 -> VEGA_X86/config/have_protobuf.hh
+ [ TRACING]  -> VEGA_X86/debug/TrafficGen.hh
+ [ TRACING]  -> VEGA_X86/debug/GUPSGen.hh
+ [ TRACING]  -> VEGA_X86/debug/TrafficGen.cc
+ [     CXX] VEGA_X86/cpu/testers/traffic_gen/BaseTrafficGen.py.cc -> .do
+ [     CXX] VEGA_X86/debug/TrafficGen.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/GUPSGen.cc
+ [     CXX] VEGA_X86/debug/GUPSGen.cc -> .do
+ [     CXX] VEGA_X86/cpu/testers/traffic_gen/GUPSGen.py.cc -> .do
+ [     CXX] VEGA_X86/cpu/testers/traffic_gen/PyTrafficGen.py.cc -> .do
+ [     CXX] VEGA_X86/cpu/testers/traffic_gen/TrafficGen.py.cc -> .do
+ [     CXX] VEGA_X86/cpu/trace/TraceCPU.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/TraceCPUData.hh
+ [ TRACING]  -> VEGA_X86/debug/TraceCPUInst.hh
+ [ TRACING]  -> VEGA_X86/debug/TraceCPUData.cc
+ [ TRACING]  -> VEGA_X86/debug/TraceCPUInst.cc
+ [     CXX] VEGA_X86/dev/Device.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/AddrRanges.hh
+ [ TRACING]  -> VEGA_X86/debug/IsaFake.hh
+ [ TRACING]  -> VEGA_X86/debug/DMA.hh
+ [     CXX] VEGA_X86/debug/TraceCPUData.cc -> .do
+ [     CXX] VEGA_X86/debug/TraceCPUInst.cc -> .do
+ [     CXX] VEGA_X86/dev/IntPin.py.cc -> .do
+ [     CXX] VEGA_X86/dev/ResetPort.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/IntPin.cc
+ [ TRACING]  -> VEGA_X86/debug/IsaFake.cc
+ [ TRACING]  -> VEGA_X86/debug/DMA.cc
+ [     CXX] VEGA_X86/debug/IntPin.cc -> .do
+ [     CXX] VEGA_X86/debug/IsaFake.cc -> .do
+ [     CXX] VEGA_X86/debug/DMA.cc -> .do
+ [     CXX] VEGA_X86/dev/Platform.py.cc -> .do
+ [     CXX] VEGA_X86/dev/BadDevice.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/Intel8254Timer.hh
+ [ TRACING]  -> VEGA_X86/debug/MC146818.hh
+ [     CXX] src/dev/intel_8254_timer.cc -> VEGA_X86/dev/intel_8254_timer.do
+ [     CXX] src/dev/mc146818.cc -> VEGA_X86/dev/mc146818.do
+ [ TRACING]  -> VEGA_X86/debug/Intel8254Timer.cc
+ [ TRACING]  -> VEGA_X86/debug/MC146818.cc
+ [     CXX] VEGA_X86/debug/Intel8254Timer.cc -> .do
+ [     CXX] VEGA_X86/debug/MC146818.cc -> .do
+ [     CXX] VEGA_X86/dev/amdgpu/AMDGPU.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/AMDGPUDevice.hh
+ [ TRACING]  -> VEGA_X86/debug/HSAPacketProcessor.hh
+ [ TRACING]  -> VEGA_X86/debug/AMDGPUMem.hh
+ [ TRACING]  -> VEGA_X86/debug/PM4PacketProcessor.hh
+ [ TRACING]  -> VEGA_X86/debug/SDMAData.hh
+ [ TRACING]  -> VEGA_X86/debug/SDMAEngine.hh
+ [ TRACING]  -> VEGA_X86/debug/AMDGPUSystemHub.hh
+ [ TRACING]  -> VEGA_X86/debug/AMDGPUDevice.cc
+ [ TRACING]  -> VEGA_X86/debug/AMDGPUMem.cc
+ [ TRACING]  -> VEGA_X86/debug/AMDGPUSystemHub.cc
+ [     CXX] VEGA_X86/debug/AMDGPUMem.cc -> .do
+ [     CXX] VEGA_X86/debug/AMDGPUDevice.cc -> .do
+ [     CXX] VEGA_X86/debug/AMDGPUSystemHub.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/PM4PacketProcessor.cc
+ [     CXX] VEGA_X86/debug/PM4PacketProcessor.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/SDMAEngine.cc
+ [ TRACING]  -> VEGA_X86/debug/SDMAData.cc
+ [     CXX] VEGA_X86/dev/hsa/HSADevice.py.cc -> .do
+ [     CXX] VEGA_X86/debug/SDMAEngine.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/HSAPacketProcessor.cc
+ [     CXX] VEGA_X86/debug/SDMAData.cc -> .do
+ [     CXX] VEGA_X86/dev/i2c/I2C.py.cc -> .do
+ [     CXX] VEGA_X86/debug/HSAPacketProcessor.cc -> .do
+ [     CXX] VEGA_X86/dev/net/Ethernet.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/Ethernet.hh
+ [ TRACING]  -> VEGA_X86/debug/EthernetData.hh
+ [ TRACING]  -> VEGA_X86/debug/EthernetAll.hh
+ [     CXX] src/dev/net/etherpkt.cc -> VEGA_X86/dev/net/etherpkt.do
+ [CONFIG H] HAVE_TUNTAP, 1 -> VEGA_X86/config/have_tuntap.hh
+ [     CXX] src/dev/net/pktfifo.cc -> VEGA_X86/dev/net/pktfifo.do
+ [ TRACING]  -> VEGA_X86/debug/Ethernet.cc
+ [ TRACING]  -> VEGA_X86/debug/EthernetCksum.cc
+ [     CXX] VEGA_X86/debug/Ethernet.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EthernetCksum.hh
+ [ TRACING]  -> VEGA_X86/debug/EthernetDMA.cc
+ [ TRACING]  -> VEGA_X86/debug/EthernetDMA.hh
+ [     CXX] VEGA_X86/debug/EthernetCksum.cc -> .do
+ [     CXX] VEGA_X86/debug/EthernetDMA.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EthernetData.cc
+ [     CXX] VEGA_X86/debug/EthernetData.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EthernetDesc.cc
+ [ TRACING]  -> VEGA_X86/debug/EthernetEEPROM.cc
+ [ TRACING]  -> VEGA_X86/debug/EthernetEEPROM.hh
+ [ TRACING]  -> VEGA_X86/debug/EthernetDesc.hh
+ [     CXX] VEGA_X86/debug/EthernetEEPROM.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EthernetIntr.cc
+ [     CXX] VEGA_X86/debug/EthernetDesc.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EthernetIntr.hh
+ [     CXX] VEGA_X86/debug/EthernetIntr.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EthernetPIO.cc
+ [ TRACING]  -> VEGA_X86/debug/EthernetSM.cc
+ [ TRACING]  -> VEGA_X86/debug/DistEthernet.hh
+ [ TRACING]  -> VEGA_X86/debug/EthernetPIO.hh
+ [ TRACING]  -> VEGA_X86/debug/EthernetSM.hh
+ [ TRACING]  -> VEGA_X86/debug/DistEthernetPkt.hh
+ [ TRACING]  -> VEGA_X86/debug/DistEthernetCmd.hh
+ [ TRACING]  -> VEGA_X86/debug/DistEthernet.cc
+ [ TRACING]  -> VEGA_X86/debug/DistEthernetPkt.cc
+ [     CXX] VEGA_X86/debug/EthernetSM.cc -> .do
+ [     CXX] VEGA_X86/debug/EthernetPIO.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/DistEthernetCmd.cc
+ [     CXX] src/dev/net/tcp_iface.cc -> VEGA_X86/dev/net/tcp_iface.do
+ [     CXX] VEGA_X86/debug/DistEthernetPkt.cc -> .do
+ [     CXX] VEGA_X86/debug/DistEthernet.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EthernetAll.cc
+ [     CXX] VEGA_X86/debug/DistEthernetCmd.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EthernetNoData.cc
+ [     CXX] VEGA_X86/debug/EthernetAll.cc -> .do
+ [     CXX] VEGA_X86/dev/pci/PciDevice.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/EthernetNoData.hh
+ [ TRACING]  -> VEGA_X86/debug/PciBridge.hh
+ [ TRACING]  -> VEGA_X86/debug/PciDevice.hh
+ [     CXX] VEGA_X86/debug/EthernetNoData.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/PciEndpoint.hh
+ [ TRACING]  -> VEGA_X86/debug/PciDevice.cc
+ [ TRACING]  -> VEGA_X86/debug/PciEndpoint.cc
+ [     CXX] VEGA_X86/debug/PciDevice.cc -> .do
+ [     CXX] VEGA_X86/debug/PciEndpoint.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/PciBridge.cc
+ [     CXX] VEGA_X86/dev/pci/PciHost.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/PciHost.hh
+ [ TRACING]  -> VEGA_X86/debug/PciHost.cc
+ [     CXX] VEGA_X86/debug/PciBridge.cc -> .do
+ [     CXX] VEGA_X86/dev/pci/CopyEngine.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/DMACopyEngine.hh
+ [     CXX] VEGA_X86/debug/PciHost.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/DMACopyEngine.cc
+ [     CXX] VEGA_X86/dev/ps2/PS2.py.cc -> .do
+ [     CXX] VEGA_X86/debug/DMACopyEngine.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/PS2.hh
+ [     CXX] src/dev/ps2/types.cc -> VEGA_X86/dev/ps2/types.do
+ [ TRACING]  -> VEGA_X86/debug/PS2.cc
+ [     CXX] VEGA_X86/dev/qemu/QemuFwCfg.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/QemuFwCfg.hh
+ [     CXX] VEGA_X86/debug/PS2.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/QemuFwCfgVerbose.hh
+ [ TRACING]  -> VEGA_X86/debug/QemuFwCfg.cc
+ [ TRACING]  -> VEGA_X86/debug/QemuFwCfgVerbose.cc
+ [     CXX] VEGA_X86/debug/QemuFwCfg.cc -> .do
+ [     CXX] VEGA_X86/dev/serial/Serial.py.cc -> .do
+ [     CXX] VEGA_X86/debug/QemuFwCfgVerbose.cc -> .do
+ [     CXX] VEGA_X86/dev/serial/Terminal.py.cc -> .do
+ [SO Param] m5.objects.SouthBridge, SouthBridge -> VEGA_X86/params/SouthBridge.hh
+ [SO Param] m5.objects.BranchPredictor, SimpleIndirectPredictor -> VEGA_X86/python/_m5/param_SimpleIndirectPredictor.cc
+ [SO Param] m5.objects.CPUTracers, IntelTrace -> VEGA_X86/params/IntelTrace.hh
+ [SO Param] m5.objects.AMDGPU, AMDGPUDevice -> VEGA_X86/python/_m5/param_AMDGPUDevice.cc
+ [SO Param] m5.objects.Workload, StubWorkload -> VEGA_X86/params/StubWorkload.hh
+ [SO Param] m5.objects.ACPI, X86ACPIRSDT -> VEGA_X86/params/X86ACPIRSDT.hh
+ [SO Param] m5.objects.PS2, PS2Keyboard -> VEGA_X86/params/PS2Keyboard.hh
+ [SO Param] m5.objects.VegaGPUTLB, VegaGPUTLB -> VEGA_X86/python/_m5/param_VegaGPUTLB.cc
+ [SO Param] m5.objects.Ethernet, EtherDevice -> VEGA_X86/params/EtherDevice.hh
+ [SO Param] m5.objects.LooppointAnalysis, LooppointAnalysisManager -> VEGA_X86/params/LooppointAnalysisManager.hh
+ [SO Param] m5.objects.BranchPredictor, TournamentBP -> VEGA_X86/python/_m5/param_TournamentBP.cc
+ [SO Param] m5.objects.RubyDirectedTester, DirectedGenerator -> VEGA_X86/python/_m5/param_DirectedGenerator.cc
+ [SO Param] m5.objects.BranchPredictor, SimpleIndirectPredictor -> VEGA_X86/params/SimpleIndirectPredictor.hh
+ [SO Param] m5.objects.E820, X86E820Table -> VEGA_X86/python/_m5/param_X86E820Table.cc
+ [SO Param] m5.objects.AMDGPU, AMDGPUDevice -> VEGA_X86/params/AMDGPUDevice.hh
+ [SO Param] m5.objects.MemTest, MemTest -> VEGA_X86/python/_m5/param_MemTest.cc
+ [SO Param] m5.objects.VegaGPUTLB, VegaGPUTLB -> VEGA_X86/params/VegaGPUTLB.hh
+ [SO Param] m5.objects.ACPI, X86ACPIMadtLAPICOverride -> VEGA_X86/python/_m5/param_X86ACPIMadtLAPICOverride.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgItemString -> VEGA_X86/python/_m5/param_QemuFwCfgItemString.cc
+ [SO Param] m5.objects.BloomFilters, BloomFilterH3 -> VEGA_X86/python/_m5/param_BloomFilterH3.cc
+ [ENUM STR] m5.objects.IntelMP, X86IntelMPInterruptType -> VEGA_X86/enums/X86IntelMPInterruptType.cc
+ [SO Param] m5.objects.InstPBTrace, InstPBTrace -> VEGA_X86/python/_m5/param_InstPBTrace.cc
+ [SO Param] m5.objects.BranchPredictor, TournamentBP -> VEGA_X86/params/TournamentBP.hh
+ [SO Param] m5.objects.RubyDirectedTester, DirectedGenerator -> VEGA_X86/params/DirectedGenerator.hh
+ [SO Param] m5.objects.E820, X86E820Table -> VEGA_X86/params/X86E820Table.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE -> VEGA_X86/python/_m5/param_TAGE.cc
+ [SO Param] m5.objects.GPU, GPUDispatcher -> VEGA_X86/params/GPUDispatcher.hh
+ [SO Param] m5.objects.IndexingPolicies, BaseIndexingPolicy -> VEGA_X86/params/BaseIndexingPolicy.hh
+ [SO Param] m5.objects.BaseO3CPU, BaseO3CPU -> VEGA_X86/params/BaseO3CPU.hh
+ [SO Param] m5.objects.MemTest, MemTest -> VEGA_X86/params/MemTest.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPIOIntAssignment -> VEGA_X86/python/_m5/param_X86IntelMPIOIntAssignment.cc
+ [SO Param] m5.objects.ACPI, X86ACPIMadtLAPICOverride -> VEGA_X86/params/X86ACPIMadtLAPICOverride.hh
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgItemString -> VEGA_X86/params/QemuFwCfgItemString.hh
+ [SO Param] m5.objects.ClockDomain, DerivedClockDomain -> VEGA_X86/params/DerivedClockDomain.hh
+ [SO Param] m5.objects.BloomFilters, BloomFilterH3 -> VEGA_X86/params/BloomFilterH3.hh
+ [ENUMDECL] m5.objects.IntelMP, X86IntelMPInterruptType -> VEGA_X86/enums/X86IntelMPInterruptType.hh
+ [SO Param] m5.objects.InstPBTrace, InstPBTrace -> VEGA_X86/params/InstPBTrace.hh
+ [SO Param] m5.objects.BaseAtomicSimpleCPU, BaseAtomicSimpleCPU -> VEGA_X86/python/_m5/param_BaseAtomicSimpleCPU.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE -> VEGA_X86/params/TAGE.hh
+ [SO Param] m5.objects.SMBios, X86SMBiosSMBiosTable -> VEGA_X86/python/_m5/param_X86SMBiosSMBiosTable.cc
+ [SO Param] m5.objects.IntelMP, X86IntelMPIOIntAssignment -> VEGA_X86/params/X86IntelMPIOIntAssignment.hh
+ [SO Param] m5.objects.HSADevice, HSAPacketProcessor -> VEGA_X86/python/_m5/param_HSAPacketProcessor.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_8KB_StatisticalCorrector -> VEGA_X86/python/_m5/param_TAGE_SC_L_8KB_StatisticalCorrector.cc
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptronTAGE64KB -> VEGA_X86/python/_m5/param_MultiperspectivePerceptronTAGE64KB.cc
+ [SO Param] m5.objects.Vnc, VncServer -> VEGA_X86/python/_m5/param_VncServer.cc
+ [SO Param] m5.objects.BaseAtomicSimpleCPU, BaseAtomicSimpleCPU -> VEGA_X86/params/BaseAtomicSimpleCPU.hh
+ [SO Param] m5.objects.TraceCPU, TraceCPU -> VEGA_X86/python/_m5/param_TraceCPU.cc
+ [SO Param] m5.objects.SMBios, X86SMBiosSMBiosTable -> VEGA_X86/params/X86SMBiosSMBiosTable.hh
+ [SO Param] m5.objects.X86MMU, X86MMU -> VEGA_X86/python/_m5/param_X86MMU.cc
+ [SO Param] m5.objects.ACPI, X86ACPISysDescTable -> VEGA_X86/python/_m5/param_X86ACPISysDescTable.cc
+ [SO Param] m5.objects.HSADevice, HSAPacketProcessor -> VEGA_X86/params/HSAPacketProcessor.hh
+ [SO Param] m5.objects.Ethernet, EtherDump -> VEGA_X86/python/_m5/param_EtherDump.cc
+ [SO Param] m5.objects.LooppointAnalysis, LooppointAnalysis -> VEGA_X86/python/_m5/param_LooppointAnalysis.cc
+ [SO Param] m5.objects.Serial, SerialNullDevice -> VEGA_X86/python/_m5/param_SerialNullDevice.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_8KB_StatisticalCorrector -> VEGA_X86/params/TAGE_SC_L_8KB_StatisticalCorrector.hh
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptronTAGE64KB -> VEGA_X86/params/MultiperspectivePerceptronTAGE64KB.hh
+ [SO Param] m5.objects.X86MMU, X86MMU -> VEGA_X86/params/X86MMU.hh
+ [SO Param] m5.objects.Workload, Workload -> VEGA_X86/params/Workload.hh
+ [SO Param] m5.objects.ACPI, X86ACPISysDescTable -> VEGA_X86/params/X86ACPISysDescTable.hh
+ [SO Param] m5.objects.BaseISA, BaseISA -> VEGA_X86/python/_m5/param_BaseISA.cc
+ [SO Param] m5.objects.VegaGPUTLB, VegaPagetableWalker -> VEGA_X86/python/_m5/param_VegaPagetableWalker.cc
+ [SO Param] m5.objects.Ethernet, EtherDump -> VEGA_X86/params/EtherDump.hh
+ [SO Param] m5.objects.Serial, SerialNullDevice -> VEGA_X86/params/SerialNullDevice.hh
+ [SO Param] m5.objects.LooppointAnalysis, LooppointAnalysis -> VEGA_X86/params/LooppointAnalysis.hh
+ [SO Param] m5.objects.BaseISA, BaseISA -> VEGA_X86/params/BaseISA.hh
+ [SO Param] m5.objects.VegaGPUTLB, VegaPagetableWalker -> VEGA_X86/params/VegaPagetableWalker.hh
+ [SO Param] m5.objects.ACPI, X86ACPIMadtNMI -> VEGA_X86/python/_m5/param_X86ACPIMadtNMI.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgItemFile -> VEGA_X86/python/_m5/param_QemuFwCfgItemFile.cc
+ [SO Param] m5.objects.BloomFilters, BloomFilterBulk -> VEGA_X86/python/_m5/param_BloomFilterBulk.cc
+ [SO Param] m5.objects.BranchPredictor, TAGEBase -> VEGA_X86/python/_m5/param_TAGEBase.cc
+ [SO Param] m5.objects.RedirectPath, RedirectPath -> VEGA_X86/params/RedirectPath.hh
+ [SO Param] m5.objects.TraceCPU, TraceCPU -> VEGA_X86/params/TraceCPU.hh
+ [SO Param] m5.objects.SpatterGen, SpatterGen -> VEGA_X86/python/_m5/param_SpatterGen.cc
+ [SO Param] m5.objects.IntelMP, X86IntelMPIOAPIC -> VEGA_X86/python/_m5/param_X86IntelMPIOAPIC.cc
+ [SO Param] m5.objects.E820, X86E820Entry -> VEGA_X86/python/_m5/param_X86E820Entry.cc
+ [SO Param] m5.objects.ACPI, X86ACPIMadtNMI -> VEGA_X86/params/X86ACPIMadtNMI.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_StatisticalCorrector_64KB -> VEGA_X86/python/_m5/param_MPP_StatisticalCorrector_64KB.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgItemFile -> VEGA_X86/params/QemuFwCfgItemFile.hh
+ [SO Param] m5.objects.PcCountTracker, PcCountTrackerManager -> VEGA_X86/python/_m5/param_PcCountTrackerManager.cc
+ [SO Param] m5.objects.Device, PioDevice -> VEGA_X86/python/_m5/param_PioDevice.cc
+ [SO Param] m5.objects.PcSpeaker, PcSpeaker -> VEGA_X86/params/PcSpeaker.hh
+ [SO Param] m5.objects.BranchPredictor, TAGEBase -> VEGA_X86/params/TAGEBase.hh
+ [SO Param] m5.objects.SMBios, X86SMBiosBiosInformation -> VEGA_X86/python/_m5/param_X86SMBiosBiosInformation.cc
+ [SO Param] m5.objects.PciDevice, PciBridge -> VEGA_X86/python/_m5/param_PciBridge.cc
+ [SO Param] m5.objects.SpatterGen, SpatterGen -> VEGA_X86/params/SpatterGen.hh
+ [SO Param] m5.objects.Vnc, VncServer -> VEGA_X86/params/VncServer.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPIOAPIC -> VEGA_X86/params/X86IntelMPIOAPIC.hh
+ [SO Param] m5.objects.E820, X86E820Entry -> VEGA_X86/params/X86E820Entry.hh
+ [SO Param] m5.objects.BaseInterrupts, BaseInterrupts -> VEGA_X86/params/BaseInterrupts.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_StatisticalCorrector_64KB -> VEGA_X86/params/MPP_StatisticalCorrector_64KB.hh
+ [SO Param] m5.objects.BaseMinorCPU, MinorFUTiming -> VEGA_X86/python/_m5/param_MinorFUTiming.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_64KB_StatisticalCorrector -> VEGA_X86/python/_m5/param_TAGE_SC_L_64KB_StatisticalCorrector.cc
+ [SO Param] m5.objects.TesterDma, TesterDma -> VEGA_X86/python/_m5/param_TesterDma.cc
+ [ENUM STR] m5.objects.StaticInstFlags, StaticInstFlags -> VEGA_X86/enums/StaticInstFlags.cc
+ [SO Param] m5.objects.PcCountTracker, PcCountTrackerManager -> VEGA_X86/params/PcCountTrackerManager.hh
+ [SO Param] m5.objects.Device, PioDevice -> VEGA_X86/params/PioDevice.hh
+ [SO Param] m5.objects.SMBios, X86SMBiosBiosInformation -> VEGA_X86/params/X86SMBiosBiosInformation.hh
+ [SO Param] m5.objects.PciDevice, PciBridge -> VEGA_X86/params/PciBridge.hh
+ [SO Param] m5.objects.X86FsWorkload, X86FsLinux -> VEGA_X86/python/_m5/param_X86FsLinux.cc
+ [SO Param] m5.objects.Ethernet, EtherTapStub -> VEGA_X86/python/_m5/param_EtherTapStub.cc
+ [SO Param] m5.objects.BaseMinorCPU, MinorFUTiming -> VEGA_X86/params/MinorFUTiming.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_64KB_StatisticalCorrector -> VEGA_X86/params/TAGE_SC_L_64KB_StatisticalCorrector.hh
+ [ENUM STR] m5.objects.TimingExpr, TimingExprOp -> VEGA_X86/enums/TimingExprOp.cc
+ [ENUMDECL] m5.objects.StaticInstFlags, StaticInstFlags -> VEGA_X86/enums/StaticInstFlags.hh
+ [SO Param] m5.objects.GarnetSyntheticTraffic, GarnetSyntheticTraffic -> VEGA_X86/python/_m5/param_GarnetSyntheticTraffic.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgItem -> VEGA_X86/python/_m5/param_QemuFwCfgItem.cc
+ [SO Param] m5.objects.X86FsWorkload, X86FsLinux -> VEGA_X86/params/X86FsLinux.hh
+ [SO Param] m5.objects.Ethernet, EtherTapStub -> VEGA_X86/params/EtherTapStub.hh
+ [SO Param] m5.objects.TesterDma, TesterDma -> VEGA_X86/params/TesterDma.hh
+ [ENUM STR] m5.objects.BaseTLB, TypeTLB -> VEGA_X86/enums/TypeTLB.cc
+ [ENUMDECL] m5.objects.TimingExpr, TimingExprOp -> VEGA_X86/enums/TimingExprOp.hh
+ [SO Param] m5.objects.ProtocolTester, ProtocolTester -> VEGA_X86/python/_m5/param_ProtocolTester.cc
+ [SO Param] m5.objects.GarnetSyntheticTraffic, GarnetSyntheticTraffic -> VEGA_X86/params/GarnetSyntheticTraffic.hh
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgItem -> VEGA_X86/params/QemuFwCfgItem.hh
+ [SO Param] m5.objects.ACPI, X86ACPIMadtIntSourceOverride -> VEGA_X86/python/_m5/param_X86ACPIMadtIntSourceOverride.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgItemBytes -> VEGA_X86/python/_m5/param_QemuFwCfgItemBytes.cc
+ [SO Param] m5.objects.I8254, I8254 -> VEGA_X86/params/I8254.hh
+ [SO Param] m5.objects.GPU, PoolManager -> VEGA_X86/params/PoolManager.hh
+ [SO Param] m5.objects.BranchPredictor, BiModeBP -> VEGA_X86/python/_m5/param_BiModeBP.cc
+ [SO Param] m5.objects.ProtocolTester, ProtocolTester -> VEGA_X86/params/ProtocolTester.hh
+ [ENUMDECL] m5.objects.SimObject, ByteOrder -> VEGA_X86/enums/ByteOrder.hh
+ [SO Param] m5.objects.BloomFilters, BloomFilterMultiBitSel -> VEGA_X86/python/_m5/param_BloomFilterMultiBitSel.cc
+ [SO Param] m5.objects.IntelMP, X86IntelMPBus -> VEGA_X86/python/_m5/param_X86IntelMPBus.cc
+ [SO Param] m5.objects.ACPI, X86ACPIMadtIntSourceOverride -> VEGA_X86/params/X86ACPIMadtIntSourceOverride.hh
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptronTAGE -> VEGA_X86/python/_m5/param_MultiperspectivePerceptronTAGE.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgItemBytes -> VEGA_X86/params/QemuFwCfgItemBytes.hh
+ [SO Param] m5.objects.AMDGPU, AMDGPUInterruptHandler -> VEGA_X86/python/_m5/param_AMDGPUInterruptHandler.cc
+ [ENUMDECL] m5.objects.BaseTLB, TypeTLB -> VEGA_X86/enums/TypeTLB.hh
+ [SO Param] m5.objects.SimPoint, SimPoint -> VEGA_X86/python/_m5/param_SimPoint.cc
+ [SO Param] m5.objects.PcCountTracker, PcCountTracker -> VEGA_X86/python/_m5/param_PcCountTracker.cc
+ [SO Param] m5.objects.BranchPredictor, BiModeBP -> VEGA_X86/params/BiModeBP.hh
+ [SO Param] m5.objects.SMBios, X86SMBiosSMBiosStructure -> VEGA_X86/python/_m5/param_X86SMBiosSMBiosStructure.cc
+ [SO Param] m5.objects.PciDevice, PciEndpoint -> VEGA_X86/python/_m5/param_PciEndpoint.cc
+ [SO Param] m5.objects.BloomFilters, BloomFilterMultiBitSel -> VEGA_X86/params/BloomFilterMultiBitSel.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPBus -> VEGA_X86/params/X86IntelMPBus.hh
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptronTAGE -> VEGA_X86/params/MultiperspectivePerceptronTAGE.hh
+ [SO Param] m5.objects.BaseMinorCPU, MinorOpClassSet -> VEGA_X86/python/_m5/param_MinorOpClassSet.cc
+ [SO Param] m5.objects.AMDGPU, AMDGPUInterruptHandler -> VEGA_X86/params/AMDGPUInterruptHandler.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L -> VEGA_X86/python/_m5/param_TAGE_SC_L.cc
+ [     CXX] src/cpu/testers/traffic_gen/exit_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/exit_gen.do
+ [     CXX] src/cpu/testers/traffic_gen/strided_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/strided_gen.do
+ [     CXX] src/dev/amdgpu/mmio_reader.cc -> VEGA_X86/dev/amdgpu/mmio_reader.do
+ [     CXX] src/arch/x86/pagetable.cc -> VEGA_X86/arch/x86/pagetable.do
+ [     CXX] src/dev/amdgpu/amdgpu_gfx.cc -> VEGA_X86/dev/amdgpu/amdgpu_gfx.do
+ [     CXX] src/cpu/testers/traffic_gen/trace_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/trace_gen.do
+ [     CXX] src/base/loader/memory_image.cc -> VEGA_X86/base/loader/memory_image.do
+ [     CXX] src/cpu/testers/traffic_gen/random_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/random_gen.do
+ [     CXX] src/cpu/testers/traffic_gen/linear_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/linear_gen.do
+ [     CXX] src/cpu/testers/traffic_gen/idle_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/idle_gen.do
+ [SO Param] m5.objects.SimPoint, SimPoint -> VEGA_X86/params/SimPoint.hh
+ [SO Param] m5.objects.TimingExpr, TimingExprUn -> VEGA_X86/python/_m5/param_TimingExprUn.cc
+ [SO Param] m5.objects.BloomFilters, BloomFilterMulti -> VEGA_X86/params/BloomFilterMulti.hh
+ [SO Param] m5.objects.FUPool, FUPool -> VEGA_X86/params/FUPool.hh
+ [SO Param] m5.objects.SMBios, X86SMBiosSMBiosStructure -> VEGA_X86/params/X86SMBiosSMBiosStructure.hh
+ [SO Param] m5.objects.PciDevice, PciEndpoint -> VEGA_X86/params/PciEndpoint.hh
+ [SO Param] m5.objects.Ethernet, EtherTapBase -> VEGA_X86/python/_m5/param_EtherTapBase.cc
+ [SO Param] m5.objects.BaseMinorCPU, MinorOpClassSet -> VEGA_X86/params/MinorOpClassSet.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L -> VEGA_X86/params/TAGE_SC_L.hh
+ [ENUM STR] m5.objects.IntelMP, X86IntelMPRangeList -> VEGA_X86/enums/X86IntelMPRangeList.cc
+ [SO Param] m5.objects.TimingExpr, TimingExprIf -> VEGA_X86/python/_m5/param_TimingExprIf.cc
+ [SO Param] m5.objects.TimingExpr, TimingExprUn -> VEGA_X86/params/TimingExprUn.hh
+ [SO Param] m5.objects.Ethernet, EtherTapBase -> VEGA_X86/params/EtherTapBase.hh
+ [SO Param] m5.objects.I2C, I2CBus -> VEGA_X86/python/_m5/param_I2CBus.cc
+ [SO Param] m5.objects.CPUTracers, ExeTracer -> VEGA_X86/python/_m5/param_ExeTracer.cc
+ [ENUMDECL] m5.objects.IntelMP, X86IntelMPRangeList -> VEGA_X86/enums/X86IntelMPRangeList.hh
+ [ENUM STR] m5.objects.FuncUnit, OpClass -> VEGA_X86/enums/OpClass.cc
+ [SO Param] m5.objects.TimingExpr, TimingExprIf -> VEGA_X86/params/TimingExprIf.hh
+ [SO Param] m5.objects.SubSystem, SubSystem -> VEGA_X86/params/SubSystem.hh
+ [SO Param] m5.objects.PcCountTracker, PcCountTracker -> VEGA_X86/params/PcCountTracker.hh
+ [SO Param] m5.objects.I2C, I2CBus -> VEGA_X86/params/I2CBus.hh
+ [SO Param] m5.objects.FUPool, FUPool -> VEGA_X86/python/_m5/param_FUPool.cc
+ [SO Param] m5.objects.ACPI, X86ACPIMadtIOAPIC -> VEGA_X86/python/_m5/param_X86ACPIMadtIOAPIC.cc
+ [SO Param] m5.objects.CPUTracers, ExeTracer -> VEGA_X86/params/ExeTracer.hh
+ [ENUMDECL] m5.objects.FuncUnit, OpClass -> VEGA_X86/enums/OpClass.hh
+ [SO Param] m5.objects.GPU, Shader -> VEGA_X86/params/Shader.hh
+ [SO Param] m5.objects.SimObject, SimObject -> VEGA_X86/params/SimObject.hh
+ [SO Param] m5.objects.BloomFilters, BloomFilterBlock -> VEGA_X86/python/_m5/param_BloomFilterBlock.cc
+ [SO Param] m5.objects.IntelMP, X86IntelMPProcessor -> VEGA_X86/python/_m5/param_X86IntelMPProcessor.cc
+ [SO Param] m5.objects.ACPI, X86ACPIMadtIOAPIC -> VEGA_X86/params/X86ACPIMadtIOAPIC.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_StatisticalCorrector -> VEGA_X86/python/_m5/param_MPP_StatisticalCorrector.cc
+ [ENUM STR] m5.objects.IntelMP, X86IntelMPAddressType -> VEGA_X86/enums/X86IntelMPAddressType.cc
+ [SO Param] m5.objects.TesterThread, TesterThread -> VEGA_X86/python/_m5/param_TesterThread.cc
+ [ENUMDECL] m5.objects.MemInterface, AddrMap -> VEGA_X86/enums/AddrMap.hh
+ [SO Param] m5.objects.RubyDirectedTester, SeriesRequestGenerator -> VEGA_X86/python/_m5/param_SeriesRequestGenerator.cc
+ [SO Param] m5.objects.ClockDomain, SrcClockDomain -> VEGA_X86/params/SrcClockDomain.hh
+ [SO Param] m5.objects.PciDevice, PciDevice -> VEGA_X86/python/_m5/param_PciDevice.cc
+ [SO Param] m5.objects.BloomFilters, BloomFilterBlock -> VEGA_X86/params/BloomFilterBlock.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPProcessor -> VEGA_X86/params/X86IntelMPProcessor.hh
+ [SO Param] m5.objects.LdsState, LdsState -> VEGA_X86/params/LdsState.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_StatisticalCorrector -> VEGA_X86/params/MPP_StatisticalCorrector.hh
+ [SO Param] m5.objects.BranchPredictor, StatisticalCorrector -> VEGA_X86/python/_m5/param_StatisticalCorrector.cc
+ [ENUMDECL] m5.objects.IntelMP, X86IntelMPAddressType -> VEGA_X86/enums/X86IntelMPAddressType.hh
+ [     CXX] src/cpu/o3/regfile.cc -> VEGA_X86/cpu/o3/regfile.do
+ [     CXX] src/cpu/static_inst.cc -> VEGA_X86/cpu/static_inst.do
+ [SO Param] m5.objects.TesterThread, TesterThread -> VEGA_X86/params/TesterThread.hh
+ [     CXX] src/cpu/o3/free_list.cc -> VEGA_X86/cpu/o3/free_list.do
+ [     CXX] src/arch/x86/bios/e820.cc -> VEGA_X86/arch/x86/bios/e820.do
+ [     CXX] src/cpu/testers/traffic_gen/dram_rot_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/dram_rot_gen.do
+ [     CXX] src/cpu/testers/traffic_gen/hybrid_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/hybrid_gen.do
+ [     CXX] src/cpu/testers/traffic_gen/dram_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/dram_gen.do
+ [     CXX] src/cpu/testers/traffic_gen/nvm_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/nvm_gen.do
+ [     CXX] src/arch/x86/insts/static_inst.cc -> VEGA_X86/arch/x86/insts/static_inst.do
+ [     CXX] src/arch/x86/insts/microregop.cc -> VEGA_X86/arch/x86/insts/microregop.do
+ [     CXX] src/arch/x86/insts/microop.cc -> VEGA_X86/arch/x86/insts/microop.do
+ [     CXX] src/dev/net/etherint.cc -> VEGA_X86/dev/net/etherint.do
+ [     CXX] src/dev/net/etherdump.cc -> VEGA_X86/dev/net/etherdump.do
+ [     CXX] VEGA_X86/python/_m5/param_EtherDump.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_BaseISA.cc -> .do
+ [SO Param] m5.objects.Serial, SerialDevice -> VEGA_X86/params/SerialDevice.hh
+ [     CXX] VEGA_X86/python/_m5/param_SerialNullDevice.cc -> .do
+ [SO Param] m5.objects.TimingExpr, TimingExprRef -> VEGA_X86/python/_m5/param_TimingExprRef.cc
+ [SO Param] m5.objects.BloomFilters, BloomFilterBulk -> VEGA_X86/params/BloomFilterBulk.hh
+ [ENUM STR] m5.objects.BaseTrafficGen, StreamGenType -> VEGA_X86/enums/StreamGenType.cc
+ [SO Param] m5.objects.BaseTLB, BaseTLB -> VEGA_X86/python/_m5/param_BaseTLB.cc
+ [SO Param] m5.objects.RubyDirectedTester, SeriesRequestGenerator -> VEGA_X86/params/SeriesRequestGenerator.hh
+ [SO Param] m5.objects.PciDevice, PciDevice -> VEGA_X86/params/PciDevice.hh
+ [SO Param] m5.objects.Ethernet, EtherSwitch -> VEGA_X86/python/_m5/param_EtherSwitch.cc
+ [SO Param] m5.objects.BranchPredictor, StatisticalCorrector -> VEGA_X86/params/StatisticalCorrector.hh
+ [SO Param] m5.objects.Ethernet, EtherTap -> VEGA_X86/python/_m5/param_EtherTap.cc
+ [ENUMDECL] m5.objects.BaseTrafficGen, StreamGenType -> VEGA_X86/enums/StreamGenType.hh
+ [ENUMDECL] m5.objects.GPU, GfxVersion -> VEGA_X86/enums/GfxVersion.hh
+ [SO Param] m5.objects.TimingExpr, TimingExprBin -> VEGA_X86/python/_m5/param_TimingExprBin.cc
+ [SO Param] m5.objects.TimingExpr, TimingExprRef -> VEGA_X86/params/TimingExprRef.hh
+ [ENUM STR] m5.objects.BaseMinorCPU, ThreadPolicy -> VEGA_X86/enums/ThreadPolicy.cc
+ [SO Param] m5.objects.BaseTLB, BaseTLB -> VEGA_X86/params/BaseTLB.hh
+ [SO Param] m5.objects.BaseMinorCPU, MinorOpClass -> VEGA_X86/python/_m5/param_MinorOpClass.cc
+ [SO Param] m5.objects.Ethernet, EtherSwitch -> VEGA_X86/params/EtherSwitch.hh
+ [SO Param] m5.objects.Ethernet, EtherTap -> VEGA_X86/params/EtherTap.hh
+ [ENUM STR] m5.objects.IntelMP, X86IntelMPTriggerMode -> VEGA_X86/enums/X86IntelMPTriggerMode.cc
+ [SO Param] m5.objects.BranchPredictor, BranchPredictor -> VEGA_X86/params/BranchPredictor.hh
+ [SO Param] m5.objects.TimingExpr, TimingExprBin -> VEGA_X86/params/TimingExprBin.hh
+ [     CXX] VEGA_X86/enums/StreamGenType.cc -> .do
+ [SO Param] m5.objects.FuncUnit, FUDesc -> VEGA_X86/python/_m5/param_FUDesc.cc
+ [ENUMDECL] m5.objects.BaseMinorCPU, ThreadPolicy -> VEGA_X86/enums/ThreadPolicy.hh
+ [SO Param] m5.objects.Process, EmulatedDriver -> VEGA_X86/params/EmulatedDriver.hh
+ [SO Param] m5.objects.BaseMinorCPU, MinorOpClass -> VEGA_X86/params/MinorOpClass.hh
+ [SO Param] m5.objects.ACPI, X86ACPIMadtLAPIC -> VEGA_X86/python/_m5/param_X86ACPIMadtLAPIC.cc
+ [ENUMDECL] m5.objects.IntelMP, X86IntelMPTriggerMode -> VEGA_X86/enums/X86IntelMPTriggerMode.hh
+ [SO Param] m5.objects.InstTracer, InstTracer -> VEGA_X86/params/InstTracer.hh
+ [     CXX] VEGA_X86/python/_m5/param_EtherTap.cc -> .do
+ [     CXX] src/dev/net/ethertap.cc -> VEGA_X86/dev/net/ethertap.do
+ [     CXX] VEGA_X86/python/_m5/param_EtherTapBase.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_EtherTapStub.cc -> .do
+ [SO Param] m5.objects.FuncUnit, FUDesc -> VEGA_X86/params/FUDesc.hh
+ [SO Param] m5.objects.BaseSimpleCPU, BaseSimpleCPU -> VEGA_X86/python/_m5/param_BaseSimpleCPU.cc
+ [SO Param] m5.objects.GPU, ComputeUnit -> VEGA_X86/params/ComputeUnit.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPExtConfigEntry -> VEGA_X86/python/_m5/param_X86IntelMPExtConfigEntry.cc
+ [SO Param] m5.objects.ACPI, X86ACPIMadtLAPIC -> VEGA_X86/params/X86ACPIMadtLAPIC.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_LoopPredictor -> VEGA_X86/python/_m5/param_MPP_LoopPredictor.cc
+ [ENUMDECL] m5.objects.GPU, PrefetchType -> VEGA_X86/enums/PrefetchType.hh
+ [SO Param] m5.objects.BaseSimpleCPU, BaseSimpleCPU -> VEGA_X86/params/BaseSimpleCPU.hh
+ [SO Param] m5.objects.ClockDomain, ClockDomain -> VEGA_X86/params/ClockDomain.hh
+ [SO Param] m5.objects.CopyEngine, CopyEngine -> VEGA_X86/python/_m5/param_CopyEngine.cc
+ [SO Param] m5.objects.BranchPredictor, IndirectPredictor -> VEGA_X86/python/_m5/param_IndirectPredictor.cc
+ [SO Param] m5.objects.PciDevice, PciMemUpperBar -> VEGA_X86/python/_m5/param_PciMemUpperBar.cc
+ [SO Param] m5.objects.IntelMP, X86IntelMPExtConfigEntry -> VEGA_X86/params/X86IntelMPExtConfigEntry.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_LoopPredictor -> VEGA_X86/params/MPP_LoopPredictor.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_LoopPredictor -> VEGA_X86/python/_m5/param_TAGE_SC_L_LoopPredictor.cc
+ [ENUM STR] m5.objects.IntelMP, X86IntelMPPolarity -> VEGA_X86/enums/X86IntelMPPolarity.cc
+ [SO Param] m5.objects.BranchPredictor, LocalBP -> VEGA_X86/python/_m5/param_LocalBP.cc
+ [SO Param] m5.objects.TimingExpr, TimingExprLet -> VEGA_X86/python/_m5/param_TimingExprLet.cc
+ [SO Param] m5.objects.CopyEngine, CopyEngine -> VEGA_X86/params/CopyEngine.hh
+ [SO Param] m5.objects.BranchPredictor, IndirectPredictor -> VEGA_X86/params/IndirectPredictor.hh
+ [SO Param] m5.objects.PciDevice, PciMemUpperBar -> VEGA_X86/params/PciMemUpperBar.hh
+ [SO Param] m5.objects.Pc, Pc -> VEGA_X86/params/Pc.hh
+ [SO Param] m5.objects.Ethernet, EtherBus -> VEGA_X86/python/_m5/param_EtherBus.cc
+ [SO Param] m5.objects.CpuCluster, CpuCluster -> VEGA_X86/python/_m5/param_CpuCluster.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_LoopPredictor -> VEGA_X86/params/TAGE_SC_L_LoopPredictor.hh
+ [ENUMDECL] m5.objects.IntelMP, X86IntelMPPolarity -> VEGA_X86/enums/X86IntelMPPolarity.hh
+ [SO Param] m5.objects.Ethernet, Sinic -> VEGA_X86/python/_m5/param_Sinic.cc
+ [SO Param] m5.objects.BranchPredictor, LocalBP -> VEGA_X86/params/LocalBP.hh
+ [SO Param] m5.objects.TimingExpr, TimingExprLet -> VEGA_X86/params/TimingExprLet.hh
+ [SO Param] m5.objects.Device, BasicPioDevice -> VEGA_X86/python/_m5/param_BasicPioDevice.cc
+ [SO Param] m5.objects.Vnc, VncInput -> VEGA_X86/python/_m5/param_VncInput.cc
+ [ENUMDECL] m5.objects.GPUStaticInstFlags, GPUStaticInstFlags -> VEGA_X86/enums/GPUStaticInstFlags.hh
+ [SO Param] m5.objects.Ethernet, EtherBus -> VEGA_X86/params/EtherBus.hh
+ [SO Param] m5.objects.CpuCluster, CpuCluster -> VEGA_X86/params/CpuCluster.hh
+ [ENUM STR] m5.objects.BranchPredictor, TargetProvider -> VEGA_X86/enums/TargetProvider.cc
+ [SO Param] m5.objects.FuncUnit, OpDesc -> VEGA_X86/python/_m5/param_OpDesc.cc
+ [SO Param] m5.objects.Process, Process -> VEGA_X86/params/Process.hh
+ [SO Param] m5.objects.Device, BasicPioDevice -> VEGA_X86/params/BasicPioDevice.hh
+ [SO Param] m5.objects.Vnc, VncInput -> VEGA_X86/params/VncInput.hh
+ [SO Param] m5.objects.Serial, SerialDevice -> VEGA_X86/python/_m5/param_SerialDevice.cc
+ [SO Param] m5.objects.ThermalModel, ThermalModel -> VEGA_X86/params/ThermalModel.hh
+ [     CXX] src/dev/net/etherbus.cc -> VEGA_X86/dev/net/etherbus.do
+ [     CXX] VEGA_X86/python/_m5/param_EtherBus.cc -> .do
+ [SO Param] m5.objects.BaseTrafficGen, BaseTrafficGen -> VEGA_X86/python/_m5/param_BaseTrafficGen.cc
+ [SO Param] m5.objects.ACPI, X86ACPIMadt -> VEGA_X86/python/_m5/param_X86ACPIMadt.cc
+ [SO Param] m5.objects.GpuWavefront, GpuWavefront -> VEGA_X86/python/_m5/param_GpuWavefront.cc
+ [ENUMDECL] m5.objects.BranchPredictor, TargetProvider -> VEGA_X86/enums/TargetProvider.hh
+ [     CXX] VEGA_X86/python/_m5/param_SerialDevice.cc -> .do
+ [SO Param] m5.objects.FuncUnit, OpDesc -> VEGA_X86/params/OpDesc.hh
+ [SO Param] m5.objects.GPU, Wavefront -> VEGA_X86/params/Wavefront.hh
+ [SO Param] m5.objects.Controller, RubyController -> VEGA_X86/params/RubyController.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPBaseConfigEntry -> VEGA_X86/python/_m5/param_X86IntelMPBaseConfigEntry.cc
+ [SO Param] m5.objects.BaseTrafficGen, BaseTrafficGen -> VEGA_X86/params/BaseTrafficGen.hh
+ [SO Param] m5.objects.ACPI, X86ACPIMadt -> VEGA_X86/params/X86ACPIMadt.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_TAGE -> VEGA_X86/python/_m5/param_MPP_TAGE.cc
+ [SO Param] m5.objects.DummyChecker, DummyChecker -> VEGA_X86/python/_m5/param_DummyChecker.cc
+ [ENUMDECL] m5.objects.MessageBuffer, MessageRandomization -> VEGA_X86/enums/MessageRandomization.hh
+ [SO Param] m5.objects.GpuWavefront, GpuWavefront -> VEGA_X86/params/GpuWavefront.hh
+ [SO Param] m5.objects.GPU, RegisterFileCache -> VEGA_X86/params/RegisterFileCache.hh
+ [SO Param] m5.objects.PyTrafficGen, PyTrafficGen -> VEGA_X86/python/_m5/param_PyTrafficGen.cc
+ [SO Param] m5.objects.X86TLB, X86TLB -> VEGA_X86/python/_m5/param_X86TLB.cc
+ [SO Param] m5.objects.BaseMMU, BaseMMU -> VEGA_X86/python/_m5/param_BaseMMU.cc
+ [SO Param] m5.objects.BranchPredictor, BranchPredictor -> VEGA_X86/python/_m5/param_BranchPredictor.cc
+ [SO Param] m5.objects.BaseKvmCPU, BaseKvmCPU -> VEGA_X86/python/_m5/param_BaseKvmCPU.cc
+ [SO Param] m5.objects.PciDevice, PciMemBar -> VEGA_X86/python/_m5/param_PciMemBar.cc
+ [SO Param] m5.objects.X86GPUTLB, X86GPUTLB -> VEGA_X86/params/X86GPUTLB.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPBaseConfigEntry -> VEGA_X86/params/X86IntelMPBaseConfigEntry.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_TAGE -> VEGA_X86/params/MPP_TAGE.hh
+ [SO Param] m5.objects.I8259, I8259 -> VEGA_X86/params/I8259.hh
+ [SO Param] m5.objects.DummyChecker, DummyChecker -> VEGA_X86/params/DummyChecker.hh
+ [SO Param] m5.objects.BranchPredictor, LTAGE -> VEGA_X86/python/_m5/param_LTAGE.cc
+ [SO Param] m5.objects.InstTracker, LocalInstTracker -> VEGA_X86/python/_m5/param_LocalInstTracker.cc
+ [ENUM STR] m5.objects.BranchPredictor, BranchType -> VEGA_X86/enums/BranchType.cc
+ [SO Param] m5.objects.PyTrafficGen, PyTrafficGen -> VEGA_X86/params/PyTrafficGen.hh
+ [SO Param] m5.objects.BranchPredictor, ReturnAddrStack -> VEGA_X86/python/_m5/param_ReturnAddrStack.cc
+ [SO Param] m5.objects.TimingExpr, TimingExprSrcReg -> VEGA_X86/python/_m5/param_TimingExprSrcReg.cc
+ [SO Param] m5.objects.X86TLB, X86TLB -> VEGA_X86/params/X86TLB.hh
+ [SO Param] m5.objects.BaseMMU, BaseMMU -> VEGA_X86/params/BaseMMU.hh
+ [SO Param] m5.objects.BaseKvmCPU, BaseKvmCPU -> VEGA_X86/params/BaseKvmCPU.hh
+ [SO Param] m5.objects.PciDevice, PciMemBar -> VEGA_X86/params/PciMemBar.hh
+ [SO Param] m5.objects.PciDevice, PciBarNone -> VEGA_X86/python/_m5/param_PciBarNone.cc
+ [SO Param] m5.objects.BranchPredictor, LTAGE -> VEGA_X86/params/LTAGE.hh
+ [SO Param] m5.objects.InstTracker, LocalInstTracker -> VEGA_X86/params/LocalInstTracker.hh
+ [ENUMDECL] m5.objects.BranchPredictor, BranchType -> VEGA_X86/enums/BranchType.hh
+ [SO Param] m5.objects.BranchPredictor, ReturnAddrStack -> VEGA_X86/params/ReturnAddrStack.hh
+ [SO Param] m5.objects.TimingExpr, TimingExprSrcReg -> VEGA_X86/params/TimingExprSrcReg.hh
+ [SO Param] m5.objects.SimpleTrace, SimpleTrace -> VEGA_X86/python/_m5/param_SimpleTrace.cc
+ [     CXX] src/arch/amdgpu/vega/faults.cc -> VEGA_X86/arch/amdgpu/vega/faults.do
+ [     CXX] VEGA_X86/python/_m5/param_BaseTLB.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_BaseMMU.cc -> .do
+ [SO Param] m5.objects.RubySystem, RubySystem -> VEGA_X86/params/RubySystem.hh
+ [SO Param] m5.objects.PciDevice, PciBarNone -> VEGA_X86/params/PciBarNone.hh
+ [SO Param] m5.objects.Device, IsaFake -> VEGA_X86/python/_m5/param_IsaFake.cc
+ [ENUM STR] m5.objects.SpatterGen, SpatterProcessingMode -> VEGA_X86/enums/SpatterProcessingMode.cc
+ [SO Param] m5.objects.BaseInterrupts, BaseInterrupts -> VEGA_X86/python/_m5/param_BaseInterrupts.cc
+ [SO Param] m5.objects.SimpleTrace, SimpleTrace -> VEGA_X86/params/SimpleTrace.hh
+ [SO Param] m5.objects.ElasticTrace, ElasticTrace -> VEGA_X86/python/_m5/param_ElasticTrace.cc
+ [SO Param] m5.objects.ACPI, X86ACPIMadtRecord -> VEGA_X86/python/_m5/param_X86ACPIMadtRecord.cc
+ [SO Param] m5.objects.Device, IsaFake -> VEGA_X86/params/IsaFake.hh
+ [ENUMDECL] m5.objects.SpatterGen, SpatterProcessingMode -> VEGA_X86/enums/SpatterProcessingMode.hh
+ [SO Param] m5.objects.GPU, RegisterManager -> VEGA_X86/params/RegisterManager.hh
+ [SO Param] m5.objects.Root, Root -> VEGA_X86/params/Root.hh
+ [SO Param] m5.objects.ElasticTrace, ElasticTrace -> VEGA_X86/params/ElasticTrace.hh
+ [SO Param] m5.objects.Sequencer, RubyPort -> VEGA_X86/params/RubyPort.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPConfigTable -> VEGA_X86/python/_m5/param_X86IntelMPConfigTable.cc
+ [     CXX] VEGA_X86/enums/SpatterProcessingMode.cc -> .do
+ [SO Param] m5.objects.ACPI, X86ACPIMadtRecord -> VEGA_X86/params/X86ACPIMadtRecord.hh
+ [ENUMDECL] m5.objects.GPU, StorageClassType -> VEGA_X86/enums/StorageClassType.hh
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptron64KB -> VEGA_X86/python/_m5/param_MultiperspectivePerceptron64KB.cc
+ [SO Param] m5.objects.MessageBuffer, MessageBuffer -> VEGA_X86/params/MessageBuffer.hh
+ [SO Param] m5.objects.PowerModel, PowerModel -> VEGA_X86/params/PowerModel.hh
+ [SO Param] m5.objects.PciDevice, PciLegacyIoBar -> VEGA_X86/python/_m5/param_PciLegacyIoBar.cc
+ [SO Param] m5.objects.IntelMP, X86IntelMPConfigTable -> VEGA_X86/params/X86IntelMPConfigTable.hh
+ [ENUMDECL] m5.objects.System, MemoryMode -> VEGA_X86/enums/MemoryMode.hh
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptron64KB -> VEGA_X86/params/MultiperspectivePerceptron64KB.hh
+ [ENUM STR] m5.objects.SpatterGen, SpatterKernelType -> VEGA_X86/enums/SpatterKernelType.cc
+ [SO Param] m5.objects.BaseCPU, BaseCPU -> VEGA_X86/python/_m5/param_BaseCPU.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_TAGE_8KB -> VEGA_X86/python/_m5/param_TAGE_SC_L_TAGE_8KB.cc
+ [SO Param] m5.objects.InstTracker, GlobalInstTracker -> VEGA_X86/python/_m5/param_GlobalInstTracker.cc
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptronTAGE8KB -> VEGA_X86/python/_m5/param_MultiperspectivePerceptronTAGE8KB.cc
+ [SO Param] m5.objects.X86LocalApic, X86LocalApic -> VEGA_X86/python/_m5/param_X86LocalApic.cc
+ [SO Param] m5.objects.BranchPredictor, BTBSetAssociative -> VEGA_X86/python/_m5/param_BTBSetAssociative.cc
+ [SO Param] m5.objects.TimingExpr, TimingExprLiteral -> VEGA_X86/python/_m5/param_TimingExprLiteral.cc
+ [SO Param] m5.objects.BaseMinorCPU, BaseMinorCPU -> VEGA_X86/python/_m5/param_BaseMinorCPU.cc
+ [SO Param] m5.objects.RubyTester, RubyTester -> VEGA_X86/python/_m5/param_RubyTester.cc
+ [SO Param] m5.objects.PciDevice, PciLegacyIoBar -> VEGA_X86/params/PciLegacyIoBar.hh
+ [SO Param] m5.objects.Ethernet, Sinic -> VEGA_X86/params/Sinic.hh
+ [ENUMDECL] m5.objects.SpatterGen, SpatterKernelType -> VEGA_X86/enums/SpatterKernelType.hh
+ [SO Param] m5.objects.BaseCPU, BaseCPU -> VEGA_X86/params/BaseCPU.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_TAGE_8KB -> VEGA_X86/params/TAGE_SC_L_TAGE_8KB.hh
+ [SO Param] m5.objects.InstTracker, GlobalInstTracker -> VEGA_X86/params/GlobalInstTracker.hh
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptronTAGE8KB -> VEGA_X86/params/MultiperspectivePerceptronTAGE8KB.hh
+ [SO Param] m5.objects.X86LocalApic, X86LocalApic -> VEGA_X86/params/X86LocalApic.hh
+ [SO Param] m5.objects.BranchPredictor, BTBSetAssociative -> VEGA_X86/params/BTBSetAssociative.hh
+ [SO Param] m5.objects.TimingExpr, TimingExprLiteral -> VEGA_X86/params/TimingExprLiteral.hh
+ [SO Param] m5.objects.I8042, I8042 -> VEGA_X86/params/I8042.hh
+ [SO Param] m5.objects.BaseMinorCPU, BaseMinorCPU -> VEGA_X86/params/BaseMinorCPU.hh
+ [SO Param] m5.objects.RubyTester, RubyTester -> VEGA_X86/params/RubyTester.hh
+ [SO Param] m5.objects.X86TLB, X86PagetableWalker -> VEGA_X86/python/_m5/param_X86PagetableWalker.cc
+ [SO Param] m5.objects.Device, DmaVirtDevice -> VEGA_X86/python/_m5/param_DmaVirtDevice.cc
+ [     CXX] VEGA_X86/enums/SpatterKernelType.cc -> .do
+ [ENUM STR] m5.objects.BaseO3CPU, CommitPolicy -> VEGA_X86/enums/CommitPolicy.cc
+ [SO Param] m5.objects.DmaThread, DmaThread -> VEGA_X86/python/_m5/param_DmaThread.cc
+ [SO Param] m5.objects.AMDGPU, PM4PacketProcessor -> VEGA_X86/python/_m5/param_PM4PacketProcessor.cc
+ [SO Param] m5.objects.SimpleMemory, SimpleMemory -> VEGA_X86/params/SimpleMemory.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPCompatAddrSpaceMod -> VEGA_X86/python/_m5/param_X86IntelMPCompatAddrSpaceMod.cc
+ [SO Param] m5.objects.IndexingPolicies, SetAssociative -> VEGA_X86/params/SetAssociative.hh
+ [SO Param] m5.objects.ThermalDomain, ThermalDomain -> VEGA_X86/params/ThermalDomain.hh
+ [SO Param] m5.objects.X86TLB, X86PagetableWalker -> VEGA_X86/params/X86PagetableWalker.hh
+ [SO Param] m5.objects.Device, DmaVirtDevice -> VEGA_X86/params/DmaVirtDevice.hh
+ [ENUMDECL] m5.objects.BaseO3CPU, CommitPolicy -> VEGA_X86/enums/CommitPolicy.hh
+ [SO Param] m5.objects.DmaThread, DmaThread -> VEGA_X86/params/DmaThread.hh
+ [SO Param] m5.objects.AMDGPU, PM4PacketProcessor -> VEGA_X86/params/PM4PacketProcessor.hh
+ [SO Param] m5.objects.PciDevice, PciBar -> VEGA_X86/python/_m5/param_PciBar.cc
+ [SO Param] m5.objects.BadDevice, BadDevice -> VEGA_X86/python/_m5/param_BadDevice.cc
+ [SO Param] m5.objects.GPU, VectorRegisterFile -> VEGA_X86/params/VectorRegisterFile.hh
+ [SO Param] m5.objects.PciHost, GenericPciHost -> VEGA_X86/python/_m5/param_GenericPciHost.cc
+ [SO Param] m5.objects.KvmVM, KvmVM -> VEGA_X86/python/_m5/param_KvmVM.cc
+ [SO Param] m5.objects.IntelMP, X86IntelMPCompatAddrSpaceMod -> VEGA_X86/params/X86IntelMPCompatAddrSpaceMod.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPFloatingPointer -> VEGA_X86/python/_m5/param_X86IntelMPFloatingPointer.cc
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptron8KB -> VEGA_X86/python/_m5/param_MultiperspectivePerceptron8KB.cc
+ [SO Param] m5.objects.PciDevice, PciBar -> VEGA_X86/params/PciBar.hh
+ [SO Param] m5.objects.BadDevice, BadDevice -> VEGA_X86/params/BadDevice.hh
+ [SO Param] m5.objects.BaseTimingSimpleCPU, BaseTimingSimpleCPU -> VEGA_X86/python/_m5/param_BaseTimingSimpleCPU.cc
+ [SO Param] m5.objects.PciHost, GenericPciHost -> VEGA_X86/params/GenericPciHost.hh
+ [SO Param] m5.objects.TrafficGen, TrafficGen -> VEGA_X86/python/_m5/param_TrafficGen.cc
+ [SO Param] m5.objects.KvmVM, KvmVM -> VEGA_X86/params/KvmVM.hh
+ [SO Param] m5.objects.PciDevice, PciIoBar -> VEGA_X86/python/_m5/param_PciIoBar.cc
+ [SO Param] m5.objects.Ethernet, NSGigE -> VEGA_X86/python/_m5/param_NSGigE.cc
+ [SO Param] m5.objects.InstTracer, InstDisassembler -> VEGA_X86/params/InstDisassembler.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPFloatingPointer -> VEGA_X86/params/X86IntelMPFloatingPointer.hh
+ [SO Param] m5.objects.System, System -> VEGA_X86/params/System.hh
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptron8KB -> VEGA_X86/params/MultiperspectivePerceptron8KB.hh
+ [SO Param] m5.objects.X86GPUTLB, TLBCoalescer -> VEGA_X86/python/_m5/param_TLBCoalescer.cc
+ [ENUM STR] m5.objects.BaseO3CPU, SMTQueuePolicy -> VEGA_X86/enums/SMTQueuePolicy.cc
+ [SO Param] m5.objects.BranchPredictor, MPP_StatisticalCorrector_8KB -> VEGA_X86/python/_m5/param_MPP_StatisticalCorrector_8KB.cc
+ [SO Param] m5.objects.BranchPredictor, BTBIndexingPolicy -> VEGA_X86/python/_m5/param_BTBIndexingPolicy.cc
+ [SO Param] m5.objects.TimingExpr, TimingExpr -> VEGA_X86/python/_m5/param_TimingExpr.cc
+ [SO Param] m5.objects.BaseTimingSimpleCPU, BaseTimingSimpleCPU -> VEGA_X86/params/BaseTimingSimpleCPU.hh
+ [ENUMDECL] m5.objects.Workload, KernelPanicOopsBehaviour -> VEGA_X86/enums/KernelPanicOopsBehaviour.hh
+ [SO Param] m5.objects.TrafficGen, TrafficGen -> VEGA_X86/params/TrafficGen.hh
+ [SO Param] m5.objects.PciDevice, PciIoBar -> VEGA_X86/params/PciIoBar.hh
+ [     CXX] src/cpu/inteltrace.cc -> VEGA_X86/cpu/inteltrace.do
+ [     CXX] VEGA_X86/python/_m5/param_ExeTracer.cc -> .do
+ [     CXX] src/cpu/inst_pb_trace.cc -> VEGA_X86/cpu/inst_pb_trace.do
+ [SO Param] m5.objects.Ethernet, NSGigE -> VEGA_X86/params/NSGigE.hh
+ [SO Param] m5.objects.BloomFilters, BloomFilterBase -> VEGA_X86/python/_m5/param_BloomFilterBase.cc
+ [SO Param] m5.objects.X86FsWorkload, X86FsWorkload -> VEGA_X86/params/X86FsWorkload.hh
+ [SO Param] m5.objects.X86GPUTLB, TLBCoalescer -> VEGA_X86/params/TLBCoalescer.hh
+ [ENUMDECL] m5.objects.BaseO3CPU, SMTQueuePolicy -> VEGA_X86/enums/SMTQueuePolicy.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_StatisticalCorrector_8KB -> VEGA_X86/params/MPP_StatisticalCorrector_8KB.hh
+ [SO Param] m5.objects.BranchPredictor, BTBIndexingPolicy -> VEGA_X86/params/BTBIndexingPolicy.hh
+ [SO Param] m5.objects.TimingExpr, TimingExpr -> VEGA_X86/params/TimingExpr.hh
+ [SO Param] m5.objects.ACPI, X86ACPIXSDT -> VEGA_X86/python/_m5/param_X86ACPIXSDT.cc
+ [SO Param] m5.objects.GUPSGen, GUPSGen -> VEGA_X86/python/_m5/param_GUPSGen.cc
+ [SO Param] m5.objects.BloomFilters, BloomFilterBase -> VEGA_X86/params/BloomFilterBase.hh
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgMmio -> VEGA_X86/python/_m5/param_QemuFwCfgMmio.cc
+ [SO Param] m5.objects.Device, DmaDevice -> VEGA_X86/python/_m5/param_DmaDevice.cc
+ [SO Param] m5.objects.AMDGPU, SDMAEngine -> VEGA_X86/python/_m5/param_SDMAEngine.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_TAGE_64KB -> VEGA_X86/python/_m5/param_TAGE_SC_L_TAGE_64KB.cc
+ [     CXX] VEGA_X86/python/_m5/param_TimingExprSrcReg.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_TimingExprIf.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_TimingExprUn.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_TimingExprLiteral.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_BloomFilterBulk.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_TimingExprBin.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_TimingExprRef.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_TimingExpr.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_TimingExprLet.cc -> .do
+ [     CXX] src/cpu/timing_expr.cc -> VEGA_X86/cpu/timing_expr.do
+ [SO Param] m5.objects.ACPI, X86ACPIXSDT -> VEGA_X86/params/X86ACPIXSDT.hh
+ [SO Param] m5.objects.X86KvmCPU, X86KvmCPU -> VEGA_X86/python/_m5/param_X86KvmCPU.cc
+ [SO Param] m5.objects.GUPSGen, GUPSGen -> VEGA_X86/params/GUPSGen.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPBusHierarchy -> VEGA_X86/python/_m5/param_X86IntelMPBusHierarchy.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgMmio -> VEGA_X86/params/QemuFwCfgMmio.hh
+ [SO Param] m5.objects.Device, DmaDevice -> VEGA_X86/params/DmaDevice.hh
+ [ENUM STR] m5.objects.BaseO3CPU, SMTFetchPolicy -> VEGA_X86/enums/SMTFetchPolicy.cc
+ [SO Param] m5.objects.AMDGPU, SDMAEngine -> VEGA_X86/params/SDMAEngine.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_TAGE_64KB -> VEGA_X86/params/TAGE_SC_L_TAGE_64KB.hh
+ [SO Param] m5.objects.GPU, ScalarRegisterFile -> VEGA_X86/params/ScalarRegisterFile.hh
+ [SO Param] m5.objects.PciHost, PciHost -> VEGA_X86/python/_m5/param_PciHost.cc
+ [SO Param] m5.objects.IntelMP, X86IntelMPBusHierarchy -> VEGA_X86/params/X86IntelMPBusHierarchy.hh
+ [ENUM STR] m5.objects.Graphics, ImageFormat -> VEGA_X86/enums/ImageFormat.cc
+ [SO Param] m5.objects.I2C, I2CDevice -> VEGA_X86/python/_m5/param_I2CDevice.cc
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptron -> VEGA_X86/python/_m5/param_MultiperspectivePerceptron.cc
+ [SO Param] m5.objects.Cmos, Cmos -> VEGA_X86/params/Cmos.hh
+ [SO Param] m5.objects.CheckerCPU, CheckerCPU -> VEGA_X86/python/_m5/param_CheckerCPU.cc
+ [SO Param] m5.objects.ReplacementPolicies, BaseReplacementPolicy -> VEGA_X86/params/BaseReplacementPolicy.hh
+ [ENUMDECL] m5.objects.BaseO3CPU, SMTFetchPolicy -> VEGA_X86/enums/SMTFetchPolicy.hh
+ [SO Param] m5.objects.X86ISA, X86ISA -> VEGA_X86/python/_m5/param_X86ISA.cc
+ [SO Param] m5.objects.PciHost, PciHost -> VEGA_X86/params/PciHost.hh
+ [SO Param] m5.objects.PS2, PS2TouchKit -> VEGA_X86/python/_m5/param_PS2TouchKit.cc
+ [     CXX] src/cpu/o3/store_set.cc -> VEGA_X86/cpu/o3/store_set.do
+ [SO Param] m5.objects.Ethernet, EtherDevBase -> VEGA_X86/python/_m5/param_EtherDevBase.cc
+ [ENUMDECL] m5.objects.Graphics, ImageFormat -> VEGA_X86/enums/ImageFormat.hh
+ [SO Param] m5.objects.X86FsWorkload, X86BareMetalWorkload -> VEGA_X86/python/_m5/param_X86BareMetalWorkload.cc
+ [SO Param] m5.objects.BranchPredictor, MultiperspectivePerceptron -> VEGA_X86/params/MultiperspectivePerceptron.hh
+ [SO Param] m5.objects.I2C, I2CDevice -> VEGA_X86/params/I2CDevice.hh
+ [SO Param] m5.objects.X86ISA, X86ISA -> VEGA_X86/params/X86ISA.hh
+ [     CXX] VEGA_X86/python/_m5/param_VncServer.cc -> .do
+ [SO Param] m5.objects.BranchPredictor, SimpleBTB -> VEGA_X86/python/_m5/param_SimpleBTB.cc
+ [SO Param] m5.objects.Probe, ProbeListenerObject -> VEGA_X86/params/ProbeListenerObject.hh
+ [     CXX] VEGA_X86/python/_m5/param_I2CDevice.cc -> .do
+ [     CXX] src/arch/x86/regs/float.cc -> VEGA_X86/arch/x86/regs/float.do
+ [     CXX] src/arch/x86/cpuid.cc -> VEGA_X86/arch/x86/cpuid.do
+ [     CXX] VEGA_X86/python/_m5/param_X86ISA.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_ElasticTrace.cc -> .do
+ [SO Param] m5.objects.Workload, SEWorkload -> VEGA_X86/params/SEWorkload.hh
+ [SO Param] m5.objects.PS2, PS2TouchKit -> VEGA_X86/params/PS2TouchKit.hh
+ [SO Param] m5.objects.X86KvmCPU, X86KvmCPU -> VEGA_X86/params/X86KvmCPU.hh
+ [SO Param] m5.objects.Ethernet, EtherDevBase -> VEGA_X86/params/EtherDevBase.hh
+ [SO Param] m5.objects.X86FsWorkload, X86BareMetalWorkload -> VEGA_X86/params/X86BareMetalWorkload.hh
+ [SO Param] m5.objects.AbstractMemory, AbstractMemory -> VEGA_X86/params/AbstractMemory.hh
+ [SO Param] m5.objects.CpuThread, CpuThread -> VEGA_X86/python/_m5/param_CpuThread.cc
+ [SO Param] m5.objects.InstDecoder, InstDecoder -> VEGA_X86/python/_m5/param_InstDecoder.cc
+ [SO Param] m5.objects.BranchPredictor, SimpleBTB -> VEGA_X86/params/SimpleBTB.hh
+ [SO Param] m5.objects.BloomFilters, BloomFilterPerfect -> VEGA_X86/python/_m5/param_BloomFilterPerfect.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgIo -> VEGA_X86/python/_m5/param_QemuFwCfgIo.cc
+ [SO Param] m5.objects.AMDGPU, AMDGPUMemoryManager -> VEGA_X86/params/AMDGPUMemoryManager.hh
+ [     CXX] VEGA_X86/python/_m5/param_X86BareMetalWorkload.cc -> .do
+ [SO Param] m5.objects.CpuThread, CpuThread -> VEGA_X86/params/CpuThread.hh
+ [SO Param] m5.objects.InstDecoder, InstDecoder -> VEGA_X86/params/InstDecoder.hh
+ [SO Param] m5.objects.AMDGPU, AMDGPUSystemHub -> VEGA_X86/python/_m5/param_AMDGPUSystemHub.cc
+ [SO Param] m5.objects.BloomFilters, BloomFilterPerfect -> VEGA_X86/params/BloomFilterPerfect.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_TAGE -> VEGA_X86/python/_m5/param_TAGE_SC_L_TAGE.cc
+ [SO Param] m5.objects.IntelMP, X86IntelMPAddrSpaceMapping -> VEGA_X86/python/_m5/param_X86IntelMPAddrSpaceMapping.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfgIo -> VEGA_X86/params/QemuFwCfgIo.hh
+ [SO Param] m5.objects.PowerModelState, PowerModelState -> VEGA_X86/params/PowerModelState.hh
+ [SO Param] m5.objects.BaseO3CPU, BaseO3CPU -> VEGA_X86/python/_m5/param_BaseO3CPU.cc
+ [     CXX] VEGA_X86/python/_m5/param_InstDecoder.cc -> .do
+ [SO Param] m5.objects.RubyDirectedTester, RubyDirectedTester -> VEGA_X86/python/_m5/param_RubyDirectedTester.cc
+ [SO Param] m5.objects.AMDGPU, AMDGPUSystemHub -> VEGA_X86/params/AMDGPUSystemHub.hh
+ [SO Param] m5.objects.Ethernet, DistEtherLink -> VEGA_X86/python/_m5/param_DistEtherLink.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_TAGE -> VEGA_X86/params/TAGE_SC_L_TAGE.hh
+ [SO Param] m5.objects.GPU, RegisterFile -> VEGA_X86/params/RegisterFile.hh
+ [ENUMDECL] m5.objects.PowerState, PwrState -> VEGA_X86/enums/PwrState.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPAddrSpaceMapping -> VEGA_X86/params/X86IntelMPAddrSpaceMapping.hh
+ [SO Param] m5.objects.VoltageDomain, VoltageDomain -> VEGA_X86/params/VoltageDomain.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_8KB -> VEGA_X86/python/_m5/param_TAGE_SC_L_8KB.cc
+ [SO Param] m5.objects.X86NativeTrace, X86NativeTrace -> VEGA_X86/python/_m5/param_X86NativeTrace.cc
+ [SO Param] m5.objects.Ethernet, EtherLink -> VEGA_X86/python/_m5/param_EtherLink.cc
+ [SO Param] m5.objects.RubyDirectedTester, RubyDirectedTester -> VEGA_X86/params/RubyDirectedTester.hh
+ [SO Param] m5.objects.Ethernet, DistEtherLink -> VEGA_X86/params/DistEtherLink.hh
+ [SO Param] m5.objects.CPUTracers, NativeTrace -> VEGA_X86/python/_m5/param_NativeTrace.cc
+ [SO Param] m5.objects.I82094AA, I82094AA -> VEGA_X86/params/I82094AA.hh
+ [SO Param] m5.objects.Platform, Platform -> VEGA_X86/python/_m5/param_Platform.cc
+ [ENUM STR] m5.objects.SMBios, ExtCharacteristic -> VEGA_X86/enums/ExtCharacteristic.cc
+ [SO Param] m5.objects.BaseO3Checker, BaseO3Checker -> VEGA_X86/python/_m5/param_BaseO3Checker.cc
+ [SO Param] m5.objects.PS2, PS2Mouse -> VEGA_X86/python/_m5/param_PS2Mouse.cc
+ [SO Param] m5.objects.Ethernet, IGbE -> VEGA_X86/python/_m5/param_IGbE.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_8KB -> VEGA_X86/params/TAGE_SC_L_8KB.hh
+ [SO Param] m5.objects.X86GPUTLB, X86GPUTLB -> VEGA_X86/python/_m5/param_X86GPUTLB.cc
+ [SO Param] m5.objects.BaseMinorCPU, MinorFUPool -> VEGA_X86/python/_m5/param_MinorFUPool.cc
+ [SO Param] m5.objects.Ethernet, EtherLink -> VEGA_X86/params/EtherLink.hh
+ [SO Param] m5.objects.BranchPredictor, BranchTargetBuffer -> VEGA_X86/python/_m5/param_BranchTargetBuffer.cc
+ [SO Param] m5.objects.CPUTracers, NativeTrace -> VEGA_X86/params/NativeTrace.hh
+ [SO Param] m5.objects.Platform, Platform -> VEGA_X86/params/Platform.hh
+ [SO Param] m5.objects.BaseNonCachingSimpleCPU, BaseNonCachingSimpleCPU -> VEGA_X86/python/_m5/param_BaseNonCachingSimpleCPU.cc
+ [ENUMDECL] m5.objects.SMBios, ExtCharacteristic -> VEGA_X86/enums/ExtCharacteristic.hh
+ [SO Param] m5.objects.Workload, KernelWorkload -> VEGA_X86/params/KernelWorkload.hh
+ [SO Param] m5.objects.BaseO3Checker, BaseO3Checker -> VEGA_X86/params/BaseO3Checker.hh
+ [SO Param] m5.objects.PS2, PS2Mouse -> VEGA_X86/params/PS2Mouse.hh
+ [SO Param] m5.objects.VegaGPUTLB, VegaTLBCoalescer -> VEGA_X86/python/_m5/param_VegaTLBCoalescer.cc
+ [     CXX] src/dev/net/etherswitch.cc -> VEGA_X86/dev/net/etherswitch.do
+ [     CXX] VEGA_X86/python/_m5/param_EtherSwitch.cc -> .do
+ [     CXX] src/cpu/nativetrace.cc -> VEGA_X86/cpu/nativetrace.do
+ [     CXX] VEGA_X86/python/_m5/param_NativeTrace.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_EtherLink.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_DistEtherLink.cc -> .do
+ [SO Param] m5.objects.Ethernet, IGbE -> VEGA_X86/params/IGbE.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_TAGE_8KB -> VEGA_X86/python/_m5/param_MPP_TAGE_8KB.cc
+ [SO Param] m5.objects.CheckerCPU, CheckerCPU -> VEGA_X86/params/CheckerCPU.hh
+ [SO Param] m5.objects.BaseMinorCPU, MinorFUPool -> VEGA_X86/params/MinorFUPool.hh
+ [SO Param] m5.objects.BranchPredictor, BranchTargetBuffer -> VEGA_X86/params/BranchTargetBuffer.hh
+ [SO Param] m5.objects.BloomFilters, BloomFilterMulti -> VEGA_X86/python/_m5/param_BloomFilterMulti.cc
+ [SO Param] m5.objects.VegaGPUTLB, VegaPWCIndexingPolicy -> VEGA_X86/python/_m5/param_VegaPWCIndexingPolicy.cc
+ [SO Param] m5.objects.BaseNonCachingSimpleCPU, BaseNonCachingSimpleCPU -> VEGA_X86/params/BaseNonCachingSimpleCPU.hh
+ [SO Param] m5.objects.X86NativeTrace, X86NativeTrace -> VEGA_X86/params/X86NativeTrace.hh
+ [SO Param] m5.objects.VegaGPUTLB, VegaTLBCoalescer -> VEGA_X86/params/VegaTLBCoalescer.hh
+ [SO Param] m5.objects.ACPI, X86ACPIRSDP -> VEGA_X86/python/_m5/param_X86ACPIRSDP.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfg -> VEGA_X86/python/_m5/param_QemuFwCfg.cc
+ [     CXX] VEGA_X86/python/_m5/param_X86NativeTrace.cc -> .do
+ [     CXX] src/arch/x86/nativetrace.cc -> VEGA_X86/arch/x86/nativetrace.do
+ [SO Param] m5.objects.PS2, PS2Device -> VEGA_X86/python/_m5/param_PS2Device.cc
+ [SO Param] m5.objects.BranchPredictor, MPP_LoopPredictor_8KB -> VEGA_X86/python/_m5/param_MPP_LoopPredictor_8KB.cc
+ [SO Param] m5.objects.BranchPredictor, MPP_TAGE_8KB -> VEGA_X86/params/MPP_TAGE_8KB.hh
+ [SO Param] m5.objects.ACPI, X86ACPIRSDT -> VEGA_X86/python/_m5/param_X86ACPIRSDT.cc
+ [SO Param] m5.objects.AMDGPU, AMDGPUMemoryManager -> VEGA_X86/python/_m5/param_AMDGPUMemoryManager.cc
+ [SO Param] m5.objects.BranchPredictor, LoopPredictor -> VEGA_X86/python/_m5/param_LoopPredictor.cc
+ [SO Param] m5.objects.VegaGPUTLB, VegaPWCIndexingPolicy -> VEGA_X86/params/VegaPWCIndexingPolicy.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPLocalIntAssignment -> VEGA_X86/python/_m5/param_X86IntelMPLocalIntAssignment.cc
+ [SO Param] m5.objects.X86FsWorkload, X86FsWorkload -> VEGA_X86/python/_m5/param_X86FsWorkload.cc
+ [SO Param] m5.objects.QemuFwCfg, QemuFwCfg -> VEGA_X86/params/QemuFwCfg.hh
+ [     CXX] VEGA_X86/python/_m5/param_VegaPWCIndexingPolicy.cc -> .do
+ [SO Param] m5.objects.ACPI, X86ACPIRSDP -> VEGA_X86/params/X86ACPIRSDP.hh
+ [SO Param] m5.objects.PS2, PS2Device -> VEGA_X86/params/PS2Device.hh
+ [SO Param] m5.objects.I8237, I8237 -> VEGA_X86/params/I8237.hh
+ [SO Param] m5.objects.BranchPredictor, MPP_LoopPredictor_8KB -> VEGA_X86/params/MPP_LoopPredictor_8KB.hh
+ [SO Param] m5.objects.X86Decoder, X86Decoder -> VEGA_X86/python/_m5/param_X86Decoder.cc
+ [     CXX] VEGA_X86/python/_m5/param_PS2TouchKit.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PS2Mouse.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIMadt.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIMadtLAPICOverride.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPISysDescTable.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIMadtRecord.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIMadtNMI.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86FsLinux.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIXSDT.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIMadtIntSourceOverride.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIRSDT.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIRSDP.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIMadtIOAPIC.cc -> .do
+ [     CXX] src/arch/x86/bios/acpi.cc -> VEGA_X86/arch/x86/bios/acpi.do
+ [     CXX] VEGA_X86/python/_m5/param_X86ACPIMadtLAPIC.cc -> .do
+ [     CXX] src/dev/ps2/touchkit.cc -> VEGA_X86/dev/ps2/touchkit.do
+ [     CXX] src/dev/ps2/mouse.cc -> VEGA_X86/dev/ps2/mouse.do
+ [     CXX] VEGA_X86/python/_m5/param_PS2Device.cc -> .do
+ [     CXX] src/dev/ps2/keyboard.cc -> VEGA_X86/dev/ps2/keyboard.do
+ [     CXX] src/dev/ps2/device.cc -> VEGA_X86/dev/ps2/device.do
+ [SO Param] m5.objects.RubyDirectedTester, InvalidateGenerator -> VEGA_X86/python/_m5/param_InvalidateGenerator.cc
+ [SO Param] m5.objects.BaseMinorCPU, MinorFU -> VEGA_X86/params/MinorFU.hh
+ [SO Param] m5.objects.BranchPredictor, LoopPredictor -> VEGA_X86/params/LoopPredictor.hh
+ [ENUM STR] m5.objects.SMBios, Characteristic -> VEGA_X86/enums/Characteristic.cc
+ [SO Param] m5.objects.PowerState, PowerState -> VEGA_X86/params/PowerState.hh
+ [SO Param] m5.objects.IntelMP, X86IntelMPLocalIntAssignment -> VEGA_X86/params/X86IntelMPLocalIntAssignment.hh
+ [SO Param] m5.objects.X86SeWorkload, X86EmuLinux -> VEGA_X86/python/_m5/param_X86EmuLinux.cc
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_64KB -> VEGA_X86/python/_m5/param_TAGE_SC_L_64KB.cc
+ [SO Param] m5.objects.X86Decoder, X86Decoder -> VEGA_X86/params/X86Decoder.hh
+ [     CXX] src/arch/x86/bios/intelmp.cc -> VEGA_X86/arch/x86/bios/intelmp.do
+ [SO Param] m5.objects.RubyDirectedTester, InvalidateGenerator -> VEGA_X86/params/InvalidateGenerator.hh
+ [SO Param] m5.objects.CPUTracers, IntelTrace -> VEGA_X86/python/_m5/param_IntelTrace.cc
+ [ENUMDECL] m5.objects.SMBios, Characteristic -> VEGA_X86/enums/Characteristic.hh
+ [SO Param] m5.objects.BaseMinorCPU, MinorFU -> VEGA_X86/python/_m5/param_MinorFU.cc
+ [SO Param] m5.objects.PS2, PS2Keyboard -> VEGA_X86/python/_m5/param_PS2Keyboard.cc
+ [SO Param] m5.objects.ClockedObject, ClockedObject -> VEGA_X86/params/ClockedObject.hh
+ [SO Param] m5.objects.Ethernet, EtherDevice -> VEGA_X86/python/_m5/param_EtherDevice.cc
+ [     CXX] src/arch/x86/bios/smbios.cc -> VEGA_X86/arch/x86/bios/smbios.do
+ [     CXX] VEGA_X86/python/_m5/param_IntelTrace.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86SMBiosSMBiosTable.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86FsWorkload.cc -> .do
+ [SO Param] m5.objects.LooppointAnalysis, LooppointAnalysisManager -> VEGA_X86/python/_m5/param_LooppointAnalysisManager.cc
+ [     CXX] VEGA_X86/python/_m5/param_PS2Keyboard.cc -> .do
+ [SO Param] m5.objects.X86SeWorkload, X86EmuLinux -> VEGA_X86/params/X86EmuLinux.hh
+ [ENUMDECL] m5.objects.PowerModel, PMType -> VEGA_X86/enums/PMType.hh
+ [SO Param] m5.objects.BranchPredictor, TAGE_SC_L_64KB -> VEGA_X86/params/TAGE_SC_L_64KB.hh
+ [     CXX] VEGA_X86/python/_m5/param_X86EmuLinux.cc -> .do
+ [     CXX] src/cpu/o3/thread_state.cc -> VEGA_X86/cpu/o3/thread_state.do
+ [     CXX] src/arch/amdgpu/vega/insts/sopp.cc -> VEGA_X86/arch/amdgpu/vega/insts/sopp.do
+ [     CXX] src/cpu/checker/cpu.cc -> VEGA_X86/cpu/checker/cpu.do
+ [     CXX] src/arch/x86/pagetable_walker.cc -> VEGA_X86/arch/x86/pagetable_walker.do
+ [     CXX] VEGA_X86/python/_m5/param_TesterThread.cc -> .do
+ [     CXX] src/dev/net/dist_iface.cc -> VEGA_X86/dev/net/dist_iface.do
+ [     CXX] VEGA_X86/python/_m5/param_LooppointAnalysis.cc -> .do
+ [     CXX] src/dev/amdgpu/memory_manager.cc -> VEGA_X86/dev/amdgpu/memory_manager.do
+ [     CXX] VEGA_X86/python/_m5/param_X86KvmCPU.cc -> .do
+ [     CXX] src/cpu/o3/decode.cc -> VEGA_X86/cpu/o3/decode.do
+ [     CXX] src/arch/amdgpu/vega/insts/mimg.cc -> VEGA_X86/arch/amdgpu/vega/insts/mimg.do
+ [     CXX] VEGA_X86/python/_m5/param_GenericPciHost.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_MemTest.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PciBarNone.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_BaseO3CPU.cc -> .do
+ [     CXX] src/dev/hsa/hsa_packet_processor.cc -> VEGA_X86/dev/hsa/hsa_packet_processor.do
+ [     CXX] src/cpu/o3/rob.cc -> VEGA_X86/cpu/o3/rob.do
+ [     CXX] src/arch/amdgpu/vega/pagetable_walker.cc -> VEGA_X86/arch/amdgpu/vega/pagetable_walker.do
+ [     CXX] src/cpu/testers/spatter_gen/spatter_gen.cc -> VEGA_X86/cpu/testers/spatter_gen/spatter_gen.do
+ [     CXX] src/cpu/o3/thread_context.cc -> VEGA_X86/cpu/o3/thread_context.do
+ [     CXX] src/arch/amdgpu/vega/insts/sopc.cc -> VEGA_X86/arch/amdgpu/vega/insts/sopc.do
+ [     CXX] VEGA_X86/python/_m5/param_DummyChecker.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PciHost.cc -> .do
+ [     CXX] src/cpu/minor/stats.cc -> VEGA_X86/cpu/minor/stats.do
+ [     CXX] src/dev/amdgpu/interrupt_handler.cc -> VEGA_X86/dev/amdgpu/interrupt_handler.do
+ [     CXX] src/cpu/o3/cpu.cc -> VEGA_X86/cpu/o3/cpu.do
+ [     CXX] src/arch/amdgpu/vega/insts/mtbuf.cc -> VEGA_X86/arch/amdgpu/vega/insts/mtbuf.do
+ [     CXX] VEGA_X86/python/_m5/param_BaseTimingSimpleCPU.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_X86TLB.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PciBar.cc -> .do
+ [     CXX] src/cpu/testers/directedtest/InvalidateGenerator.cc -> VEGA_X86/cpu/testers/directedtest/InvalidateGenerator.do
+ [     CXX] VEGA_X86/python/_m5/param_HSAPacketProcessor.cc -> .do
+ [     CXX] src/cpu/trace/trace_cpu.cc -> VEGA_X86/cpu/trace/trace_cpu.do
+ [     CXX] src/dev/pixelpump.cc -> VEGA_X86/dev/pixelpump.do
+ [     CXX] src/cpu/o3/rename_map.cc -> VEGA_X86/cpu/o3/rename_map.do
+ [     CXX] VEGA_X86/python/_m5/param_SimpleBTB.cc -> .do
+ [     CXX] src/cpu/probes/pc_count_tracker_manager.cc -> VEGA_X86/cpu/probes/pc_count_tracker_manager.do
+ [     CXX] src/arch/amdgpu/vega/insts/sop1.cc -> VEGA_X86/arch/amdgpu/vega/insts/sop1.do
+ [     CXX] src/cpu/testers/traffic_gen/traffic_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/traffic_gen.do
+ [     CXX] VEGA_X86/python/_m5/param_GpuWavefront.cc -> .do
+ [     CXX] src/cpu/simple/probes/simpoint.cc -> VEGA_X86/cpu/simple/probes/simpoint.do
+ [     CXX] src/cpu/minor/scoreboard.cc -> VEGA_X86/cpu/minor/scoreboard.do
+ [     CXX] VEGA_X86/python/_m5/param_BaseSimpleCPU.cc -> .do
+ [     CXX] src/dev/amdgpu/amdgpu_vm.cc -> VEGA_X86/dev/amdgpu/amdgpu_vm.do
+ [     CXX] src/cpu/o3/commit.cc -> VEGA_X86/cpu/o3/commit.do
+ [     CXX] src/arch/amdgpu/vega/insts/mubuf.cc -> VEGA_X86/arch/amdgpu/vega/insts/mubuf.do
+ [     CXX] src/dev/i2c/bus.cc -> VEGA_X86/dev/i2c/bus.do
+ [     CXX] VEGA_X86/python/_m5/param_X86PagetableWalker.cc -> .do
+ [     CXX] src/cpu/testers/directedtest/SeriesRequestGenerator.cc -> VEGA_X86/cpu/testers/directedtest/SeriesRequestGenerator.do
+ [     CXX] src/dev/net/etherdevice.cc -> VEGA_X86/dev/net/etherdevice.do
+ [     CXX] VEGA_X86/python/_m5/param_TraceCPU.cc -> .do
+ [     CXX] src/cpu/testers/traffic_gen/stream_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/stream_gen.do
+ [     CXX] src/cpu/o3/rename.cc -> VEGA_X86/cpu/o3/rename.do
+ [     CXX] src/cpu/probes/pc_count_tracker.cc -> VEGA_X86/cpu/probes/pc_count_tracker.do
+ [     CXX] VEGA_X86/python/_m5/param_BaseMinorCPU.cc -> .do
+ [     CXX] src/cpu/pc_event.cc -> VEGA_X86/cpu/pc_event.do
+ [     CXX] src/arch/amdgpu/vega/insts/sopk.cc -> VEGA_X86/arch/amdgpu/vega/insts/sopk.do
+ [     CXX] src/arch/x86/isa.cc -> VEGA_X86/arch/x86/isa.do
+ [     CXX] src/dev/dma_virt_device.cc -> VEGA_X86/dev/dma_virt_device.do
+ [     CXX] VEGA_X86/python/_m5/param_SimPoint.cc -> .do
+ [     CXX] src/cpu/minor/pipeline.cc -> VEGA_X86/cpu/minor/pipeline.do
+ [     CXX] src/dev/amdgpu/amdgpu_nbio.cc -> VEGA_X86/dev/amdgpu/amdgpu_nbio.do
+ [     CXX] src/arch/generic/mmu.cc -> VEGA_X86/arch/generic/mmu.do
+ [     CXX] src/cpu/simple/noncaching.cc -> VEGA_X86/cpu/simple/noncaching.do
+ [     CXX] VEGA_X86/python/_m5/param_BaseCPU.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_I2CBus.cc -> .do
+ [     CXX] src/cpu/testers/directedtest/DirectedGenerator.cc -> VEGA_X86/cpu/testers/directedtest/DirectedGenerator.do
+ [     CXX] VEGA_X86/python/_m5/param_TrafficGen.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_SpatterGen.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PcCountTrackerManager.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_MinorFUPool.cc -> .do
+ [     CXX] src/arch/amdgpu/vega/insts/sop2.cc -> VEGA_X86/arch/amdgpu/vega/insts/sop2.do
+ [     CXX] src/cpu/thread_state.cc -> VEGA_X86/cpu/thread_state.do
+ [ENUMDECL] m5.objects.I8259, X86I8259CascadeMode -> VEGA_X86/enums/X86I8259CascadeMode.hh
+ [     CXX] src/arch/x86/interrupts.cc -> VEGA_X86/arch/x86/interrupts.do
+ [     CXX] VEGA_X86/python/_m5/param_DmaThread.cc -> .do
+ [     CXX] src/dev/dma_device.cc -> VEGA_X86/dev/dma_device.do
+ [     CXX] src/cpu/minor/pipe_data.cc -> VEGA_X86/cpu/minor/pipe_data.do
+ [     CXX] src/cpu/simple/base.cc -> VEGA_X86/cpu/simple/base.do
+ [     CXX] src/cpu/exetrace.cc -> VEGA_X86/cpu/exetrace.do
+ [     CXX] VEGA_X86/python/_m5/param_BaseNonCachingSimpleCPU.cc -> .do
+ [     CXX] src/cpu/testers/gpu_ruby_test/tester_thread.cc -> VEGA_X86/cpu/testers/gpu_ruby_test/tester_thread.do
+ [     CXX] src/cpu/testers/directedtest/RubyDirectedTester.cc -> VEGA_X86/cpu/testers/directedtest/RubyDirectedTester.do
+ [     CXX] src/base/remote_gdb.cc -> VEGA_X86/base/remote_gdb.do
+ [     CXX] src/cpu/o3/mem_dep_unit.cc -> VEGA_X86/cpu/o3/mem_dep_unit.do
+ [     CXX] src/dev/baddev.cc -> VEGA_X86/dev/baddev.do
+ [     CXX] VEGA_X86/python/_m5/param_VegaTLBCoalescer.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_QemuFwCfgItemString.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_MinorFU.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PcCountTracker.cc -> .do
+ [     CXX] src/cpu/thread_context.cc -> VEGA_X86/cpu/thread_context.do
+ [     CXX] src/dev/isa_fake.cc -> VEGA_X86/dev/isa_fake.do
+ [     CXX] src/cpu/minor/lsq.cc -> VEGA_X86/cpu/minor/lsq.do
+ [     CXX] src/dev/amdgpu/amdgpu_device.cc -> VEGA_X86/dev/amdgpu/amdgpu_device.do
+ [     CXX] src/cpu/base.cc -> VEGA_X86/cpu/base.do
+ [     CXX] VEGA_X86/python/_m5/param_CheckerCPU.cc -> .do
+ [     CXX] src/arch/amdgpu/vega/insts/ds.cc -> VEGA_X86/arch/amdgpu/vega/insts/ds.do
+ [     CXX] src/cpu/kvm/vm.cc -> VEGA_X86/cpu/kvm/vm.do
+ [     CXX] src/cpu/testers/gpu_ruby_test/gpu_wavefront.cc -> VEGA_X86/cpu/testers/gpu_ruby_test/gpu_wavefront.do
+ [     CXX] VEGA_X86/python/_m5/param_RubyDirectedTester.cc -> .do
+ [     CXX] src/dev/net/sinic.cc -> VEGA_X86/dev/net/sinic.do
+ [     CXX] src/cpu/o3/lsq_unit.cc -> VEGA_X86/cpu/o3/lsq_unit.do
+ [     CXX] VEGA_X86/python/_m5/param_BadDevice.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_VegaGPUTLB.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_CpuThread.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_QemuFwCfgItemFile.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_MinorFUTiming.cc -> .do
+ [     CXX] src/arch/amdgpu/vega/gpu_isa.cc -> VEGA_X86/arch/amdgpu/vega/gpu_isa.do
+ [     CXX] src/cpu/simple_thread.cc -> VEGA_X86/cpu/simple_thread.do
+ [     CXX] VEGA_X86/python/_m5/param_PyTrafficGen.cc -> .do
+ [     CXX] src/dev/pci/device.cc -> VEGA_X86/dev/pci/device.do
+ [     CXX] src/dev/io_device.cc -> VEGA_X86/dev/io_device.do
+ [     CXX] src/cpu/minor/func_unit.cc -> VEGA_X86/cpu/minor/func_unit.do
+ [     CXX] src/cpu/simple/timing.cc -> VEGA_X86/cpu/simple/timing.do
+ [     CXX] VEGA_X86/python/_m5/param_PM4PacketProcessor.cc -> .do
+ [     CXX] src/cpu/simple/atomic.cc -> VEGA_X86/cpu/simple/atomic.do
+ [     CXX] src/arch/amdgpu/vega/insts/vop3_cmp.cc -> VEGA_X86/arch/amdgpu/vega/insts/vop3_cmp.do
+ [     CXX] src/cpu/testers/gpu_ruby_test/dma_thread.cc -> VEGA_X86/cpu/testers/gpu_ruby_test/dma_thread.do
+ [     CXX] VEGA_X86/python/_m5/param_X86MMU.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_InvalidateGenerator.cc -> .do
+ [     CXX] src/dev/net/ns_gige.cc -> VEGA_X86/dev/net/ns_gige.do
+ [     CXX] VEGA_X86/python/_m5/param_Sinic.cc -> .do
+In file included from src/cpu/exec_context.hh:49,
+                 from src/cpu/checker/cpu.hh:52,
+                 from src/cpu/simple/base.hh:50,
+                 from src/cpu/simple/timing.hh:45,
+                 from src/cpu/simple/timing.cc:42:
+src/cpu/translation.hh: In instantiation of ‘gem5::DataTranslation<ExecContextPtr>::DataTranslation(ExecContextPtr, gem5::WholeTranslationState*, int) [with ExecContextPtr = gem5::TimingSimpleCPU*]’:
+src/cpu/simple/timing.cc:487:66:   required from here
+  487 |             new DataTranslation<TimingSimpleCPU *>(this, state, 0);
+      |                                                                  ^
+src/cpu/translation.hh:314:28: warning: ‘gem5::DataTranslation<gem5::TimingSimpleCPU*>::state’ will be initialized after [-Wreorder]
+  314 |     WholeTranslationState *state; // HOTFIX (was protected previously)
+      |                            ^~~~~
+src/cpu/translation.hh:311:9: warning:   ‘int gem5::DataTranslation<gem5::TimingSimpleCPU*>::index’ [-Wreorder]
+  311 |     int index;
+      |         ^~~~~
+src/cpu/translation.hh:321:5: warning:   when initialized here [-Wreorder]
+  321 |     DataTranslation(ExecContextPtr _xc, WholeTranslationState* _state,
+      |     ^~~~~~~~~~~~~~~
+src/cpu/translation.hh: In instantiation of ‘gem5::DataTranslation<ExecContextPtr>::DataTranslation(ExecContextPtr, gem5::WholeTranslationState*) [with ExecContextPtr = gem5::TimingSimpleCPU*]’:
+src/cpu/simple/timing.cc:497:65:   required from here
+  497 |             = new DataTranslation<TimingSimpleCPU *>(this, state);
+      |                                                                 ^
+src/cpu/translation.hh:314:28: warning: ‘gem5::DataTranslation<gem5::TimingSimpleCPU*>::state’ will be initialized after [-Wreorder]
+  314 |     WholeTranslationState *state; // HOTFIX (was protected previously)
+      |                            ^~~~~
+src/cpu/translation.hh:311:9: warning:   ‘int gem5::DataTranslation<gem5::TimingSimpleCPU*>::index’ [-Wreorder]
+  311 |     int index;
+      |         ^~~~~
+src/cpu/translation.hh:316:5: warning:   when initialized here [-Wreorder]
+  316 |     DataTranslation(ExecContextPtr _xc, WholeTranslationState* _state)
+      |     ^~~~~~~~~~~~~~~
+ [     CXX] src/cpu/o3/checker.cc -> VEGA_X86/cpu/o3/checker.do
+ [     CXX] src/cpu/o3/lsq.cc -> VEGA_X86/cpu/o3/lsq.do
+ [     CXX] VEGA_X86/python/_m5/param_VegaPagetableWalker.cc -> .do
+ [     CXX] src/arch/amdgpu/common/tlb_coalescer.cc -> VEGA_X86/arch/amdgpu/common/tlb_coalescer.do
+ [     CXX] VEGA_X86/python/_m5/param_QemuFwCfgItemBytes.cc -> .do
+ [     CXX] src/cpu/minor/decode.cc -> VEGA_X86/cpu/minor/decode.do
+ [     CXX] VEGA_X86/python/_m5/param_MinorOpClassSet.cc -> .do
+ [     CXX] src/arch/amdgpu/vega/insts/op_encodings.cc -> VEGA_X86/arch/amdgpu/vega/insts/op_encodings.do
+ [     CXX] src/cpu/testers/rubytest/CheckTable.cc -> VEGA_X86/cpu/testers/rubytest/CheckTable.do
+ [     CXX] VEGA_X86/python/_m5/param_PciBridge.cc -> .do
+In file included from src/cpu/o3/fetch.hh:54,
+                 from src/cpu/o3/cpu.hh:58,
+                 from src/cpu/o3/lsq.cc:50:
+src/cpu/translation.hh: In instantiation of ‘gem5::DataTranslation<ExecContextPtr>::DataTranslation(ExecContextPtr, gem5::WholeTranslationState*, int) [with ExecContextPtr = gem5::RefCountingPtr<gem5::o3::DynInst>]’:
+src/cpu/o3/lsq.cc:824:63:   required from here
+  824 |                 new DataTranslation<DynInstPtr>(inst, state, 0);
+      |                                                               ^
+src/cpu/translation.hh:314:28: warning: ‘gem5::DataTranslation<gem5::RefCountingPtr<gem5::o3::DynInst> >::state’ will be initialized after [-Wreorder]
+  314 |     WholeTranslationState *state; // HOTFIX (was protected previously)
+      |                            ^~~~~
+src/cpu/translation.hh:311:9: warning:   ‘int gem5::DataTranslation<gem5::RefCountingPtr<gem5::o3::DynInst> >::index’ [-Wreorder]
+  311 |     int index;
+      |         ^~~~~
+src/cpu/translation.hh:321:5: warning:   when initialized here [-Wreorder]
+  321 |     DataTranslation(ExecContextPtr _xc, WholeTranslationState* _state,
+      |     ^~~~~~~~~~~~~~~
+ [     CXX] VEGA_X86/python/_m5/param_IsaFake.cc -> .do
+ [     CXX] src/cpu/minor/fetch2.cc -> VEGA_X86/cpu/minor/fetch2.do
+ [     CXX] VEGA_X86/python/_m5/param_SDMAEngine.cc -> .do
+ [     CXX] src/cpu/pred/simple_btb.cc -> VEGA_X86/cpu/pred/simple_btb.do
+ [     CXX] src/arch/x86/bare_metal/workload.cc -> VEGA_X86/arch/x86/bare_metal/workload.do
+ [     CXX] src/arch/amdgpu/vega/insts/vop3p_mai.cc -> VEGA_X86/arch/amdgpu/vega/insts/vop3p_mai.do
+ [     CXX] VEGA_X86/python/_m5/param_BaseAtomicSimpleCPU.cc -> .do
+ [     CXX] src/dev/hsa/hw_scheduler.cc -> VEGA_X86/dev/hsa/hw_scheduler.do
+ [     CXX] src/arch/amdgpu/vega/insts/vop3.cc -> VEGA_X86/arch/amdgpu/vega/insts/vop3.do
+ [     CXX] src/cpu/kvm/base.cc -> VEGA_X86/cpu/kvm/base.do
+ [     CXX] src/cpu/testers/gpu_ruby_test/cpu_thread.cc -> VEGA_X86/cpu/testers/gpu_ruby_test/cpu_thread.do
+ [     CXX] VEGA_X86/python/_m5/param_SeriesRequestGenerator.cc -> .do
+ [     CXX] src/dev/net/i8254xGBe.cc -> VEGA_X86/dev/net/i8254xGBe.do
+ [     CXX] VEGA_X86/python/_m5/param_NSGigE.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_BaseO3Checker.cc -> .do
+ [     CXX] src/arch/x86/linux/syscall_tbl64.cc -> VEGA_X86/arch/x86/linux/syscall_tbl64.do
+ [     CXX] src/cpu/o3/inst_queue.cc -> VEGA_X86/cpu/o3/inst_queue.do
+ [     CXX] src/dev/platform.cc -> VEGA_X86/dev/platform.do
+ [     CXX] VEGA_X86/python/_m5/param_PciEndpoint.cc -> .do
+ [     CXX] src/arch/amdgpu/common/tlb.cc -> VEGA_X86/arch/amdgpu/common/tlb.do
+ [     CXX] VEGA_X86/python/_m5/param_QemuFwCfgItem.cc -> .do
+ [     CXX] src/cpu/minor/cpu.cc -> VEGA_X86/cpu/minor/cpu.do
+In file included from src/arch/x86/linux/syscalls.hh:34,
+                 from src/arch/x86/linux/syscall_tbl64.cc:43:
+src/sim/syscall_emul.hh: In instantiation of ‘gem5::SyscallReturn gem5::mmapPimFunc(SyscallDesc*, ThreadContext*, VPtr<>, typename OS::size_t, typename OS::size_t) [with OS = X86Linux64; VPtr<> = ProxyPtr<void, SETranslatingPortProxy>; typename OS::size_t = long unsigned int]’:
+src/arch/x86/linux/syscall_tbl64.cc:421:1:   required from here
+  421 | };
+      | ^
+src/sim/syscall_emul.hh:3269:14: warning: unused variable ‘start_aligned’ [-Wunused-variable]
+ 3269 |         auto start_aligned = p->pTable->hugePageAlign(start); // gem5 considers non-aligned vaddr as error when mapping regions/VMAs...
+      |              ^~~~~~~~~~~~~
+src/sim/syscall_emul.hh:3270:14: warning: unused variable ‘length_aligned’ [-Wunused-variable]
+ 3270 |         auto length_aligned =  (size + hugePageSize - 1) / hugePageSize * hugePageSize; // gem5 also checks `Assertion `(_addrRange.end() % _pageBytes) == 0' failed.` ...
+      |              ^~~~~~~~~~~~~~
+ [     CXX] VEGA_X86/python/_m5/param_MinorOpClass.cc -> .do
+ [     CXX] src/arch/amdgpu/vega/insts/gpu_static_inst.cc -> VEGA_X86/arch/amdgpu/vega/insts/gpu_static_inst.do
+ [     CXX] src/cpu/testers/rubytest/Check.cc -> VEGA_X86/cpu/testers/rubytest/Check.do
+ [     CXX] src/cpu/testers/traffic_gen/pygen.cc -> VEGA_X86/cpu/testers/traffic_gen/pygen.do
+ [     CXX] VEGA_X86/python/_m5/param_ProtocolTester.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_DmaVirtDevice.cc -> .do
+ [     CXX] src/cpu/minor/fetch1.cc -> VEGA_X86/cpu/minor/fetch1.do
+ [     CXX] VEGA_X86/python/_m5/param_AMDGPUSystemHub.cc -> .do
+ [     CXX] VEGA_X86/arch/x86/generated/generic_cpu_exec.cc -> .do
+ [     CXX] src/arch/amdgpu/vega/insts/vop3p.cc -> VEGA_X86/arch/amdgpu/vega/insts/vop3p.do
+ [     CXX] src/dev/pci/copy_engine.cc -> VEGA_X86/dev/pci/copy_engine.do
+ [     CXX] src/cpu/testers/gpu_ruby_test/protocol_tester.cc -> VEGA_X86/cpu/testers/gpu_ruby_test/protocol_tester.do
+ [     CXX] src/arch/amdgpu/vega/insts/vinterp.cc -> VEGA_X86/arch/amdgpu/vega/insts/vinterp.do
+ [     CXX] VEGA_X86/python/_m5/param_BaseKvmCPU.cc -> .do
+ [     CXX] src/arch/x86/utility.cc -> VEGA_X86/arch/x86/utility.do
+ [     CXX] VEGA_X86/python/_m5/param_X86LocalApic.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_DirectedGenerator.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_EtherDevBase.cc -> .do
+ [     CXX] src/arch/x86/linux/syscall_tbl32.cc -> VEGA_X86/arch/x86/linux/syscall_tbl32.do
+ [     CXX] src/cpu/o3/iew.cc -> VEGA_X86/cpu/o3/iew.do
+ [     CXX] VEGA_X86/python/_m5/param_Platform.cc -> .do
+ [     CXX] src/cpu/o3/probe/elastic_trace.cc -> VEGA_X86/cpu/o3/probe/elastic_trace.do
+ [     CXX] VEGA_X86/python/_m5/param_TLBCoalescer.cc -> .do
+ [     CXX] src/cpu/testers/rubytest/RubyTester.cc -> VEGA_X86/cpu/testers/rubytest/RubyTester.do
+In file included from src/arch/x86/linux/syscalls.hh:34,
+                 from src/arch/x86/linux/syscall_tbl32.cc:43:
+src/sim/syscall_emul.hh: In instantiation of ‘gem5::SyscallReturn gem5::mmapPimFunc(SyscallDesc*, ThreadContext*, VPtr<>, typename OS::size_t, typename OS::size_t) [with OS = X86Linux32; VPtr<> = ProxyPtr<void, SETranslatingPortProxy>; typename OS::size_t = unsigned int]’:
+src/arch/x86/linux/syscall_tbl32.cc:389:1:   required from here
+  389 | };
+      | ^
+src/sim/syscall_emul.hh:3269:14: warning: unused variable ‘start_aligned’ [-Wunused-variable]
+ 3269 |         auto start_aligned = p->pTable->hugePageAlign(start); // gem5 considers non-aligned vaddr as error when mapping regions/VMAs...
+      |              ^~~~~~~~~~~~~
+src/sim/syscall_emul.hh:3270:14: warning: unused variable ‘length_aligned’ [-Wunused-variable]
+ 3270 |         auto length_aligned =  (size + hugePageSize - 1) / hugePageSize * hugePageSize; // gem5 also checks `Assertion `(_addrRange.end() % _pageBytes) == 0' failed.` ...
+      |              ^~~~~~~~~~~~~~
+ [     CXX] VEGA_X86/python/_m5/param_GUPSGen.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PciDevice.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_DmaDevice.cc -> .do
+ [     CXX] src/cpu/minor/execute.cc -> VEGA_X86/cpu/minor/execute.do
+ [     CXX] VEGA_X86/python/_m5/param_AMDGPUMemoryManager.cc -> .do
+ [     CXX] src/arch/x86/insts/badmicroop.cc -> VEGA_X86/arch/x86/insts/badmicroop.do
+ [     CXX] VEGA_X86/arch/x86/generated/inst-constrs.cc -> .do
+ [     CXX] src/arch/amdgpu/vega/insts/flat.cc -> VEGA_X86/arch/amdgpu/vega/insts/flat.do
+ [     CXX] src/arch/amdgpu/vega/insts/vopc.cc -> VEGA_X86/arch/amdgpu/vega/insts/vopc.do
+ [     CXX] VEGA_X86/python/_m5/param_CopyEngine.cc -> .do
+ [     CXX] src/cpu/testers/gpu_ruby_test/episode.cc -> VEGA_X86/cpu/testers/gpu_ruby_test/episode.do
+ [     CXX] VEGA_X86/python/_m5/param_IGbE.cc -> .do
+ [     CXX] src/dev/amdgpu/system_hub.cc -> VEGA_X86/dev/amdgpu/system_hub.do
+ [     CXX] src/arch/x86/linux/syscalls.cc -> VEGA_X86/arch/x86/linux/syscalls.do
+ [     CXX] VEGA_X86/python/_m5/param_X86GPUTLB.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_RubyTester.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_BasicPioDevice.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PciMemUpperBar.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_AMDGPUInterruptHandler.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_TAGE_SC_L_8KB_StatisticalCorrector.cc -> .do
+ [     CXX] src/dev/qemu/fw_cfg.cc -> VEGA_X86/dev/qemu/fw_cfg.do
+ [     CXX] src/cpu/minor/dyn_inst.cc -> VEGA_X86/cpu/minor/dyn_inst.do
+ [     CXX] src/arch/x86/fs_workload.cc -> VEGA_X86/arch/x86/fs_workload.do
+ [     CXX] src/arch/amdgpu/vega/gpu_decoder.cc -> VEGA_X86/arch/amdgpu/vega/gpu_decoder.do
+ [     CXX] VEGA_X86/arch/x86/generated/decoder.cc -> .do
+ [     CXX] src/cpu/testers/traffic_gen/base_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/base_gen.do
+ [     CXX] src/arch/amdgpu/vega/insts/vop1.cc -> VEGA_X86/arch/amdgpu/vega/insts/vop1.do
+ [     CXX] VEGA_X86/python/_m5/param_KvmVM.cc -> .do
+ [     CXX] src/arch/x86/tlb.cc -> VEGA_X86/arch/x86/tlb.do
+ [     CXX] VEGA_X86/python/_m5/param_EtherDevice.cc -> .do
+ [     CXX] src/dev/amdgpu/sdma_engine.cc -> VEGA_X86/dev/amdgpu/sdma_engine.do
+ [     CXX] src/arch/x86/linux/se_workload.cc -> VEGA_X86/arch/x86/linux/se_workload.do
+ [     CXX] VEGA_X86/python/_m5/param_PciMemBar.cc -> .do
+ [     CXX] src/cpu/testers/garnet_synthetic_traffic/GarnetSyntheticTraffic.cc -> VEGA_X86/cpu/testers/garnet_synthetic_traffic/GarnetSyntheticTraffic.do
+ [     CXX] VEGA_X86/python/_m5/param_QemuFwCfgMmio.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PioDevice.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_AMDGPUDevice.cc -> .do
+ [     CXX] src/arch/x86/faults.cc -> VEGA_X86/arch/x86/faults.do
+ [     CXX] src/arch/amdgpu/vega/insts/vop2.cc -> VEGA_X86/arch/amdgpu/vega/insts/vop2.do
+ [     CXX] src/cpu/testers/traffic_gen/base.cc -> VEGA_X86/cpu/testers/traffic_gen/base.do
+ [     CXX] src/arch/x86/remote_gdb.cc -> VEGA_X86/arch/x86/remote_gdb.do
+ [     CXX] VEGA_X86/python/_m5/param_TesterDma.cc -> .do
+ [     CXX] src/cpu/simple/probes/looppoint_analysis.cc -> VEGA_X86/cpu/simple/probes/looppoint_analysis.do
+ [     CXX] src/dev/amdgpu/pm4_packet_processor.cc -> VEGA_X86/dev/amdgpu/pm4_packet_processor.do
+ [     CXX] src/arch/x86/linux/fs_workload.cc -> VEGA_X86/arch/x86/linux/fs_workload.do
+ [     CXX] src/cpu/o3/fetch.cc -> VEGA_X86/cpu/o3/fetch.do
+ [     CXX] VEGA_X86/python/_m5/param_MultiperspectivePerceptronTAGE64KB.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PciLegacyIoBar.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_GarnetSyntheticTraffic.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_QemuFwCfgIo.cc -> .do
+ [     CXX] src/arch/amdgpu/vega/tlb_coalescer.cc -> VEGA_X86/arch/amdgpu/vega/tlb_coalescer.do
+ [     CXX] src/arch/amdgpu/vega/insts/smem.cc -> VEGA_X86/arch/amdgpu/vega/insts/smem.do
+ [     CXX] src/arch/x86/process.cc -> VEGA_X86/arch/x86/process.do
+ [     CXX] src/dev/pci/host.cc -> VEGA_X86/dev/pci/host.do
+ [     CXX] src/dev/net/dist_etherlink.cc -> VEGA_X86/dev/net/dist_etherlink.do
+ [     CXX] VEGA_X86/python/_m5/param_LooppointAnalysisManager.cc -> .do
+ [     CXX] src/arch/x86/kvm/x86_cpu.cc -> VEGA_X86/arch/x86/kvm/x86_cpu.do
+ [     CXX] src/cpu/o3/dyn_inst.cc -> VEGA_X86/cpu/o3/dyn_inst.do
+ [     CXX] src/cpu/profile.cc -> VEGA_X86/cpu/profile.do
+ [     CXX] VEGA_X86/python/_m5/param_MPP_StatisticalCorrector_64KB.cc -> .do
+ [     CXX] src/cpu/o3/probe/simple_trace.cc -> VEGA_X86/cpu/o3/probe/simple_trace.do
+ [     CXX] src/arch/amdgpu/vega/insts/exp.cc -> VEGA_X86/arch/amdgpu/vega/insts/exp.do
+ [     CXX] src/cpu/testers/traffic_gen/gups_gen.cc -> VEGA_X86/cpu/testers/traffic_gen/gups_gen.do
+ [     CXX] src/cpu/testers/memtest/memtest.cc -> VEGA_X86/cpu/testers/memtest/memtest.do
+ [     CXX] VEGA_X86/python/_m5/param_BaseTrafficGen.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PciIoBar.cc -> .do
+ [     CXX] src/dev/net/etherlink.cc -> VEGA_X86/dev/net/etherlink.do
+ [     CXX] VEGA_X86/python/_m5/param_QemuFwCfg.cc -> .do
+ [     CXX] src/cpu/pred/multiperspective_perceptron_tage_64KB.cc -> VEGA_X86/cpu/pred/multiperspective_perceptron_tage_64KB.do
+ [     CXX] src/arch/amdgpu/vega/tlb.cc -> VEGA_X86/arch/amdgpu/vega/tlb.do
+ [SO Param] m5.objects.Terminal, Terminal -> VEGA_X86/python/_m5/param_Terminal.cc
+ [ENUM STR] m5.objects.Terminal, TerminalDump -> VEGA_X86/enums/TerminalDump.cc
+ [ENUMDECL] m5.objects.Terminal, TerminalDump -> VEGA_X86/enums/TerminalDump.hh
+ [SO Param] m5.objects.Terminal, Terminal -> VEGA_X86/params/Terminal.hh
+ [     CXX] VEGA_X86/dev/serial/Uart.py.cc -> .do
+ [SO Param] m5.objects.Uart, Uart -> VEGA_X86/python/_m5/param_Uart.cc
+ [     CXX] VEGA_X86/enums/TerminalDump.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_Terminal.cc -> .do
+ [SO Param] m5.objects.Uart, Uart -> VEGA_X86/params/Uart.hh
+ [SO Param] m5.objects.Uart, SimpleUart -> VEGA_X86/python/_m5/param_SimpleUart.cc
+ [SO Param] m5.objects.Uart, Uart8250 -> VEGA_X86/python/_m5/param_Uart8250.cc
+ [     CXX] src/dev/serial/serial.cc -> VEGA_X86/dev/serial/serial.do
+ [SO Param] m5.objects.Uart, SimpleUart -> VEGA_X86/params/SimpleUart.hh
+ [     CXX] VEGA_X86/python/_m5/param_Uart.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/Terminal.hh
+ [SO Param] m5.objects.Uart, Uart8250 -> VEGA_X86/params/Uart8250.hh
+ [ TRACING]  -> VEGA_X86/debug/TerminalVerbose.hh
+ [     CXX] src/dev/serial/terminal.cc -> VEGA_X86/dev/serial/terminal.do
+ [     CXX] src/dev/serial/simple.cc -> VEGA_X86/dev/serial/simple.do
+ [     CXX] VEGA_X86/python/_m5/param_Uart8250.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_SimpleUart.cc -> .do
+ [     CXX] src/dev/serial/uart.cc -> VEGA_X86/dev/serial/uart.do
+ [ TRACING]  -> VEGA_X86/debug/Uart.hh
+ [     CXX] src/dev/serial/uart8250.cc -> VEGA_X86/dev/serial/uart8250.do
+ [ TRACING]  -> VEGA_X86/debug/Terminal.cc
+ [     CXX] VEGA_X86/debug/Terminal.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/TerminalVerbose.cc
+ [ TRACING]  -> VEGA_X86/debug/Uart.cc
+ [     CXX] VEGA_X86/debug/TerminalVerbose.cc -> .do
+ [     CXX] VEGA_X86/debug/Uart.cc -> .do
+ [     CXX] VEGA_X86/dev/storage/Ide.py.cc -> .do
+ [SO Param] m5.objects.Ide, IdeDisk -> VEGA_X86/python/_m5/param_IdeDisk.cc
+ [SO Param] m5.objects.Ide, IdeController -> VEGA_X86/python/_m5/param_IdeController.cc
+ [ENUM STR] m5.objects.Ide, IdeID -> VEGA_X86/enums/IdeID.cc
+ [ TRACING]  -> VEGA_X86/debug/IdeCtrl.hh
+ [SO Param] m5.objects.Ide, IdeController -> VEGA_X86/params/IdeController.hh
+ [SO Param] m5.objects.Ide, IdeDisk -> VEGA_X86/params/IdeDisk.hh
+ [SO Param] m5.objects.DiskImage, CowDiskImage -> VEGA_X86/params/CowDiskImage.hh
+ [ENUMDECL] m5.objects.Ide, IdeID -> VEGA_X86/enums/IdeID.hh
+ [SO Param] m5.objects.DiskImage, DiskImage -> VEGA_X86/params/DiskImage.hh
+ [SO Param] m5.objects.DiskImage, RawDiskImage -> VEGA_X86/params/RawDiskImage.hh
+ [ TRACING]  -> VEGA_X86/debug/IdeDisk.hh
+ [ TRACING]  -> VEGA_X86/debug/IdeCtrl.cc
+ [ TRACING]  -> VEGA_X86/debug/IdeDisk.cc
+ [     CXX] VEGA_X86/dev/storage/DiskImage.py.cc -> .do
+ [     CXX] VEGA_X86/debug/IdeCtrl.cc -> .do
+ [     CXX] VEGA_X86/enums/IdeID.cc -> .do
+ [SO Param] m5.objects.DiskImage, DiskImage -> VEGA_X86/python/_m5/param_DiskImage.cc
+ [SO Param] m5.objects.DiskImage, RawDiskImage -> VEGA_X86/python/_m5/param_RawDiskImage.cc
+ [     CXX] src/dev/storage/ide_ctrl.cc -> VEGA_X86/dev/storage/ide_ctrl.do
+ [     CXX] VEGA_X86/debug/IdeDisk.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_IdeDisk.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_DiskImage.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_RawDiskImage.cc -> .do
+ [     CXX] src/dev/storage/ide_disk.cc -> VEGA_X86/dev/storage/ide_disk.do
+ [     CXX] VEGA_X86/python/_m5/param_IdeController.cc -> .do
+ [SO Param] m5.objects.DiskImage, CowDiskImage -> VEGA_X86/python/_m5/param_CowDiskImage.cc
+ [     CXX] VEGA_X86/dev/storage/SimpleDisk.py.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_CowDiskImage.cc -> .do
+ [SO Param] m5.objects.SimpleDisk, SimpleDisk -> VEGA_X86/python/_m5/param_SimpleDisk.cc
+ [ TRACING]  -> VEGA_X86/debug/DiskImageRead.hh
+ [SO Param] m5.objects.SimpleDisk, SimpleDisk -> VEGA_X86/params/SimpleDisk.hh
+ [ TRACING]  -> VEGA_X86/debug/DiskImageWrite.hh
+ [     CXX] src/dev/storage/disk_image.cc -> VEGA_X86/dev/storage/disk_image.do
+ [ TRACING]  -> VEGA_X86/debug/SimpleDisk.hh
+ [     CXX] VEGA_X86/python/_m5/param_SimpleDisk.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/SimpleDiskData.hh
+ [     CXX] src/dev/storage/simple_disk.cc -> VEGA_X86/dev/storage/simple_disk.do
+ [ TRACING]  -> VEGA_X86/debug/DiskImageRead.cc
+ [     CXX] VEGA_X86/debug/DiskImageRead.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/DiskImageWrite.cc
+ [ TRACING]  -> VEGA_X86/debug/SimpleDisk.cc
+ [     CXX] VEGA_X86/debug/DiskImageWrite.cc -> .do
+ [     CXX] VEGA_X86/debug/SimpleDisk.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/SimpleDiskData.cc
+ [     CXX] VEGA_X86/debug/SimpleDiskData.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/DiskImageAll.cc
+ [ TRACING]  -> VEGA_X86/debug/IdeAll.cc
+ [     CXX] VEGA_X86/dev/virtio/VirtIO.py.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/IdeAll.hh
+ [ TRACING]  -> VEGA_X86/debug/DiskImageAll.hh
+ [SO Param] m5.objects.VirtIO, VirtIODeviceBase -> VEGA_X86/python/_m5/param_VirtIODeviceBase.cc
+ [     CXX] VEGA_X86/debug/IdeAll.cc -> .do
+ [SO Param] m5.objects.VirtIO, VirtIODummyDevice -> VEGA_X86/python/_m5/param_VirtIODummyDevice.cc
+ [     CXX] VEGA_X86/debug/DiskImageAll.cc -> .do
+ [SO Param] m5.objects.VirtIO, PciVirtIO -> VEGA_X86/python/_m5/param_PciVirtIO.cc
+ [SO Param] m5.objects.VirtIO, VirtIODeviceBase -> VEGA_X86/params/VirtIODeviceBase.hh
+ [SO Param] m5.objects.VirtIO, VirtIODummyDevice -> VEGA_X86/params/VirtIODummyDevice.hh
+ [     CXX] VEGA_X86/dev/virtio/VirtIOConsole.py.cc -> .do
+ [SO Param] m5.objects.VirtIO, PciVirtIO -> VEGA_X86/params/PciVirtIO.hh
+ [SO Param] m5.objects.VirtIOConsole, VirtIOConsole -> VEGA_X86/python/_m5/param_VirtIOConsole.cc
+ [     CXX] VEGA_X86/dev/virtio/VirtIOBlock.py.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_VirtIODeviceBase.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_VirtIODummyDevice.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_PciVirtIO.cc -> .do
+ [SO Param] m5.objects.VirtIOConsole, VirtIOConsole -> VEGA_X86/params/VirtIOConsole.hh
+ [SO Param] m5.objects.VirtIOBlock, VirtIOBlock -> VEGA_X86/python/_m5/param_VirtIOBlock.cc
+ [     CXX] VEGA_X86/dev/virtio/VirtIORng.py.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_VirtIOConsole.cc -> .do
+ [SO Param] m5.objects.VirtIORng, VirtIORng -> VEGA_X86/python/_m5/param_VirtIORng.cc
+ [     CXX] VEGA_X86/dev/virtio/VirtIO9P.py.cc -> .do
+ [SO Param] m5.objects.VirtIOBlock, VirtIOBlock -> VEGA_X86/params/VirtIOBlock.hh
+ [SO Param] m5.objects.VirtIORng, VirtIORng -> VEGA_X86/params/VirtIORng.hh
+ [     CXX] VEGA_X86/python/_m5/param_VirtIOBlock.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_VirtIORng.cc -> .do
+ [SO Param] m5.objects.VirtIO9P, VirtIO9PBase -> VEGA_X86/python/_m5/param_VirtIO9PBase.cc
+ [SO Param] m5.objects.VirtIO9P, VirtIO9PBase -> VEGA_X86/params/VirtIO9PBase.hh
+ [SO Param] m5.objects.VirtIO9P, VirtIO9PProxy -> VEGA_X86/python/_m5/param_VirtIO9PProxy.cc
+ [SO Param] m5.objects.VirtIO9P, VirtIO9PDiod -> VEGA_X86/python/_m5/param_VirtIO9PDiod.cc
+ [     CXX] VEGA_X86/python/_m5/param_VirtIO9PBase.cc -> .do
+ [SO Param] m5.objects.VirtIO9P, VirtIO9PProxy -> VEGA_X86/params/VirtIO9PProxy.hh
+ [SO Param] m5.objects.VirtIO9P, VirtIO9PSocket -> VEGA_X86/python/_m5/param_VirtIO9PSocket.cc
+ [SO Param] m5.objects.VirtIO9P, VirtIO9PDiod -> VEGA_X86/params/VirtIO9PDiod.hh
+ [     CXX] VEGA_X86/python/_m5/param_VirtIO9PProxy.cc -> .do
+ [SO Param] m5.objects.VirtIO9P, VirtIO9PSocket -> VEGA_X86/params/VirtIO9PSocket.hh
+ [ TRACING]  -> VEGA_X86/debug/VIO.hh
+ [     CXX] VEGA_X86/python/_m5/param_VirtIO9PDiod.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/VIOIface.hh
+ [     CXX] src/dev/virtio/base.cc -> VEGA_X86/dev/virtio/base.do
+ [     CXX] src/dev/virtio/pci.cc -> VEGA_X86/dev/virtio/pci.do
+ [     CXX] VEGA_X86/python/_m5/param_VirtIO9PSocket.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/VIOConsole.hh
+ [     CXX] src/dev/virtio/console.cc -> VEGA_X86/dev/virtio/console.do
+ [ TRACING]  -> VEGA_X86/debug/VIOBlock.hh
+ [     CXX] src/dev/virtio/block.cc -> VEGA_X86/dev/virtio/block.do
+ [ TRACING]  -> VEGA_X86/debug/VIO9P.hh
+ [ TRACING]  -> VEGA_X86/debug/VIO9PData.hh
+ [ TRACING]  -> VEGA_X86/debug/VIORng.hh
+ [     CXX] src/dev/virtio/fs9p.cc -> VEGA_X86/dev/virtio/fs9p.do
+ [     CXX] src/dev/virtio/rng.cc -> VEGA_X86/dev/virtio/rng.do
+ [ TRACING]  -> VEGA_X86/debug/VIO.cc
+ [     CXX] VEGA_X86/debug/VIO.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/VIORng.cc
+ [     CXX] VEGA_X86/debug/VIORng.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/VIOIface.cc
+ [     CXX] VEGA_X86/debug/VIOIface.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/VIOConsole.cc
+ [     CXX] VEGA_X86/debug/VIOConsole.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/VIOBlock.cc
+ [ TRACING]  -> VEGA_X86/debug/VIO9P.cc
+ [     CXX] VEGA_X86/debug/VIOBlock.cc -> .do
+ [     CXX] VEGA_X86/debug/VIO9P.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/VIO9PData.cc
+ [     CXX] VEGA_X86/debug/VIO9PData.cc -> .do
+ [     CXX] VEGA_X86/dev/x86/Pc.py.cc -> .do
+ [SO Param] m5.objects.Pc, Pc -> VEGA_X86/python/_m5/param_Pc.cc
+ [     CXX] src/dev/x86/pc.cc -> VEGA_X86/dev/x86/pc.do
+ [     CXX] VEGA_X86/dev/x86/SouthBridge.py.cc -> .do
+ [SO Param] m5.objects.SouthBridge, SouthBridge -> VEGA_X86/python/_m5/param_SouthBridge.cc
+ [     CXX] src/dev/x86/south_bridge.cc -> VEGA_X86/dev/x86/south_bridge.do
+ [     CXX] VEGA_X86/dev/x86/Cmos.py.cc -> .do
+ [SO Param] m5.objects.Cmos, Cmos -> VEGA_X86/python/_m5/param_Cmos.cc
+ [ TRACING]  -> VEGA_X86/debug/CMOS.hh
+ [ TRACING]  -> VEGA_X86/debug/CMOS.cc
+ [     CXX] VEGA_X86/python/_m5/param_Pc.cc -> .do
+ [     CXX] src/dev/x86/cmos.cc -> VEGA_X86/dev/x86/cmos.do
+ [     CXX] VEGA_X86/debug/CMOS.cc -> .do
+ [     CXX] VEGA_X86/dev/x86/I8259.py.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_SouthBridge.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_Cmos.cc -> .do
+ [SO Param] m5.objects.I8259, I8259 -> VEGA_X86/python/_m5/param_I8259.cc
+ [ENUM STR] m5.objects.I8259, X86I8259CascadeMode -> VEGA_X86/enums/X86I8259CascadeMode.cc
+ [     CXX] VEGA_X86/python/_m5/param_I8259.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/I8259.hh
+ [     CXX] VEGA_X86/enums/X86I8259CascadeMode.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/I8259.cc
+ [     CXX] src/dev/x86/i8259.cc -> VEGA_X86/dev/x86/i8259.do
+ [     CXX] VEGA_X86/debug/I8259.cc -> .do
+ [     CXX] VEGA_X86/dev/x86/I8254.py.cc -> .do
+ [SO Param] m5.objects.I8254, I8254 -> VEGA_X86/python/_m5/param_I8254.cc
+ [ TRACING]  -> VEGA_X86/debug/I8254.hh
+ [     CXX] VEGA_X86/python/_m5/param_I8254.cc -> .do
+ [     CXX] src/dev/x86/i8254.cc -> VEGA_X86/dev/x86/i8254.do
+ [ TRACING]  -> VEGA_X86/debug/I8254.cc
+ [     CXX] VEGA_X86/debug/I8254.cc -> .do
+ [     CXX] VEGA_X86/dev/x86/I8237.py.cc -> .do
+ [SO Param] m5.objects.I8237, I8237 -> VEGA_X86/python/_m5/param_I8237.cc
+ [     CXX] VEGA_X86/python/_m5/param_I8237.cc -> .do
+ [     CXX] src/dev/x86/i8237.cc -> VEGA_X86/dev/x86/i8237.do
+ [ TRACING]  -> VEGA_X86/debug/I8237.cc
+ [ TRACING]  -> VEGA_X86/debug/I8237.hh
+ [     CXX] VEGA_X86/debug/I8237.cc -> .do
+ [     CXX] VEGA_X86/dev/x86/I8042.py.cc -> .do
+ [SO Param] m5.objects.I8042, I8042 -> VEGA_X86/python/_m5/param_I8042.cc
+ [ TRACING]  -> VEGA_X86/debug/I8042.hh
+ [     CXX] VEGA_X86/python/_m5/param_I8042.cc -> .do
+ [     CXX] src/dev/x86/i8042.cc -> VEGA_X86/dev/x86/i8042.do
+ [ TRACING]  -> VEGA_X86/debug/I8042.cc
+ [     CXX] VEGA_X86/debug/I8042.cc -> .do
+ [     CXX] VEGA_X86/dev/x86/X86Ide.py.cc -> .do
+ [SO Param] m5.objects.X86Ide, X86IdeController -> VEGA_X86/python/_m5/param_X86IdeController.cc
+ [SO Param] m5.objects.X86Ide, X86IdeController -> VEGA_X86/params/X86IdeController.hh
+ [     CXX] src/dev/x86/ide_ctrl.cc -> VEGA_X86/dev/x86/ide_ctrl.do
+ [     CXX] VEGA_X86/python/_m5/param_X86IdeController.cc -> .do
+ [     CXX] VEGA_X86/dev/x86/PcSpeaker.py.cc -> .do
+ [SO Param] m5.objects.PcSpeaker, PcSpeaker -> VEGA_X86/python/_m5/param_PcSpeaker.cc
+ [ TRACING]  -> VEGA_X86/debug/PcSpeaker.hh
+ [     CXX] VEGA_X86/python/_m5/param_PcSpeaker.cc -> .do
+ [     CXX] src/dev/x86/speaker.cc -> VEGA_X86/dev/x86/speaker.do
+ [ TRACING]  -> VEGA_X86/debug/PcSpeaker.cc
+ [     CXX] VEGA_X86/dev/x86/I82094AA.py.cc -> .do
+ [     CXX] VEGA_X86/debug/PcSpeaker.cc -> .do
+ [SO Param] m5.objects.I82094AA, I82094AA -> VEGA_X86/python/_m5/param_I82094AA.cc
+ [ TRACING]  -> VEGA_X86/debug/I82094AA.hh
+ [     CXX] src/dev/x86/i82094aa.cc -> VEGA_X86/dev/x86/i82094aa.do
+ [     CXX] VEGA_X86/python/_m5/param_I82094AA.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/I82094AA.cc
+ [     CXX] VEGA_X86/debug/I82094AA.cc -> .do
+ [     CXX] VEGA_X86/dev/x86/X86QemuFwCfg.py.cc -> .do
+ [SO Param] m5.objects.X86QemuFwCfg, QemuFwCfgItemE820 -> VEGA_X86/python/_m5/param_QemuFwCfgItemE820.cc
+ [SO Param] m5.objects.X86QemuFwCfg, QemuFwCfgItemE820 -> VEGA_X86/params/QemuFwCfgItemE820.hh
+ [     CXX] VEGA_X86/gpu-compute/GPU.py.cc -> .do
+ [SO Param] m5.objects.GPU, PoolManager -> VEGA_X86/python/_m5/param_PoolManager.cc
+ [SO Param] m5.objects.GPU, SimplePoolManager -> VEGA_X86/python/_m5/param_SimplePoolManager.cc
+ [     CXX] src/dev/x86/qemu_fw_cfg.cc -> VEGA_X86/dev/x86/qemu_fw_cfg.do
+ [     CXX] VEGA_X86/python/_m5/param_PoolManager.cc -> .do
+ [SO Param] m5.objects.GPU, SimplePoolManager -> VEGA_X86/params/SimplePoolManager.hh
+ [     CXX] VEGA_X86/python/_m5/param_QemuFwCfgItemE820.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_SimplePoolManager.cc -> .do
+ [SO Param] m5.objects.GPU, DynPoolManager -> VEGA_X86/python/_m5/param_DynPoolManager.cc
+ [SO Param] m5.objects.GPU, RegisterFile -> VEGA_X86/python/_m5/param_RegisterFile.cc
+ [SO Param] m5.objects.GPU, ScalarRegisterFile -> VEGA_X86/python/_m5/param_ScalarRegisterFile.cc
+ [SO Param] m5.objects.GPU, VectorRegisterFile -> VEGA_X86/python/_m5/param_VectorRegisterFile.cc
+ [     CXX] VEGA_X86/python/_m5/param_RegisterFile.cc -> .do
+ [SO Param] m5.objects.GPU, DynPoolManager -> VEGA_X86/params/DynPoolManager.hh
+ [     CXX] VEGA_X86/python/_m5/param_ScalarRegisterFile.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_VectorRegisterFile.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_DynPoolManager.cc -> .do
+ [SO Param] m5.objects.GPU, RegisterManager -> VEGA_X86/python/_m5/param_RegisterManager.cc
+ [SO Param] m5.objects.GPU, Wavefront -> VEGA_X86/python/_m5/param_Wavefront.cc
+ [SO Param] m5.objects.GPU, ComputeUnit -> VEGA_X86/python/_m5/param_ComputeUnit.cc
+ [     CXX] VEGA_X86/python/_m5/param_RegisterManager.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_Wavefront.cc -> .do
+ [     CXX] VEGA_X86/python/_m5/param_ComputeUnit.cc -> .do
+ [SO Param] m5.objects.GPU, Shader -> VEGA_X86/python/_m5/param_Shader.cc
+ [     CXX] VEGA_X86/python/_m5/param_Shader.cc -> .do
+ [SO Param] m5.objects.GPU, GPUComputeDriver -> VEGA_X86/python/_m5/param_GPUComputeDriver.cc
+ [SO Param] m5.objects.GPU, GPUComputeDriver -> VEGA_X86/params/GPUComputeDriver.hh
+ [SO Param] m5.objects.GPU, GPURenderDriver -> VEGA_X86/python/_m5/param_GPURenderDriver.cc
+ [     CXX] VEGA_X86/python/_m5/param_GPUComputeDriver.cc -> .do
+ [SO Param] m5.objects.GPU, GPURenderDriver -> VEGA_X86/params/GPURenderDriver.hh
+ [     CXX] VEGA_X86/python/_m5/param_GPURenderDriver.cc -> .do
+ [SO Param] m5.objects.GPU, GPUDispatcher -> VEGA_X86/python/_m5/param_GPUDispatcher.cc
+ [     CXX] VEGA_X86/python/_m5/param_GPUDispatcher.cc -> .do
+ [SO Param] m5.objects.GPU, RegisterFileCache -> VEGA_X86/python/_m5/param_RegisterFileCache.cc
+ [ENUM STR] m5.objects.GPU, PrefetchType -> VEGA_X86/enums/PrefetchType.cc
+ [     CXX] VEGA_X86/python/_m5/param_RegisterFileCache.cc -> .do
+ [ENUM STR] m5.objects.GPU, GfxVersion -> VEGA_X86/enums/GfxVersion.cc
+ [     CXX] VEGA_X86/enums/PrefetchType.cc -> .do
+ [     CXX] VEGA_X86/enums/GfxVersion.cc -> .do
+ [ENUM STR] m5.objects.GPU, StorageClassType -> VEGA_X86/enums/StorageClassType.cc
+ [     CXX] VEGA_X86/gpu-compute/GPUStaticInstFlags.py.cc -> .do
+ [ENUM STR] m5.objects.GPUStaticInstFlags, GPUStaticInstFlags -> VEGA_X86/enums/GPUStaticInstFlags.cc
+ [     CXX] VEGA_X86/enums/StorageClassType.cc -> .do
+ [     CXX] VEGA_X86/enums/GPUStaticInstFlags.cc -> .do
+ [     CXX] VEGA_X86/gpu-compute/LdsState.py.cc -> .do
+ [SO Param] m5.objects.LdsState, LdsState -> VEGA_X86/python/_m5/param_LdsState.cc
+ [     CXX] src/gpu-compute/comm.cc -> VEGA_X86/gpu-compute/comm.do
+ [     CXX] VEGA_X86/python/_m5/param_LdsState.cc -> .do
+ [ TRACING]  -> VEGA_X86/debug/GPUDisp.hh
+ [ TRACING]  -> VEGA_X86/debug/GPUFetch.hh
+ [ TRACING]  -> VEGA_X86/debug/GPUPort.hh
+ [ TRACING]  -> VEGA_X86/debug/GPUReg.hh
+ [ TRACING]  -> VEGA_X86/debug/GPURename.hh
+ [     CXX] src/gpu-compute/compute_unit.cc -> VEGA_X86/gpu-compute/compute_unit.do
+ [ TRACING]  -> VEGA_X86/debug/GPUAgentDisp.hh
+ [ TRACING]  -> VEGA_X86/debug/GPUKernelInfo.hh
+ [ TRACING]  -> VEGA_X86/debug/GPUWgLatency.hh
+ [ TRACING]  -> VEGA_X86/debug/GPUSched.hh
+ [     CXX] src/gpu-compute/fetch_stage.cc -> VEGA_X86/gpu-compute/fetch_stage.do
+ [     CXX] src/gpu-compute/exec_stage.cc -> VEGA_X86/gpu-compute/exec_stage.do
+ [     CXX] src/gpu-compute/dispatcher.cc -> VEGA_X86/gpu-compute/dispatcher.do
+ [     CXX] src/gpu-compute/fetch_unit.cc -> VEGA_X86/gpu-compute/fetch_unit.do
+ [ TRACING]  -> VEGA_X86/debug/GPUCoalescer.hh
+ [ TRACING]  -> VEGA_X86/debug/GPUInitAbi.hh
+ [ TRACING]  -> VEGA_X86/debug/GPUDriver.hh
+ [     CXX] src/gpu-compute/gpu_command_processor.cc -> VEGA_X86/gpu-compute/gpu_command_processor.do
+ [     CXX] src/gpu-compute/global_memory_pipeline.cc -> VEGA_X86/gpu-compute/global_memory_pipeline.do
+ [ TRACING]  -> VEGA_X86/debug/GPUShader.hh
+ [     CXX] src/gpu-compute/gpu_compute_driver.cc -> VEGA_X86/gpu-compute/gpu_compute_driver.do
+ [ TRACING]  -> VEGA_X86/debug/GPUInst.hh
+ [     CXX] src/gpu-compute/gpu_dyn_inst.cc -> VEGA_X86/gpu-compute/gpu_dyn_inst.do
+ [     CXX] src/gpu-compute/gpu_exec_context.cc -> VEGA_X86/gpu-compute/gpu_exec_context.do
+ [     CXX] src/gpu-compute/gpu_render_driver.cc -> VEGA_X86/gpu-compute/gpu_render_driver.do
+ [     CXX] src/gpu-compute/gpu_static_inst.cc -> VEGA_X86/gpu-compute/gpu_static_inst.do
+ [     CXX] src/gpu-compute/lds_state.cc -> VEGA_X86/gpu-compute/lds_state.do
+ [     CXX] src/gpu-compute/local_memory_pipeline.cc -> VEGA_X86/gpu-compute/local_memory_pipeline.do
+ [     CXX] src/gpu-compute/pool_manager.cc -> VEGA_X86/gpu-compute/pool_manager.do
+ [ TRACING]  -> VEGA_X86/debug/GPURF.hh
+ [     CXX] src/gpu-compute/register_file.cc -> VEGA_X86/gpu-compute/register_file.do
+ [     CXX] src/gpu-compute/register_manager.cc -> VEGA_X86/gpu-compute/register_manager.do
+src/gpu-compute/gpu_compute_driver.cc: In constructor ‘gem5::GPUComputeDriver::GPUComputeDriver(const Params&)’:
+   61 |     : EmulatedDriver(p), device(p.device), queueId(0),
+      |                                 ~~^~~~~~
+      |                                   |
+src/gpu-compute/gpu_compute_driver.cc:65:11: error: invalid use of incomplete type ‘class gem5::CIMMemoryDevice’
+   65 |     device->attachDriver(this);
+      |           ^~
+In file included from src/gpu-compute/gpu_compute_driver.cc:32:
+src/gpu-compute/gpu_compute_driver.hh:58:7: note: forward declaration of ‘class gem5::CIMMemoryDevice’
+   58 | class CIMMemoryDevice;
+      |       ^~~~~~~~~~~~~~~
+src/gpu-compute/gpu_compute_driver.cc: In member function ‘virtual gem5::Addr gem5::GPUComputeDriver::mmap(gem5::ThreadContext*, gem5::Addr, uint64_t, int, int, int, off_t)’:
+src/gpu-compute/gpu_compute_driver.cc:123:47: error: invalid use of incomplete type ‘class gem5::CIMMemoryDevice’
+  123 |             process->pTable->map(start, device->hsaPacketProc().pioAddr,
+      |                                               ^~
+src/gpu-compute/gpu_compute_driver.hh:58:7: note: forward declaration of ‘class gem5::CIMMemoryDevice’
+   58 | class CIMMemoryDevice;
+      |       ^~~~~~~~~~~~~~~
+src/gpu-compute/gpu_compute_driver.cc: In member function ‘void gem5::GPUComputeDriver::allocateQueue(gem5::PortProxy&, gem5::Addr)’:
+src/gpu-compute/gpu_compute_driver.cc:176:26: error: invalid use of incomplete type ‘class gem5::CIMMemoryDevice’
+  176 |     auto &hsa_pp = device->hsaPacketProc();
+      |                          ^~
+src/gpu-compute/gpu_compute_driver.hh:58:7: note: forward declaration of ‘class gem5::CIMMemoryDevice’
+   58 | class CIMMemoryDevice;
+      |       ^~~~~~~~~~~~~~~
+src/gpu-compute/gpu_compute_driver.cc: In member function ‘virtual int gem5::GPUComputeDriver::ioctl(gem5::ThreadContext*, unsigned int, gem5::Addr)’:
+src/gpu-compute/gpu_compute_driver.cc:264:19: error: invalid use of incomplete type ‘class gem5::CIMMemoryDevice’
+  264 |             device->hsaPacketProc().unsetDeviceQueueDesc(args->queue_id,
+      |                   ^~
+src/gpu-compute/gpu_compute_driver.hh:58:7: note: forward declaration of ‘class gem5::CIMMemoryDevice’
+   58 | class CIMMemoryDevice;
+      |       ^~~~~~~~~~~~~~~
+src/gpu-compute/gpu_compute_driver.cc:790:33: error: invalid use of incomplete type ‘class gem5::CIMMemoryDevice’
+  790 |                 pa_addr = device->hsaPacketProc().pioAddr;
+      |                                 ^~
+src/gpu-compute/gpu_compute_driver.hh:58:7: note: forward declaration of ‘class gem5::CIMMemoryDevice’
+   58 | class CIMMemoryDevice;
+      |       ^~~~~~~~~~~~~~~
+ [     CXX] src/gpu-compute/scalar_memory_pipeline.cc -> VEGA_X86/gpu-compute/scalar_memory_pipeline.do
+ [     CXX] src/gpu-compute/scalar_register_file.cc -> VEGA_X86/gpu-compute/scalar_register_file.do
+ [     CXX] src/gpu-compute/schedule_stage.cc -> VEGA_X86/gpu-compute/schedule_stage.do
+ [     CXX] src/gpu-compute/scheduler.cc -> VEGA_X86/gpu-compute/scheduler.do
+ [     CXX] src/gpu-compute/scoreboard_check_stage.cc -> VEGA_X86/gpu-compute/scoreboard_check_stage.do
+scons: *** [build/VEGA_X86/gpu-compute/gpu_compute_driver.do] Error 1
+scons: building terminated because of errors.
+*** Summary of Warnings ***
+Warning: Detected GCC version 15.2.1 is not officially supported.
+         gem5 supports GCC v11 up to v14.2.
+Warning: Couldn't find HDF5 C++ libraries. Disabling HDF5 support.

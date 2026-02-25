@@ -1,0 +1,52 @@
+Global frequency set at 1000000000000 ticks per second
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.0.0.1
+gem5 compiled Feb 24 2026 22:24:29
+gem5 started Feb 25 2026 10:55:25
+gem5 executing on edr00859.dip.tu-dresden.de, pid 45052
+command line: ./build/X86/gem5.debug --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results/pim_rowmult/gem5_debug.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results/pim_rowmult /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/configs/cim/cim.py --cmd=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/pim_test_cim --options=4
+
+Beginning simulation!
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+CIM: Running rowmult (op_id=4)
+gem5.debug: src/mem/mem_ctrl.cc:336: void gem5::memory::MemCtrl::addToWriteQueue(gem5::PacketPtr, unsigned int, gem5::memory::MemInterface*): Assertion `mem_pkt->mat == mem_pkt1->mat' failed.
+Program aborted at tick 3142580250
+--- BEGIN LIBC BACKTRACE ---
+./build/X86/gem5.debug(_ZN4gem515print_backtraceEv+0x1f) [0x1ba3c7f]
+./build/X86/gem5.debug(_ZN4gem512abortHandlerEi+0x5c) [0x1bc66e1]
+/lib64/libc.so.6(+0x1a040) [0x7f95a5429040]
+/lib64/libc.so.6(+0x73e5c) [0x7f95a5482e5c]
+/lib64/libc.so.6(gsignal+0x1e) [0x7f95a5428f0e]
+/lib64/libc.so.6(abort+0x26) [0x7f95a54106d0]
+/lib64/libc.so.6(__assert_perror_fail+0x0) [0x7f95a5410639]
+./build/X86/gem5.debug(_ZN4gem56memory7MemCtrl15addToWriteQueueEPNS_6PacketEjPNS0_12MemInterfaceE+0x28b) [0x1554a45]
+./build/X86/gem5.debug(_ZN4gem56memory7MemCtrl13recvTimingReqEPNS_6PacketE+0x654) [0x15569f6]
+./build/X86/gem5.debug(_ZN4gem56memory7MemCtrl10MemoryPort13recvTimingReqEPNS_6PacketE+0x3e) [0x155d7b8]
+./build/X86/gem5.debug(_ZN4gem521TimingRequestProtocol7sendReqEPNS_22TimingResponseProtocolEPNS_6PacketE+0x57) [0x180665b]
+./build/X86/gem5.debug(_ZN4gem511RequestPort13sendTimingReqEPNS_6PacketE+0x5b) [0x4b2c99]
+./build/X86/gem5.debug(_ZN4gem512CoherentXBar13recvTimingReqEPNS_6PacketEs+0xe02) [0x1532824]
+./build/X86/gem5.debug(_ZN4gem512CoherentXBar24CoherentXBarResponsePort13recvTimingReqEPNS_6PacketE+0x32) [0x1538960]
+./build/X86/gem5.debug(_ZN4gem521TimingRequestProtocol7sendReqEPNS_22TimingResponseProtocolEPNS_6PacketE+0x57) [0x180665b]
+./build/X86/gem5.debug(_ZN4gem511RequestPort13sendTimingReqEPNS_6PacketE+0x5b) [0x4b2c99]
+./build/X86/gem5.debug(_ZN4gem59BaseCache20sendWriteQueuePacketEPNS_15WriteQueueEntryE+0x177) [0x162de59]
+./build/X86/gem5.debug(_ZN4gem515WriteQueueEntry10sendPacketERNS_9BaseCacheE+0x23) [0x165ffb9]
+./build/X86/gem5.debug(_ZN4gem59BaseCache19CacheReqPacketQueue18sendDeferredPacketEv+0xd4) [0x1636f16]
+./build/X86/gem5.debug(_ZN4gem511PacketQueue16processSendEventEv+0x4e) [0x15a7c90]
+./build/X86/gem5.debug() [0x15a6dfd]
+./build/X86/gem5.debug() [0x15a8358]
+./build/X86/gem5.debug() [0x15a825c]
+./build/X86/gem5.debug() [0x15a813d]
+./build/X86/gem5.debug(_ZNKSt8functionIFvvEEclEv+0x32) [0x497bc2]
+./build/X86/gem5.debug(_ZN4gem520EventFunctionWrapper7processEv+0x1c) [0x494db8]
+./build/X86/gem5.debug(_ZN4gem510EventQueue10serviceOneEv+0x107) [0x1bb6b45]
+./build/X86/gem5.debug(_ZN4gem59doSimLoopEPNS_10EventQueueE+0x219) [0x1bdb994]
+./build/X86/gem5.debug(_ZN4gem58simulateEm+0x2dc) [0x1bdb447]
+./build/X86/gem5.debug() [0x1b16b62]
+./build/X86/gem5.debug() [0x1b15279]
+./build/X86/gem5.debug() [0x1b10bbc]
+--- END LIBC BACKTRACE ---
+For more info on how to address this issue, please visit https://www.gem5.org/documentation/general_docs/common-errors/ 
+

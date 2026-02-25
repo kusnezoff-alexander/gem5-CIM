@@ -289,16 +289,16 @@ static inline void rowabs(T* dst, const T* src, const size_t size, const size_t 
 }
 
 template<typename T>
-static inline void rowtrsp_init(T* dst, const T* src1, const T* src2, const size_t size, const size_t n) {
-	register uint64_t rdi asm("rdi") = (uint64_t)dst;
-	register uint64_t rsi asm("rsi") = (uint64_t)src1;
-	register uint64_t rdx asm("rdx") = (uint64_t)src2;
+static inline void rowtrsp_init(T* arr, const size_t size, const size_t n) {
+	register uint64_t rdi asm("rdi") = (uint64_t)arr;
+	// register uint64_t rsi asm("rsi") = (uint64_t)src1;
+	// register uint64_t rdx asm("rdx") = (uint64_t)src2;
 	register uint64_t rcx asm("rcx") = size;
 	register uint64_t r8 asm("r8") = n;
 
 	asm volatile(
 		".byte 0x66, 0x0F, 0x38, 0x5c\n"
-		: "+r"(rdi), "+r"(rsi), "+r"(rdx), "+r"(rcx), "+r"(r8)
+		: "+r"(rdi), "+r"(rcx), "+r"(r8) // "+r"(rsi), "+r"(rdx),
 		:
 		: "memory"
 	);

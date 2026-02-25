@@ -13,7 +13,8 @@ OBJ_DIR   := $(BUILD_DIR)/obj
 LIB_DIR   := $(BUILD_DIR)/lib
 
 # Flags
-CXXFLAGS  := -Wall -Wextra -O2
+CXXFLAGS  := -Wall -Wextra -O2 -std=c++20
+CXXFLAGS  += -I/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/include
 TESTFLAGS := -std=c++20
 
 # Library
@@ -27,6 +28,8 @@ TEST_OBJ       := $(OBJ_DIR)/pim_test_primitives.o
 PIMMALLOC_OBJ  := $(OBJ_DIR)/pim_test_pimmalloc.o
 WORKLOADS_OBJ  := $(OBJ_DIR)/pim_workloads.o
 KNN_OBJ        := $(OBJ_DIR)/combined_knn.o
+KNN_CPU_OBJ    := $(OBJ_DIR)/combined_knn_cpu.o
+KNN_GPU_OBJ    := $(OBJ_DIR)/combined_knn_gpu.o
 
 # Binaries
 HELLO_WORLD_PROG:= $(BIN_DIR)/hello_world
@@ -35,6 +38,8 @@ TEST_PROG       := $(BIN_DIR)/pim_test_primitives
 PIMMALLOC_PROG  := $(BIN_DIR)/pim_test_pimmalloc
 WORKLOADS_PROG  := $(BIN_DIR)/pim_workloads
 KNN_PROG        := $(BIN_DIR)/combined_knn
+KNN_CPU_PROG    := $(BIN_DIR)/combined_knn_cpu
+KNN_GPU_PROG    := $(BIN_DIR)/combined_knn_gpu
 
 # Selectable test (TEST=primitives | pimmalloc | workloads | knn)
 TEST ?= all
@@ -52,7 +57,9 @@ $(error Invalid TEST='$(TEST)'. Valid values: $(VALID_TESTS))
 endif
 
 # Default targets
-all: $(BIN_DIR) $(LIB_DIR) $(OBJ_DIR) $(LIB) $(FULL_PROG) $(KNN_PROG)
+all: $(BIN_DIR) $(LIB_DIR) $(OBJ_DIR) $(LIB) $(FULL_PROG) $(KNN_PROG) $(KNN_CPU_PROG)
+
+knn_all: $(BIN_DIR) $(LIB_DIR) $(OBJ_DIR) $(LIB) $(KNN_PROG) $(KNN_CPU_PROG) $(KNN_GPU_PROG)
 
 test: $(BIN_DIR) $(LIB_DIR) $(OBJ_DIR) $(LIB) $(TEST_$(TEST))
 	@echo "Built test(s): $(TEST)"
@@ -83,6 +90,12 @@ $(OBJ_DIR)/pim_workloads.o: pim_workloads.cpp pim_core.h | $(OBJ_DIR)
 $(OBJ_DIR)/combined_knn.o: combined_knn.cpp pim_core.h | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) $(TESTFLAGS) -c $< -o $@
 
+$(OBJ_DIR)/combined_knn_cpu.o: combined_knn_cpu.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) $(TESTFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/combined_knn_gpu.o: combined_knn_gpu.cpp | $(OBJ_DIR)
+	hipcc $(TESTFLAGS) -c $< -o $@
+
 # Static library
 $(LIB): $(CORE_OBJ) | $(LIB_DIR)
 	$(AR) $(ARFLAGS) $@ $^
@@ -95,7 +108,7 @@ $(FULL_PROG): $(FULL_OBJ) $(LIB) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -o $@
 
 $(TEST_PROG): $(TEST_OBJ) $(LIB) | $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -o $@
+	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -L/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/util/m5/build/x86/out -lm5 -o $@
 
 $(PIMMALLOC_PROG): $(PIMMALLOC_OBJ) $(LIB) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -o $@
@@ -105,6 +118,12 @@ $(WORKLOADS_PROG): $(WORKLOADS_OBJ) $(LIB) | $(BIN_DIR)
 
 $(KNN_PROG): $(KNN_OBJ) $(LIB) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -o $@
+
+$(KNN_CPU_PROG): $(KNN_CPU_OBJ) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+$(KNN_GPU_PROG): $(KNN_GPU_OBJ) | $(BIN_DIR)
+	hipcc $< -o $@
 
 # Cleanup
 clean:

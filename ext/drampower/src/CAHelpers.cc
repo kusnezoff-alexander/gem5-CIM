@@ -112,7 +112,7 @@ void CommandAnalysis::printWarningIfPoweredDown(const string& warning, int type,
 
 void CommandAnalysis::printWarning(const string& warning, int type, int64_t timestamp, unsigned bank)
 {
-  cerr << "11 WARNING: " << warning << endl;
+  cerr << "WARNING: " << warning << endl;
   cerr << "Command: " << type << ", Timestamp: " << timestamp <<
     ", Bank: " << bank << endl;
 }

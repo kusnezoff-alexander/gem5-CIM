@@ -7,29 +7,29 @@ CIM_CONFIG="$GEM5_DIR/configs/cim/cim.py"
 
 mkdir -p "$OUTPUT_DIR"
 
-OP_NAMES=("rowand" "rowadd" "rowsub" "rowmult" "rowmin" "rowmax" "rowequal" "rowgreater" "rowgreater_equal" "rowif_else" "rowabs" "rowbitcount") # "rowdiv"
+OP_NAMES=("rowand" "rowadd" "rowsub" "rowmult" "rowmin" "rowmax" "rowequal" "rowgreater" "rowgreater_equal" "rowif_else" "rowabs" "rowbitcount")
 
 echo "=============================================="
 echo "Running benchmarks in gem5..."
 echo "=============================================="
 echo ""
 
-for op_id in {1..13}; do
+for op_id in {1..12}; do
     op_name="${OP_NAMES[$op_id-1]}"
 
     echo "--- Operation: $op_name (op_id=$op_id) ---"
 
-    for variant in "cpu_serial" "cpu_simd" "cim"; do
+    for variant in "cpu" "gpu" "pim"; do
         echo "  Running $variant..."
 
         case "$variant" in
-            "cpu_serial")
-                BIN="$BENCHMARK_DIR/pim_test_cpu_serial"
-                ;;
-            "cpu_simd")
-                BIN="$BENCHMARK_DIR/pim_test_cpu_simd"
-                ;;
-            "cim")
+            # "cpu")
+            #     BIN="$BENCHMARK_DIR/pim_test_cpu_serial"
+            #     ;;
+            # "gpu")
+            #     BIN="$BENCHMARK_DIR/pim_test_gpu"
+            #     ;;
+            "pim")
                 BIN="$BENCHMARK_DIR/pim_test_cim"
                 ;;
         esac
@@ -60,6 +60,54 @@ done
 
 echo "=============================================="
 echo "All benchmarks completed!"
+echo "Results in: $OUTPUT_DIR"
+echo "=============================================="
+echo ""
+
+echo "=============================================="
+echo "Running KNN benchmarks..."
+echo "=============================================="
+echo ""
+
+for variant in "cpu" "gpu" "pim"; do
+    echo "  Running KNN $variant..."
+
+    case "$variant" in
+        "cpu")
+            BIN="$BENCHMARK_DIR/../bin/combined_knn_cpu"
+            ;;
+        "gpu")
+            BIN="$BENCHMARK_DIR/../bin/combined_knn_gpu"
+            ;;
+        "pim")
+            BIN="$BENCHMARK_DIR/../bin/combined_knn"
+            ;;
+    esac
+
+    OUTPUT_SUBDIR="$OUTPUT_DIR/knn_${variant}"
+    mkdir -p "$OUTPUT_SUBDIR"
+
+    cd "$GEM5_DIR"
+    ./build/X86/gem5.debug \
+        --debug-flags=RowOp \
+        --debug-start=0 \
+        --debug-file="$OUTPUT_SUBDIR/gem5_debug.log" \
+        --outdir="$OUTPUT_SUBDIR" \
+        "$CIM_CONFIG" \
+        --cmd="$BIN" \
+        2>&1 | grep -Ev '(^Command|WARNING|^.*warn:)' \
+        > "$OUTPUT_DIR/knn_${variant}.txt"
+
+    if [ $? -eq 0 ]; then
+        echo "    Done: $OUTPUT_SUBDIR"
+    else
+        echo "    FAILED!"
+    fi
+done
+
+echo ""
+echo "=============================================="
+echo "All KNN benchmarks completed!"
 echo "Results in: $OUTPUT_DIR"
 echo "=============================================="
 echo ""

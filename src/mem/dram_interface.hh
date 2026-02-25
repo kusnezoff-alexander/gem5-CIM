@@ -729,7 +729,7 @@ class DRAMInterface : public MemInterface
         Request::RowOp op, size_t n);
 
     /**
-     * Execute a refresh during microprogram execution (synchronously).
+     * Execute a refresh during microprogram execution (synchronously to avoid asynchronous complexity).
      * Precharges all banks and executes the refresh command.
      *
      * @param rank_ref   The rank to refresh

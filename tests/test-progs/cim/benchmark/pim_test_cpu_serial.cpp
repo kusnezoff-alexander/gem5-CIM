@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <gem5/m5ops.h>
 
 using namespace std;
 using namespace std::chrono;
@@ -61,7 +62,7 @@ check_result(T* res, T* array1_initial_val, T* array2_initial_val, T* mask_initi
 using dtype = int16_t;
 
 const char* op_names[] = {
-    "rowand", "rowadd", "rowsub", "rowmult", "rowdiv",
+    "rowand", "rowadd", "rowsub", "rowmult",
     "rowmin", "rowmax", "rowequal", "rowgreater", "rowgreater_equal",
     "rowif_else", "rowabs", "bitcount"
 };
@@ -95,14 +96,6 @@ typename enable_if<is_integral<T>::value>::type
 cpu_rowmult(T* dst, const T* src1, const T* src2, size_t size) {
     for (size_t i = 0; i < size; ++i) {
         dst[i] = src1[i] * src2[i];
-    }
-}
-
-template<typename T>
-typename enable_if<is_integral<T>::value>::type
-cpu_rowdiv(T* dst, const T* src1, const T* src2, size_t size) {
-    for (size_t i = 0; i < size; ++i) {
-        dst[i] = src2[i] != 0 ? src1[i] / src2[i] : 0;
     }
 }
 
@@ -196,7 +189,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    if (op_id < 1 || op_id > 13) {
+    if (op_id < 1 || op_id > 12) {
         cerr << "Invalid op_id: " << op_id << endl;
         return 1;
     }
@@ -214,6 +207,8 @@ int main(int argc, char* argv[])
     }
 
     init_data(array1, array2, array1_initial_val, array2_initial_val);
+
+    m5_reset_stats(0, 0);
 
     auto start = high_resolution_clock::now();
 
@@ -241,23 +236,18 @@ int main(int argc, char* argv[])
             break;
         }
         case 5: {
-            cpu_rowdiv(array1, array1, array2, N_ELEMS);
-            if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, divides<dtype>{});
-            break;
-        }
-        case 6: {
             auto min_op = [](auto a, auto b) { return a < b ? a : b; };
             cpu_rowmin(array1, array1, array2, N_ELEMS);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, min_op);
             break;
         }
-        case 7: {
+        case 6: {
             auto max_op = [](auto a, auto b) { return a > b ? a : b; };
             cpu_rowmax(array1, array1, array2, N_ELEMS);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, max_op);
             break;
         }
-        case 8: {
+        case 7: {
             auto row_equal = [](dtype a, dtype b) -> dtype {
                 return (a == b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
@@ -265,7 +255,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_equal);
             break;
         }
-        case 9: {
+        case 8: {
             auto row_greater = [](dtype a, dtype b) -> dtype {
                 return (a > b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
@@ -273,7 +263,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_greater);
             break;
         }
-        case 10: {
+        case 9: {
             auto row_greater_equal = [](dtype a, dtype b) -> dtype {
                 return (a >= b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
@@ -281,7 +271,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_greater_equal);
             break;
         }
-        case 11: {
+        case 10: {
             auto mask_initial_val = new dtype[N_ELEMS];
             for (size_t i = 0; i < N_ELEMS; ++i) {
                 mask_initial_val[i] = array1_initial_val[i];
@@ -294,7 +284,7 @@ int main(int argc, char* argv[])
             delete[] mask_initial_val;
             break;
         }
-        case 12: {
+        case 11: {
             auto row_abs = [](dtype a, dtype) -> dtype {
                 return (a < 0) ? static_cast<dtype>(-a) : a;
             };
@@ -302,7 +292,7 @@ int main(int argc, char* argv[])
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_abs);
             break;
         }
-        case 13: {
+        case 12: {
             auto row_bitcount = [](dtype a, dtype) -> dtype {
                 unsigned int count = 0;
                 unsigned int val = static_cast<unsigned int>(a);

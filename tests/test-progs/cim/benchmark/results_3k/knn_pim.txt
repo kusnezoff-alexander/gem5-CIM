@@ -1,0 +1,56 @@
+Global frequency set at 1000000000000 ticks per second
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.0.0.1
+gem5 compiled Feb 24 2026 22:24:29
+gem5 started Feb 25 2026 11:56:26
+gem5 executing on edr00859.dip.tu-dresden.de, pid 56813
+command line: ./build/X86/gem5.debug --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results/knn_pim/gem5_debug.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results/knn_pim /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/configs/cim/cim.py --cmd=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/../bin/combined_knn
+
+Beginning simulation!
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+Running PIM + CPU KNN on Iris dataset (SoA layout)
+Loaded dataset with 120 samples in SoA layout
+Loaded dataset with 30 samples in SoA layout
+Loaded training set: 120 samples
+Loaded test set:     30 samples
+gem5.debug: src/mem/cache/write_queue.cc:64: gem5::WriteQueueEntry* gem5::WriteQueue::allocate(gem5::Addr, unsigned int, gem5::PacketPtr, gem5::Tick, gem5::Counter): Assertion `!freeList.empty()' failed.
+Program aborted at tick 3884955500
+--- BEGIN LIBC BACKTRACE ---
+./build/X86/gem5.debug(_ZN4gem515print_backtraceEv+0x1f) [0x1ba3c7f]
+./build/X86/gem5.debug(_ZN4gem512abortHandlerEi+0x5c) [0x1bc66e1]
+/lib64/libc.so.6(+0x1a040) [0x7fe223a29040]
+/lib64/libc.so.6(+0x73e5c) [0x7fe223a82e5c]
+/lib64/libc.so.6(gsignal+0x1e) [0x7fe223a28f0e]
+/lib64/libc.so.6(abort+0x26) [0x7fe223a106d0]
+/lib64/libc.so.6(__assert_perror_fail+0x0) [0x7fe223a10639]
+./build/X86/gem5.debug(_ZN4gem510WriteQueue8allocateEmjPNS_6PacketEml+0x54) [0x165d8da]
+./build/X86/gem5.debug(_ZN4gem59BaseCache19allocateWriteBufferEPNS_6PacketEm+0x27f) [0x163ba61]
+./build/X86/gem5.debug(_ZN4gem55Cache12doWritebacksERNSt7__cxx114listIPNS_6PacketESaIS4_EEEm+0x1b3) [0x16496cb]
+./build/X86/gem5.debug(_ZN4gem59BaseCache13recvTimingReqEPNS_6PacketE+0x26d) [0x16253d3]
+./build/X86/gem5.debug(_ZN4gem55Cache13recvTimingReqEPNS_6PacketE+0x3a5) [0x164a78f]
+./build/X86/gem5.debug(_ZN4gem59BaseCache11CpuSidePort13recvTimingReqEPNS_6PacketE+0xe5) [0x1636ab3]
+./build/X86/gem5.debug(_ZN4gem521TimingRequestProtocol7sendReqEPNS_22TimingResponseProtocolEPNS_6PacketE+0x57) [0x180665b]
+./build/X86/gem5.debug(_ZN4gem511RequestPort13sendTimingReqEPNS_6PacketE+0x5b) [0x4b2c99]
+./build/X86/gem5.debug(_ZN4gem515TimingSimpleCPU17handleWritePacketEv+0x151) [0x10eeb23]
+./build/X86/gem5.debug(_ZN4gem515TimingSimpleCPU8sendDataERKSt10shared_ptrINS_7RequestEEPhPmb+0x3c8) [0x10edbf4]
+./build/X86/gem5.debug(_ZN4gem515TimingSimpleCPU17finishTranslationEPNS_21WholeTranslationStateE+0x129) [0x10f0031]
+./build/X86/gem5.debug(_ZN4gem515DataTranslationIPNS_15TimingSimpleCPUEE6finishERKSt10shared_ptrINS_9FaultBaseEERKS4_INS_7RequestEEPNS_13ThreadContextENS_7BaseMMU4ModeE+0xfa) [0x10f8b24]
+./build/X86/gem5.debug(_ZN4gem56X86ISA3TLB15translateTimingERKSt10shared_ptrINS_7RequestEEPNS_13ThreadContextEPNS_7BaseMMU11TranslationENS9_4ModeE+0xbc) [0x4d1aca]
+./build/X86/gem5.debug(_ZN4gem57BaseMMU15translateTimingERKSt10shared_ptrINS_7RequestEEPNS_13ThreadContextEPNS0_11TranslationENS0_4ModeE+0x4f) [0x4126a3]
+./build/X86/gem5.debug(_ZN4gem515TimingSimpleCPU8writeMemEPhjmNS_5FlagsImEEPmRKSt6vectorIbSaIbEE+0xb26) [0x10ef6bc]
+./build/X86/gem5.debug(_ZN4gem517SimpleExecContext8writeMemEPhjmNS_5FlagsImEEPmRKSt6vectorIbSaIbEE+0x90) [0x10fd536]
+./build/X86/gem5.debug(_ZNK4gem510X86ISAInst6ROWSUB11initiateAccEPNS_11ExecContextEPNS_5trace10InstRecordE+0x927) [0xb1fd17]
+./build/X86/gem5.debug(_ZN4gem515TimingSimpleCPU14completeIfetchEPNS_6PacketE+0x566) [0x10f18d2]
+./build/X86/gem5.debug(_ZN4gem515TimingSimpleCPU10IcachePort10ITickEvent7processEv+0x27) [0x10f1d4b]
+./build/X86/gem5.debug(_ZN4gem510EventQueue10serviceOneEv+0x107) [0x1bb6b45]
+./build/X86/gem5.debug(_ZN4gem59doSimLoopEPNS_10EventQueueE+0x219) [0x1bdb994]
+./build/X86/gem5.debug(_ZN4gem58simulateEm+0x2dc) [0x1bdb447]
+./build/X86/gem5.debug() [0x1b16b62]
+./build/X86/gem5.debug() [0x1b15279]
+./build/X86/gem5.debug() [0x1b10bbc]
+--- END LIBC BACKTRACE ---
+For more info on how to address this issue, please visit https://www.gem5.org/documentation/general_docs/common-errors/ 
+

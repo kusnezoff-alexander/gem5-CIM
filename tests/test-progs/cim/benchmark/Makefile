@@ -79,7 +79,7 @@ pim_test_cim.o: pim_test_cim.cpp
 	$(CXX) $(CXXFLAGS_CIM) -c $< -o $@
 
 pim_test_cpu_serial: pim_test_cpu_serial.o $(LIB)
-	$(CXX) $(CXXFLAGS_SERIAL) $< -L$(SRC_DIR)/build/lib -lpim -o $@
+	$(CXX) $(CXXFLAGS_SERIAL) $< -L$(SRC_DIR)/build/lib -lpim $(M5_LIB) -o $@
 
 pim_test_cpu_simd: pim_test_cpu_simd.o $(LIB)
 	$(CXX) $(CXXFLAGS_SIMD) $< -L$(SRC_DIR)/build/lib -lpim -o $@
@@ -95,7 +95,7 @@ gpu_kernels.hip.o: gpu_kernels.hip
 	$(HIPCC) $(HIPFLAGS) -c $< -o $@
 
 pim_test_gpu: pim_test_gpu.o gpu_kernels.hip.o
-	$(HIPCC) $(HIPFLAGS) $^ -o $@
+	$(HIPCC) $(HIPFLAGS) $^ $(M5_LIB) -o $@
 
 verify-serial:
 	@echo "Checking for SIMD instructions in serial binary..."

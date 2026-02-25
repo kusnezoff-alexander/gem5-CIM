@@ -1,0 +1,483 @@
+{
+  "rowand": {
+    "cpu": {
+      "simSeconds": 0.003205,
+      "simTicks": 3205106750,
+      "simOps": 4886691,
+      "simInsts": 2650626,
+      "workload_energy_pJ": 109032859.40399998,
+      "background_energy_pJ": 3102989279.611208,
+      "total_energy_pJ": 3212022139.0151997,
+      "n_ops": 3000,
+      "GOps_s": 0.0009360374414976599,
+      "GOps_J": 0.02751464114945464,
+      "GOps_J_total": 0.0009339910717177668
+    },
+    "gpu": {
+      "simSeconds": 0.035034,
+      "simTicks": 35034309750,
+      "simOps": 56468057,
+      "simInsts": 27617988,
+      "workload_energy_pJ": 1262856863.116793,
+      "background_energy_pJ": 32585900601.92945,
+      "total_energy_pJ": 33848757465.045845,
+      "n_ops": 3000,
+      "GOps_s": 8.563110121596163e-05,
+      "GOps_J": 0.002375566137080534,
+      "GOps_J_total": 8.862954579936859e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 56000,
+      "simOps": 16,
+      "simInsts": 7,
+      "workload_energy_pJ": 265343.82,
+      "background_energy_pJ": 2553866.0448000003,
+      "total_energy_pJ": 2819209.8648,
+      "n_ops": 3000,
+      "GOps_J": 11.306085817261543,
+      "GOps_J_total": 1.0641279450165464
+    }
+  },
+  "rowadd": {
+    "cpu": {
+      "simSeconds": 0.003205,
+      "simTicks": 3205106750,
+      "simOps": 4886691,
+      "simInsts": 2650626,
+      "workload_energy_pJ": 109030116.5016,
+      "background_energy_pJ": 3102996718.634408,
+      "total_energy_pJ": 3212026835.1359987,
+      "n_ops": 3000,
+      "GOps_s": 0.0009360374414976599,
+      "GOps_J": 0.027515333343296717,
+      "GOps_J_total": 0.0009339897061828185
+    },
+    "gpu": {
+      "simSeconds": 0.035034,
+      "simTicks": 35034309750,
+      "simOps": 56468025,
+      "simInsts": 27617976,
+      "workload_energy_pJ": 1262856863.116793,
+      "background_energy_pJ": 32585895845.83265,
+      "total_energy_pJ": 33848752708.949043,
+      "n_ops": 3000,
+      "GOps_s": 8.563110121596163e-05,
+      "GOps_J": 0.002375566137080534,
+      "GOps_J_total": 8.862955825272849e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 109250,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 272398.99679999996,
+      "background_energy_pJ": 2594399.8248,
+      "total_energy_pJ": 2866798.8216,
+      "n_ops": 3000,
+      "GOps_J": 11.013256418865051,
+      "GOps_J_total": 1.0464633853608392
+    }
+  },
+  "rowsub": {
+    "cpu": {
+      "simSeconds": 0.003207,
+      "simTicks": 3207093500,
+      "simOps": 4886691,
+      "simInsts": 2650626,
+      "workload_energy_pJ": 109035602.3064,
+      "background_energy_pJ": 3104353151.8440075,
+      "total_energy_pJ": 3213388754.1504,
+      "n_ops": 3000,
+      "GOps_s": 0.0009354536950420954,
+      "GOps_J": 0.02751394899043824,
+      "GOps_J_total": 0.0009335938566801829
+    },
+    "gpu": {
+      "simSeconds": 0.035034,
+      "simTicks": 35034309750,
+      "simOps": 56468025,
+      "simInsts": 27617976,
+      "workload_energy_pJ": 1262822364.921593,
+      "background_energy_pJ": 32585949504.360653,
+      "total_energy_pJ": 33848771869.28186,
+      "n_ops": 3000,
+      "GOps_s": 8.563110121596163e-05,
+      "GOps_J": 0.002375631033574755,
+      "GOps_J_total": 8.862950808335038e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 109000,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 272398.99679999996,
+      "background_energy_pJ": 2594399.8248,
+      "total_energy_pJ": 2866798.8216,
+      "n_ops": 3000,
+      "GOps_J": 11.013256418865051,
+      "GOps_J_total": 1.0464633853608392
+    }
+  },
+  "rowmult": {
+    "cpu": {
+      "simSeconds": 0.003209,
+      "simTicks": 3208852500,
+      "simOps": 4892703,
+      "simInsts": 2653631,
+      "workload_energy_pJ": 109028547.1296,
+      "background_energy_pJ": 3106940104.648808,
+      "total_energy_pJ": 3215968651.7784,
+      "n_ops": 3000,
+      "GOps_s": 0.0009348706762231224,
+      "GOps_J": 0.027515729402813754,
+      "GOps_J_total": 0.0009328449138772011
+    },
+    "gpu": {
+      "simSeconds": 0.035037,
+      "simTicks": 35037326000,
+      "simOps": 56468037,
+      "simInsts": 27617981,
+      "workload_energy_pJ": 1262914524.0431929,
+      "background_energy_pJ": 32591771226.739838,
+      "total_energy_pJ": 33854685750.78264,
+      "n_ops": 3000,
+      "GOps_s": 8.562376915831835e-05,
+      "GOps_J": 0.0023754576757859798,
+      "GOps_J_total": 8.861402590129335e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 160000,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 279454.1736,
+      "background_energy_pJ": 2632936.404,
+      "total_energy_pJ": 2912390.5776,
+      "n_ops": 3000,
+      "GOps_J": 10.73521272326419,
+      "GOps_J_total": 1.0300816185417672
+    }
+  },
+  "rowmin": {
+    "cpu": {
+      "simSeconds": 0.003211,
+      "simTicks": 3210564000,
+      "simOps": 4895691,
+      "simInsts": 2659626,
+      "workload_energy_pJ": 109042657.4832,
+      "background_energy_pJ": 3108085382.3544083,
+      "total_energy_pJ": 3217128039.8375998,
+      "n_ops": 3000,
+      "GOps_s": 0.0009342883836810962,
+      "GOps_J": 0.02751216880845191,
+      "GOps_J_total": 0.0009325087353848184
+    },
+    "gpu": {
+      "simSeconds": 0.035034,
+      "simTicks": 35034309750,
+      "simOps": 56468025,
+      "simInsts": 27617976,
+      "workload_energy_pJ": 1262822364.921593,
+      "background_energy_pJ": 32585949504.360653,
+      "total_energy_pJ": 33848771869.28186,
+      "n_ops": 3000,
+      "GOps_s": 8.563110121596163e-05,
+      "GOps_J": 0.002375631033574755,
+      "GOps_J_total": 8.862950808335038e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 160000,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 279454.1736,
+      "background_energy_pJ": 2632936.404,
+      "total_energy_pJ": 2912390.5776,
+      "n_ops": 3000,
+      "GOps_J": 10.73521272326419,
+      "GOps_J_total": 1.0300816185417672
+    }
+  },
+  "rowmax": {
+    "cpu": {
+      "simSeconds": 0.003213,
+      "simTicks": 3213244500,
+      "simOps": 4895691,
+      "simInsts": 2659626,
+      "workload_energy_pJ": 109042657.4832,
+      "background_energy_pJ": 3109839908.263207,
+      "total_energy_pJ": 3218882565.7464,
+      "n_ops": 3000,
+      "GOps_s": 0.0009337068160597572,
+      "GOps_J": 0.02751216880845191,
+      "GOps_J_total": 0.0009320004500705838
+    },
+    "gpu": {
+      "simSeconds": 0.035034,
+      "simTicks": 35034309750,
+      "simOps": 56468025,
+      "simInsts": 27617976,
+      "workload_energy_pJ": 1262822364.921593,
+      "background_energy_pJ": 32585949504.360653,
+      "total_energy_pJ": 33848771869.28186,
+      "n_ops": 3000,
+      "GOps_s": 8.563110121596163e-05,
+      "GOps_J": 0.002375631033574755,
+      "GOps_J_total": 8.862950808335038e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 109000,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 272398.99679999996,
+      "background_energy_pJ": 2594399.8248,
+      "total_energy_pJ": 2866798.8216,
+      "n_ops": 3000,
+      "GOps_J": 11.013256418865051,
+      "GOps_J_total": 1.0464633853608392
+    }
+  },
+  "rowequal": {
+    "cpu": {
+      "simSeconds": 0.003215,
+      "simTicks": 3214726000,
+      "simOps": 4898715,
+      "simInsts": 2662636,
+      "workload_energy_pJ": 109039914.5808,
+      "background_energy_pJ": 3110803826.5416083,
+      "total_energy_pJ": 3219843741.1224003,
+      "n_ops": 3000,
+      "GOps_s": 0.0009331259720062209,
+      "GOps_J": 0.027512860877903212,
+      "GOps_J_total": 0.0009317222328789889
+    },
+    "gpu": {
+      "simSeconds": 0.035034,
+      "simTicks": 35034309750,
+      "simOps": 56468049,
+      "simInsts": 27617986,
+      "workload_energy_pJ": 1262822364.921593,
+      "background_energy_pJ": 32585949504.360653,
+      "total_energy_pJ": 33848771869.28186,
+      "n_ops": 3000,
+      "GOps_s": 8.563110121596163e-05,
+      "GOps_J": 0.002375631033574755,
+      "GOps_J_total": 8.862950808335038e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 109000,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 272398.99679999996,
+      "background_energy_pJ": 2594399.8248,
+      "total_energy_pJ": 2866798.8216,
+      "n_ops": 3000,
+      "GOps_J": 11.013256418865051,
+      "GOps_J_total": 1.0464633853608392
+    }
+  },
+  "rowgreater": {
+    "cpu": {
+      "simSeconds": 0.003215,
+      "simTicks": 3214735250,
+      "simOps": 4898739,
+      "simInsts": 2662646,
+      "workload_energy_pJ": 109039914.5808,
+      "background_energy_pJ": 3110810417.904008,
+      "total_energy_pJ": 3219850332.4848003,
+      "n_ops": 3000,
+      "GOps_s": 0.0009331259720062209,
+      "GOps_J": 0.027512860877903212,
+      "GOps_J_total": 0.0009317203255484427
+    },
+    "gpu": {
+      "simSeconds": 0.035034,
+      "simTicks": 35034309750,
+      "simOps": 56468073,
+      "simInsts": 27617996,
+      "workload_energy_pJ": 1262822364.921593,
+      "background_energy_pJ": 32585949504.360653,
+      "total_energy_pJ": 33848771869.28186,
+      "n_ops": 3000,
+      "GOps_s": 8.563110121596163e-05,
+      "GOps_J": 0.002375631033574755,
+      "GOps_J_total": 8.862950808335038e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 109000,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 272398.99679999996,
+      "background_energy_pJ": 2594793.6672,
+      "total_energy_pJ": 2867192.664,
+      "n_ops": 3000,
+      "GOps_J": 11.013256418865051,
+      "GOps_J_total": 1.0463196413926092
+    }
+  },
+  "rowgreater_equal": {
+    "cpu": {
+      "simSeconds": 0.003216,
+      "simTicks": 3216274500,
+      "simOps": 4900830,
+      "simInsts": 2663668,
+      "workload_energy_pJ": 109044598.70639999,
+      "background_energy_pJ": 3113261185.204808,
+      "total_energy_pJ": 3222305783.9112,
+      "n_ops": 3000,
+      "GOps_s": 0.0009328358208955224,
+      "GOps_J": 0.027511679033983417,
+      "GOps_J_total": 0.0009310103389252625
+    },
+    "gpu": {
+      "simSeconds": 0.035005,
+      "simTicks": 35004978250,
+      "simOps": 56470080,
+      "simInsts": 27618989,
+      "workload_energy_pJ": 1260547473.242391,
+      "background_energy_pJ": 32562001635.34143,
+      "total_energy_pJ": 33822549108.583443,
+      "n_ops": 3000,
+      "GOps_s": 8.57020425653478e-05,
+      "GOps_J": 0.0023799183003265826,
+      "GOps_J_total": 8.869822290356773e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 109000,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 350005.9416,
+      "background_energy_pJ": 3187958.3064,
+      "total_energy_pJ": 3537964.248,
+      "n_ops": 3000,
+      "GOps_J": 8.571283065327254,
+      "GOps_J_total": 0.8479452560030505
+    }
+  },
+  "rowif_else": {
+    "cpu": {
+      "simSeconds": 0.003222,
+      "simTicks": 3221650750,
+      "simOps": 4908379,
+      "simInsts": 2659150,
+      "workload_energy_pJ": 109552911.3,
+      "background_energy_pJ": 3117981488.328009,
+      "total_energy_pJ": 3227534399.628,
+      "n_ops": 3000,
+      "GOps_s": 0.000931098696461825,
+      "GOps_J": 0.02738402808652699,
+      "GOps_J_total": 0.0009295020992946736
+    },
+    "gpu": {
+      "simSeconds": 0.035005,
+      "simTicks": 35004978250,
+      "simOps": 56469972,
+      "simInsts": 27618943,
+      "workload_energy_pJ": 1260530224.1447911,
+      "background_energy_pJ": 32561942732.91183,
+      "total_energy_pJ": 33822472957.056255,
+      "n_ops": 3000,
+      "GOps_s": 8.57020425653478e-05,
+      "GOps_J": 0.002379950867132405,
+      "GOps_J_total": 8.869842260821799e-05
+    },
+    "pim": {
+      "simSeconds": 8e-06,
+      "simTicks": 8027500,
+      "simOps": 6232,
+      "simInsts": 846,
+      "workload_energy_pJ": 865495.6632,
+      "background_energy_pJ": 10824230.575199999,
+      "total_energy_pJ": 11689726.2384,
+      "n_ops": 3000,
+      "GOps_s": 0.375,
+      "GOps_J": 3.4662218744205955,
+      "GOps_J_total": 0.2566356079533491
+    }
+  },
+  "rowabs": {
+    "cpu": {
+      "simSeconds": 0.003212,
+      "simTicks": 3211514750,
+      "simOps": 4894674,
+      "simInsts": 2660602,
+      "workload_energy_pJ": 109041855.80399999,
+      "background_energy_pJ": 3108719252.704808,
+      "total_energy_pJ": 3217761108.5088,
+      "n_ops": 3000,
+      "GOps_s": 0.000933997509339975,
+      "GOps_J": 0.02751237107879405,
+      "GOps_J_total": 0.0009323252717757793
+    },
+    "gpu": {
+      "simSeconds": 0.035005,
+      "simTicks": 35004978250,
+      "simOps": 56469924,
+      "simInsts": 27618923,
+      "workload_energy_pJ": 1260540418.0655909,
+      "background_energy_pJ": 32561998464.610226,
+      "total_energy_pJ": 33822538882.675453,
+      "n_ops": 3000,
+      "GOps_s": 8.57020425653478e-05,
+      "GOps_J": 0.0023799316206010762,
+      "GOps_J_total": 8.869824972059259e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 109000,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 350005.9416,
+      "background_energy_pJ": 3187958.3064,
+      "total_energy_pJ": 3537964.248,
+      "n_ops": 3000,
+      "GOps_J": 8.571283065327254,
+      "GOps_J_total": 0.8479452560030505
+    }
+  },
+  "rowbitcount": {
+    "cpu": {
+      "simSeconds": 0.003409,
+      "simTicks": 3409152000,
+      "simOps": 5418094,
+      "simInsts": 2989231,
+      "workload_energy_pJ": 109032057.7248,
+      "background_energy_pJ": 3273979476.1632113,
+      "total_energy_pJ": 3383011533.8879986,
+      "n_ops": 3000,
+      "GOps_s": 0.0008800234672924611,
+      "GOps_J": 0.027514843456151995,
+      "GOps_J_total": 0.0008867838521827875
+    },
+    "gpu": {
+      "simSeconds": 0.035005,
+      "simTicks": 35004978250,
+      "simOps": 56469948,
+      "simInsts": 27618933,
+      "workload_energy_pJ": 1260540418.0655909,
+      "background_energy_pJ": 32561998464.610226,
+      "total_energy_pJ": 33822538882.675453,
+      "n_ops": 3000,
+      "GOps_s": 8.57020425653478e-05,
+      "GOps_J": 0.0023799316206010762,
+      "GOps_J_total": 8.869824972059259e-05
+    },
+    "pim": {
+      "simSeconds": 0.0,
+      "simTicks": 109000,
+      "simOps": 18,
+      "simInsts": 8,
+      "workload_energy_pJ": 350005.9416,
+      "background_energy_pJ": 3187958.3064,
+      "total_energy_pJ": 3537964.248,
+      "n_ops": 3000,
+      "GOps_J": 8.571283065327254,
+      "GOps_J_total": 0.8479452560030505
+    }
+  }
+}
