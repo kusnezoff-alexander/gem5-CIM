@@ -52,6 +52,7 @@
 #include "mem/mem_interface.hh"
 #include "mem/mimdram_control_unit.hh"
 #include "mem/nvm_interface.hh"
+#include "mem/request.hh"
 #include "sim/system.hh"
 
 namespace gem5
@@ -330,10 +331,13 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
 
         // Make sure `dest`&`src1` address the same bank&rank
         // Only care about dram_pkt1 if the operation is not in place
-		assert(mem_pkt->rank == mem_pkt1->rank);
-		assert(mem_pkt->bank == mem_pkt1->bank);
-		assert(mem_pkt->subarray== mem_pkt1->subarray);
-		assert(mem_pkt->mat == mem_pkt1->mat);
+
+		if (!(addrs->op == Request::ROWTRSP_INIT)) {
+			assert(mem_pkt->rank == mem_pkt1->rank);
+			assert(mem_pkt->bank == mem_pkt1->bank);
+			assert(mem_pkt->subarray== mem_pkt1->subarray);
+			assert(mem_pkt->mat == mem_pkt1->mat);
+		}
         // Make sure `dest`&`src2` address the same bank&rank
         // Only care about dram_pkt2 if it's a binary (=not a unary) op
         if (!Request::is_unary_rowop(addrs->op)) {

@@ -29,6 +29,24 @@ void* mmapPim(void* addr, size_t length, size_t mat_label);
 void* pim_malloc(size_t size, size_t mat_label);
 void pim_free(void* ptr);
 
+static inline void flush_cache_line(void* addr) {
+    asm volatile("clflush %0" : : "m"(*(char*)addr) : "memory");
+}
+
+static const size_t CACHE_LINE_SIZE = 64;
+
+template<typename T>
+static inline void flush_array_cache(T* ptr, size_t n) {
+    char* char_ptr = reinterpret_cast<char*>(ptr);
+    size_t total_bytes = n * sizeof(T);
+
+    for (size_t i = 0; i < total_bytes; i += CACHE_LINE_SIZE) {
+        flush_cache_line(char_ptr + i);
+    }
+
+    asm volatile("mfence" : : : "memory");
+}
+
 /**
  * @oaram n in **BITS** (since we also allow for <1byte, eg 4bit operands are supported
  */
