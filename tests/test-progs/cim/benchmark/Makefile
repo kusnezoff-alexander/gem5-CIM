@@ -46,6 +46,7 @@ CXXFLAGS_CPU_SIMD_PARAM += -DN_ELEMS=$(N_ELEMS) -DN_RUNS=$(N_RUNS)
 
 # GPU: HIP compilation flags
 HIPFLAGS := -O2 -std=c++17
+HIPFLAGS += -mno-avx -mno-sse4.2 -mno-sse4.1
 HIPFLAGS += -I$(GEM5_DIR)/include
 HIPFLAGS += -I$(SRC_DIR)
 HIPFLAGS += -DN_ELEMS=$(N_ELEMS) -DN_RUNS=$(N_RUNS)

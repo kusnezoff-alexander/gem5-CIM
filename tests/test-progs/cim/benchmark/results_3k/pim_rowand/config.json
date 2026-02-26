@@ -26,7 +26,7 @@
         "m5ops_base": 0,
         "mem_mode": "timing",
         "mem_ranges": [
-            "0:8589934592"
+            "0:536870912"
         ],
         "memories": [
             "system.mem_ctrl.dram"
@@ -128,7 +128,7 @@
                     "system": "system",
                     "int_requestor": {
                         "role": "GEM5 REQUESTOR",
-                        "peer": "system.membus.cpu_side_ports[1]",
+                        "peer": "system.membus.cpu_side_ports[2]",
                         "is_source": "True"
                     },
                     "int_responder": {
@@ -339,7 +339,7 @@
                     "name": "workload",
                     "path": "system.cpu.workload",
                     "cmd": [
-                        "/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/pim_test_cim",
+                        "/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/build/bin/pim_test_cim",
                         "1"
                     ],
                     "cwd": "/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix",
@@ -366,226 +366,14 @@
                     "zeroPages": true
                 }
             ],
-            "dcache": {
-                "type": "Cache",
-                "cxx_class": "gem5::Cache",
-                "name": "dcache",
-                "path": "system.cpu.dcache",
-                "addr_ranges": [
-                    "0:18446744073709551615"
-                ],
-                "assoc": 8,
-                "clk_domain": "system.clk_domain",
-                "clusivity": "mostly_incl",
-                "compressor": null,
-                "data_latency": 2,
-                "demand_mshr_reserve": 1,
-                "eventq_index": 0,
-                "is_read_only": false,
-                "max_miss_count": 0,
-                "move_contractions": true,
-                "mshrs": 4,
-                "partitioning_manager": null,
-                "power_model": [],
-                "power_state": {
-                    "type": "PowerState",
-                    "cxx_class": "gem5::PowerState",
-                    "name": "power_state",
-                    "path": "system.cpu.dcache.power_state",
-                    "clk_gate_bins": 20,
-                    "clk_gate_max": 1000000000000,
-                    "clk_gate_min": 1000,
-                    "default_state": "UNDEFINED",
-                    "eventq_index": 0,
-                    "leaders": [],
-                    "possible_states": []
-                },
-                "prefetcher": null,
-                "replace_expansions": true,
-                "replacement_policy": {
-                    "type": "LRURP",
-                    "cxx_class": "gem5::replacement_policy::LRU",
-                    "name": "replacement_policy",
-                    "path": "system.cpu.dcache.replacement_policy",
-                    "eventq_index": 0
-                },
-                "response_latency": 2,
-                "sequential_access": false,
-                "size": 32768,
-                "system": "system",
-                "tag_latency": 2,
-                "tags": {
-                    "type": "BaseSetAssoc",
-                    "cxx_class": "gem5::BaseSetAssoc",
-                    "name": "tags",
-                    "path": "system.cpu.dcache.tags",
-                    "assoc": 8,
-                    "block_size": 64,
-                    "clk_domain": "system.clk_domain",
-                    "entry_size": 64,
-                    "eventq_index": 0,
-                    "indexing_policy": {
-                        "type": "TaggedSetAssociative",
-                        "cxx_class": "gem5::TaggedSetAssociative",
-                        "name": "indexing_policy",
-                        "path": "system.cpu.dcache.tags.indexing_policy",
-                        "assoc": 8,
-                        "entry_size": 64,
-                        "eventq_index": 0,
-                        "size": 32768
-                    },
-                    "partitioning_manager": null,
-                    "power_model": [],
-                    "power_state": {
-                        "type": "PowerState",
-                        "cxx_class": "gem5::PowerState",
-                        "name": "power_state",
-                        "path": "system.cpu.dcache.tags.power_state",
-                        "clk_gate_bins": 20,
-                        "clk_gate_max": 1000000000000,
-                        "clk_gate_min": 1000,
-                        "default_state": "UNDEFINED",
-                        "eventq_index": 0,
-                        "leaders": [],
-                        "possible_states": []
-                    },
-                    "replacement_policy": "system.cpu.dcache.replacement_policy",
-                    "sequential_access": false,
-                    "size": 32768,
-                    "system": "system",
-                    "tag_latency": 2,
-                    "warmup_percentage": 0
-                },
-                "tgts_per_mshr": 20,
-                "warmup_percentage": 0,
-                "write_allocator": null,
-                "write_buffers": 8,
-                "writeback_clean": false,
-                "cpu_side": {
-                    "role": "GEM5 RESPONDER",
-                    "peer": "system.cpu.dcache_port",
-                    "is_source": "False"
-                },
-                "mem_side": {
-                    "role": "GEM5 REQUESTOR",
-                    "peer": "system.l2bus.cpu_side_ports[1]",
-                    "is_source": "True"
-                }
-            },
-            "icache": {
-                "type": "Cache",
-                "cxx_class": "gem5::Cache",
-                "name": "icache",
-                "path": "system.cpu.icache",
-                "addr_ranges": [
-                    "0:18446744073709551615"
-                ],
-                "assoc": 8,
-                "clk_domain": "system.clk_domain",
-                "clusivity": "mostly_incl",
-                "compressor": null,
-                "data_latency": 2,
-                "demand_mshr_reserve": 1,
-                "eventq_index": 0,
-                "is_read_only": false,
-                "max_miss_count": 0,
-                "move_contractions": true,
-                "mshrs": 4,
-                "partitioning_manager": null,
-                "power_model": [],
-                "power_state": {
-                    "type": "PowerState",
-                    "cxx_class": "gem5::PowerState",
-                    "name": "power_state",
-                    "path": "system.cpu.icache.power_state",
-                    "clk_gate_bins": 20,
-                    "clk_gate_max": 1000000000000,
-                    "clk_gate_min": 1000,
-                    "default_state": "UNDEFINED",
-                    "eventq_index": 0,
-                    "leaders": [],
-                    "possible_states": []
-                },
-                "prefetcher": null,
-                "replace_expansions": true,
-                "replacement_policy": {
-                    "type": "LRURP",
-                    "cxx_class": "gem5::replacement_policy::LRU",
-                    "name": "replacement_policy",
-                    "path": "system.cpu.icache.replacement_policy",
-                    "eventq_index": 0
-                },
-                "response_latency": 2,
-                "sequential_access": false,
-                "size": 32768,
-                "system": "system",
-                "tag_latency": 2,
-                "tags": {
-                    "type": "BaseSetAssoc",
-                    "cxx_class": "gem5::BaseSetAssoc",
-                    "name": "tags",
-                    "path": "system.cpu.icache.tags",
-                    "assoc": 8,
-                    "block_size": 64,
-                    "clk_domain": "system.clk_domain",
-                    "entry_size": 64,
-                    "eventq_index": 0,
-                    "indexing_policy": {
-                        "type": "TaggedSetAssociative",
-                        "cxx_class": "gem5::TaggedSetAssociative",
-                        "name": "indexing_policy",
-                        "path": "system.cpu.icache.tags.indexing_policy",
-                        "assoc": 8,
-                        "entry_size": 64,
-                        "eventq_index": 0,
-                        "size": 32768
-                    },
-                    "partitioning_manager": null,
-                    "power_model": [],
-                    "power_state": {
-                        "type": "PowerState",
-                        "cxx_class": "gem5::PowerState",
-                        "name": "power_state",
-                        "path": "system.cpu.icache.tags.power_state",
-                        "clk_gate_bins": 20,
-                        "clk_gate_max": 1000000000000,
-                        "clk_gate_min": 1000,
-                        "default_state": "UNDEFINED",
-                        "eventq_index": 0,
-                        "leaders": [],
-                        "possible_states": []
-                    },
-                    "replacement_policy": "system.cpu.icache.replacement_policy",
-                    "sequential_access": false,
-                    "size": 32768,
-                    "system": "system",
-                    "tag_latency": 2,
-                    "warmup_percentage": 0
-                },
-                "tgts_per_mshr": 20,
-                "warmup_percentage": 0,
-                "write_allocator": null,
-                "write_buffers": 8,
-                "writeback_clean": false,
-                "cpu_side": {
-                    "role": "GEM5 RESPONDER",
-                    "peer": "system.cpu.icache_port",
-                    "is_source": "False"
-                },
-                "mem_side": {
-                    "role": "GEM5 REQUESTOR",
-                    "peer": "system.l2bus.cpu_side_ports[0]",
-                    "is_source": "True"
-                }
-            },
             "dcache_port": {
                 "role": "GEM5 REQUESTOR",
-                "peer": "system.cpu.dcache.cpu_side",
+                "peer": "system.membus.cpu_side_ports[1]",
                 "is_source": "True"
             },
             "icache_port": {
                 "role": "GEM5 REQUESTOR",
-                "peer": "system.cpu.icache.cpu_side",
+                "peer": "system.membus.cpu_side_ports[0]",
                 "is_source": "True"
             }
         },
@@ -599,171 +387,6 @@
             "eventq_index": 0,
             "sys_clk_domain": "system.clk_domain",
             "transition_latency": 100000000
-        },
-        "l2bus": {
-            "type": "CoherentXBar",
-            "cxx_class": "gem5::CoherentXBar",
-            "name": "l2bus",
-            "path": "system.l2bus",
-            "clk_domain": "system.clk_domain",
-            "eventq_index": 0,
-            "forward_latency": 0,
-            "frontend_latency": 1,
-            "header_latency": 1,
-            "max_outstanding_snoops": 512,
-            "max_routing_table_size": 512,
-            "point_of_coherency": false,
-            "point_of_unification": true,
-            "power_model": [],
-            "power_state": {
-                "type": "PowerState",
-                "cxx_class": "gem5::PowerState",
-                "name": "power_state",
-                "path": "system.l2bus.power_state",
-                "clk_gate_bins": 20,
-                "clk_gate_max": 1000000000000,
-                "clk_gate_min": 1000,
-                "default_state": "UNDEFINED",
-                "eventq_index": 0,
-                "leaders": [],
-                "possible_states": []
-            },
-            "response_latency": 1,
-            "snoop_filter": {
-                "type": "SnoopFilter",
-                "cxx_class": "gem5::SnoopFilter",
-                "name": "snoop_filter",
-                "path": "system.l2bus.snoop_filter",
-                "eventq_index": 0,
-                "lookup_latency": 0,
-                "max_capacity": 8388608,
-                "system": "system"
-            },
-            "snoop_response_latency": 1,
-            "system": "system",
-            "use_default_range": false,
-            "width": 32,
-            "cpu_side_ports": {
-                "role": "GEM5 RESPONDER",
-                "peer": [
-                    "system.cpu.icache.mem_side",
-                    "system.cpu.dcache.mem_side"
-                ],
-                "is_source": "False"
-            },
-            "mem_side_ports": {
-                "role": "GEM5 REQUESTOR",
-                "peer": [
-                    "system.l2cache.cpu_side"
-                ],
-                "is_source": "True"
-            }
-        },
-        "l2cache": {
-            "type": "Cache",
-            "cxx_class": "gem5::Cache",
-            "name": "l2cache",
-            "path": "system.l2cache",
-            "addr_ranges": [
-                "0:18446744073709551615"
-            ],
-            "assoc": 4,
-            "clk_domain": "system.clk_domain",
-            "clusivity": "mostly_incl",
-            "compressor": null,
-            "data_latency": 20,
-            "demand_mshr_reserve": 1,
-            "eventq_index": 0,
-            "is_read_only": false,
-            "max_miss_count": 0,
-            "move_contractions": true,
-            "mshrs": 20,
-            "partitioning_manager": null,
-            "power_model": [],
-            "power_state": {
-                "type": "PowerState",
-                "cxx_class": "gem5::PowerState",
-                "name": "power_state",
-                "path": "system.l2cache.power_state",
-                "clk_gate_bins": 20,
-                "clk_gate_max": 1000000000000,
-                "clk_gate_min": 1000,
-                "default_state": "UNDEFINED",
-                "eventq_index": 0,
-                "leaders": [],
-                "possible_states": []
-            },
-            "prefetcher": null,
-            "replace_expansions": true,
-            "replacement_policy": {
-                "type": "LRURP",
-                "cxx_class": "gem5::replacement_policy::LRU",
-                "name": "replacement_policy",
-                "path": "system.l2cache.replacement_policy",
-                "eventq_index": 0
-            },
-            "response_latency": 20,
-            "sequential_access": false,
-            "size": 262144,
-            "system": "system",
-            "tag_latency": 20,
-            "tags": {
-                "type": "BaseSetAssoc",
-                "cxx_class": "gem5::BaseSetAssoc",
-                "name": "tags",
-                "path": "system.l2cache.tags",
-                "assoc": 4,
-                "block_size": 64,
-                "clk_domain": "system.clk_domain",
-                "entry_size": 64,
-                "eventq_index": 0,
-                "indexing_policy": {
-                    "type": "TaggedSetAssociative",
-                    "cxx_class": "gem5::TaggedSetAssociative",
-                    "name": "indexing_policy",
-                    "path": "system.l2cache.tags.indexing_policy",
-                    "assoc": 4,
-                    "entry_size": 64,
-                    "eventq_index": 0,
-                    "size": 262144
-                },
-                "partitioning_manager": null,
-                "power_model": [],
-                "power_state": {
-                    "type": "PowerState",
-                    "cxx_class": "gem5::PowerState",
-                    "name": "power_state",
-                    "path": "system.l2cache.tags.power_state",
-                    "clk_gate_bins": 20,
-                    "clk_gate_max": 1000000000000,
-                    "clk_gate_min": 1000,
-                    "default_state": "UNDEFINED",
-                    "eventq_index": 0,
-                    "leaders": [],
-                    "possible_states": []
-                },
-                "replacement_policy": "system.l2cache.replacement_policy",
-                "sequential_access": false,
-                "size": 262144,
-                "system": "system",
-                "tag_latency": 20,
-                "warmup_percentage": 0
-            },
-            "tgts_per_mshr": 12,
-            "warmup_percentage": 0,
-            "write_allocator": null,
-            "write_buffers": 8,
-            "writeback_clean": false,
-            "cpu_side": {
-                "role": "GEM5 RESPONDER",
-                "peer": "system.l2bus.mem_side_ports[0]",
-                "is_source": "False"
-            },
-            "mem_side": {
-                "role": "GEM5 REQUESTOR",
-                "peer": "system.membus.cpu_side_ports[0]",
-                "is_source": "True"
-            }
         },
         "mem_ctrl": {
             "type": "MemCtrl",
@@ -840,7 +463,7 @@
                     "leaders": [],
                     "possible_states": []
                 },
-                "range": "0:8589934592",
+                "range": "0:536870912",
                 "ranks_per_channel": 2,
                 "read_buffer_size": 64,
                 "rows_per_mat": 1024,
@@ -977,7 +600,8 @@
             "cpu_side_ports": {
                 "role": "GEM5 RESPONDER",
                 "peer": [
-                    "system.l2cache.mem_side",
+                    "system.cpu.icache_port",
+                    "system.cpu.dcache_port",
                     "system.cpu.interrupts.int_requestor",
                     "system.system_port"
                 ],
@@ -995,7 +619,7 @@
         },
         "system_port": {
             "role": "GEM5 REQUESTOR",
-            "peer": "system.membus.cpu_side_ports[2]",
+            "peer": "system.membus.cpu_side_ports[3]",
             "is_source": "True"
         }
     }
