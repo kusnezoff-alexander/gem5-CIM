@@ -13,7 +13,7 @@
 using namespace std;
 using namespace std::chrono;
 
-const size_t N_ELEMS = 30000;
+size_t N_ELEMS = 8000;
 
 using dtype = int16_t;
 
@@ -88,6 +88,14 @@ bool check_result(dtype* res, dtype* array1_initial_val, dtype* array2_initial_v
 
 int main(int argc, char* argv[])
 {
+    if (argc >= 2 && atoi(argv[1]) > 0) {
+        N_ELEMS = atoi(argv[1]);
+        for (int i = 1; i < argc - 1; i++) {
+            argv[i] = argv[i + 1];
+        }
+        argc--;
+    }
+
     bool run_checks = false;
     int op_id = 1;
 

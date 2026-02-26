@@ -36,7 +36,7 @@ def calculate_throughput(elements, runtime_ns, ops_per_element=1):
 def run_benchmark():
     results = []
     
-    sizes = [3000, 30000, 10000000]
+    sizes = [8000, 40000, 10000000]
     
     # PIM Test GPU CUDA - 12 operations
     print("Running pim_test_gpu_cuda benchmarks...")
@@ -44,7 +44,7 @@ def run_benchmark():
         for op_id in range(1, 13):
             power_before = get_power()
             
-            runtime_output = run_command(f"./pim_test_gpu_cuda {op_id}")
+            runtime_output = run_command(f"./pim_test_gpu_cuda {size} {op_id}")
             runtime_match = re.search(r"Runtime:\s+(\d+)", runtime_output)
             runtime = int(runtime_match.group(1)) if runtime_match else 0
             
@@ -74,7 +74,7 @@ def run_benchmark():
     for size in sizes:
         power_before = get_power()
         
-        runtime_output = run_command("./saxpy_cuda")
+        runtime_output = run_command(f"./saxpy_cuda {size}")
         runtime_match = re.search(r"Runtime:\s+(\d+)", runtime_output)
         runtime = int(runtime_match.group(1)) if runtime_match else 0
         

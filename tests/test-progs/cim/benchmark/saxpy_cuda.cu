@@ -13,7 +13,7 @@
 using namespace std;
 using namespace std::chrono;
 
-const size_t N_ELEMS = 10000000;
+size_t N_ELEMS = 10000000;
 const float A_CONST = 2.5f;
 
 __global__ void saxpy_kernel(float* y, const float* x, float a, size_t size) {
@@ -55,6 +55,14 @@ bool verify_saxpy(float* y, float* x, float a, size_t size) {
 
 int main(int argc, char* argv[])
 {
+    if (argc >= 2 && atoi(argv[1]) > 0) {
+        N_ELEMS = atoi(argv[1]);
+        for (int i = 1; i < argc - 1; i++) {
+            argv[i] = argv[i + 1];
+        }
+        argc--;
+    }
+
     bool run_checks = false;
     bool use_double = false;
     
