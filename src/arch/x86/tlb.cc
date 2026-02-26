@@ -361,15 +361,30 @@ TLB::translate(const RequestPtr &req,
     Addr vaddr = req->getVaddr();
     DPRINTF(TLB, "Translating vaddr %#x.\n", vaddr);
 
-	// FIXME: ILLEGAL (DIRTY) QUICKFIX - to not deal with trie lookups (into which huge page entries would have to be inserted)
-	// RowOps will go right through TLB (NOTE: this is a functionality which is not actually performed by the TLB,
-	// this is just a temporal workaround to map physical addresses=virtual addresses). Else the requests would have to go
-	// through the OS page-table walker due to TLB misses. For CIM another computer architecture (instead of TLB), like the one proposed by
-	// "The Virtual Block Interface: A Flexible Alternative to the Conventional Virtual Memory Framework (2020)" might be suited better
+	// For PIM/RowOp accesses to the huge page pool, we need to properly
+	// translate virtual addresses to physical addresses using the page table
+	// instead of just passing through vaddr = paddr
     if(hugePagePoolRange.contains(vaddr)) {
-		// TODO: assert the vaddr is in the preallocated address range for CIM operations
-		req->setPaddr(vaddr);
-		DPRINTF(HugePage, "TLB::translate for Huge Page %#x -> %#x.\n", vaddr, vaddr);
+		// Look up the page table to get the correct physical address
+		Process *p = tc->getProcessPtr();
+		const EmulationPageTable::Entry *pte = p->pTable->lookup(vaddr);
+
+		if (!pte) {
+			// Page not yet allocated - allocate it now
+			DPRINTF(HugePage, "TLB: PIM huge page not found, allocating for vaddr=%#x\n", vaddr);
+			// For PIM, the page should already be allocated via mmapPim, but if not,
+			// we can try to allocate it
+			Fault fault = std::make_shared<PageFault>(vaddr, true, mode, true, false);
+			return fault;
+		}
+
+		// Calculate the physical address by combining page frame with offset
+		Addr page_size = p->pTable->hugePageSize();
+		Addr page_offset = vaddr & (page_size - 1);
+		Addr paddr = pte->paddr | page_offset;
+
+		req->setPaddr(paddr);
+		DPRINTF(HugePage, "TLB::translate for Huge Page %#x -> %#x (page_size=%#x, offset=%#x)\n", vaddr, paddr, page_size, page_offset);
 		return NoFault;
 	}
 
