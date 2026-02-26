@@ -13,7 +13,9 @@
 using namespace std;
 using namespace std::chrono;
 
-const size_t N_ELEMS = 3000;
+#ifndef N_ELEMS
+#define N_ELEMS 3000
+#endif
 
 template<typename T>
 typename enable_if<is_integral<T>::value>::type

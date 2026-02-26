@@ -67,16 +67,12 @@ bool test_axpy()
 
     m5_reset_stats(0, 0);
 
-    m5_work_begin(1, 0);
     for (int r = 0; r < N_RUNS; ++r) {
         for (size_t i = 0; i < N_ELEMS; ++i) {
             y[i] = y_initial[i];
         }
         axpy_loop(y, x, alpha, N_ELEMS);
     }
-    m5_work_end(1, 0);
-
-    m5_dump_reset_stats(0, 0);
 
     bool correct = check_axpy_result(y, y_initial, x_initial, alpha);
 

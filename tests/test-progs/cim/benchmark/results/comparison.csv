@@ -1,0 +1,12 @@
+operation,serial_runtime_ns,serial_throughput_gbs,serial_energy_pj,simd_runtime_ns,simd_throughput_gbs,simd_energy_pj,cim_runtime_ns,cim_throughput_gbs,cim_energy_pj
+rowand,,,,,,,,,
+rowadd,,,,,,,,,
+rowsub,,,,,,,,,
+rowmult,,,,,,,,,
+rowmin,,,,,,,,,
+rowmax,,,,,,,,,
+rowequal,,,,,,,,,
+rowgreater,,,,,,,,,
+rowgreater_equal,,,,,,,,,
+rowif_else,,,,,,,,,
+rowabs,,,,,,,,,

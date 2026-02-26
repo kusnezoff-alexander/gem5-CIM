@@ -1,0 +1,26 @@
+Global frequency set at 1000000000000 ticks per second
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.0.0.1
+gem5 compiled Feb 26 2026 22:53:09
+gem5 started Feb 26 2026 23:02:18
+gem5 executing on fedora.fritz.box, pid 1024844
+command line: ./build/X86/gem5.opt --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_40k/saxpy_pim/gem5.opt.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_40k/saxpy_pim /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/configs/cim/cim.py --cmd=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/build/bin/pim_axpy
+
+Beginning simulation!
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+Starting AXPY test with 40000 elements, 1 runs
+
+=== Run 1/1 ===
+Run 1: PIM memory allocated: x=0x101c0000, y=0x101d3880, scalar_alpha=0x101e7100
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+Run 1: Data initialized. Running AXPY: y = 3 * x + y
+Run 1: AXPY test PASSED!
+
+AXPY test PASSED!
+
+=== Summary: 1/1 runs passed ===
+Exiting @ tick 597658153750 because exiting with last active thread context

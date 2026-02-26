@@ -13,7 +13,10 @@
 using namespace pim_core;
 using namespace std;
 
-const size_t N_ELEMS = 3000;
+#ifndef N_ELEMS
+#define N_ELEMS 3000
+#endif
+
 size_t next_mat = 0;
 
 template<typename T>
@@ -73,17 +76,18 @@ int main(int argc, char* argv[])
     bool run_checks = false;
     int op_id = 1;
 
-    if (argc == 2) {
-        if (string(argv[1]) == "--check") {
-            run_checks = true;
-            op_id = 1;  // default to first operation
-        } else {
-            op_id = atoi(argv[1]);
-        }
-    } else if (argc == 3 && string(argv[2]) == "--check") {
+    if (argc >= 2 && string(argv[1]) == "--check") {
         run_checks = true;
+        op_id = 1;
+    } else if (argc >= 2) {
         op_id = atoi(argv[1]);
-    } else if (argc != 1) {
+    }
+
+    if (argc >= 3 && string(argv[2]) == "--check") {
+        run_checks = true;
+    }
+
+    if (argc > 3) {
         cerr << "Usage: " << argv[0] << " [op_id] [--check]" << endl;
         cerr << "op_id: 1=rowand, 2=rowadd, 3=rowsub, 4=rowmult, 5=rowdiv, ";
         cerr << "6=rowmin, 7=rowmax, 8=rowequal, 9=rowgreater, 10=rowgreater_equal, ";
@@ -97,7 +101,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    cout << "CIM: Running " << op_names[op_id-1] << " (op_id=" << op_id << ")" << endl;
+    cout << "CIM: Running " << op_names[op_id-1] << " (op_id=" << op_id << ", n_elems=" << N_ELEMS << ")" << endl;
 
     auto array1_initial_val = static_cast<dtype*>(malloc(N_ELEMS*sizeof(dtype)));
     auto array2_initial_val = static_cast<dtype*>(malloc(N_ELEMS*sizeof(dtype)));

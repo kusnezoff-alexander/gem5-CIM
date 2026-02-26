@@ -29,12 +29,14 @@ CXXFLAGS_COMMON += -I$(SRC_DIR)
 
 # Serial: NO SIMD, NO auto-vectorization (gem5 compatible)
 CXXFLAGS_SERIAL := $(CXXFLAGS_COMMON) -O2 -fno-tree-vectorize -mno-sse -mno-avx
+CXXFLAGS_SERIAL += -DN_ELEMS=$(N_ELEMS)
 
 # SIMD: SSE4.1 optimization (gem5 compatible)
 CXXFLAGS_SIMD := $(CXXFLAGS_COMMON) -O2 -msse4.1
 
 # CIM: Similar to serial, no vectorization
 CXXFLAGS_CIM := $(CXXFLAGS_COMMON) -O2 -fno-tree-vectorize -mno-avx
+CXXFLAGS_CIM += -DN_ELEMS=$(N_ELEMS)
 
 # CIM with configurable params (for pim_axpy, combined_knn)
 CXXFLAGS_CIM_PARAM := $(CXXFLAGS_COMMON) -O2 -fno-tree-vectorize -mno-avx

@@ -1,0 +1,307 @@
+Global frequency set at 1000000000000 ticks per second
+warn: system.ruby.network adopting orphan SimObject param 'ext_links'
+warn: system.ruby.network adopting orphan SimObject param 'int_links'
+warn: No dot file generated. Please install pydot to generate the dot file and pdf.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/mem/dram_interface.cc:844: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+Forcing maxCoalescedReqs to 32 (TLB assoc.) 
+Forcing maxCoalescedReqs to 32 (TLB assoc.) 
+Forcing maxCoalescedReqs to 32 (TLB assoc.) 
+Forcing maxCoalescedReqs to 32 (TLB assoc.) 
+Forcing maxCoalescedReqs to 32 (TLB assoc.) 
+Forcing maxCoalescedReqs to 32 (TLB assoc.) 
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+Forcing maxCoalescedReqs to 32 (TLB assoc.) 
+Forcing maxCoalescedReqs to 32 (TLB assoc.) 
+src/base/remote_gdb.cc:418: warn: Sockets disabled, not accepting gdb connections
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.0.0.1
+gem5 compiled Feb 26 2026 16:17:41
+gem5 started Feb 26 2026 17:49:27
+gem5 executing on edr00859.dip.tu-dresden.de, pid 841167
+command line: ./build/VEGA_X86/gem5.opt --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_3k_test/gpu_rowand/gem5.opt.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_3k_test/gpu_rowand /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/configs/cim/cim_gpu.py --num-compute-units=4 --num-cp=1 -n 1 --cpu-type=X86TimingSimpleCPU -c /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/build/bin/pim_test_gpu '--options=1 --check'
+
+info: Standard input is not a terminal, disabling listeners.
+Num SQC =  1 Num scalar caches =  1 Num CU =  4
+src/mem/ruby/system/Sequencer.cc:704: warn: Replacement policy updates recently became the responsibility of SLICC state machines. Make sure to setMRU() near callbacks in .sm files!
+WARNING: Bank is not active!
+Command: 1, Timestamp: 3567, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 148, Bank: 5
+WARNING: Bank is not active!
+Command: 1, Timestamp: 15284, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 15496, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 15696, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 16715, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 17346, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 17896, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 18003, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 19240, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 19336, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 19439, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 19546, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 24895, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 27256, Bank: 6
+WARNING: Bank is not active!
+Command: 1, Timestamp: 28004, Bank: 6
+WARNING: Bank is not active!
+Command: 1, Timestamp: 29764, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 29965, Bank: 7
+WARNING: Bank is not active!
+Command: 2, Timestamp: 30648, Bank: 5
+WARNING: Bank is not active!
+Command: 1, Timestamp: 35082, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 36566, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 36672, Bank: 6
+WARNING: Bank is not active!
+Command: 1, Timestamp: 47276, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 54839, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 57740, Bank: 6
+WARNING: Bank is not active!
+Command: 1, Timestamp: 60024, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 63794, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 64096, Bank: 4
+WARNING: Bank is not active!
+Command: 2, Timestamp: 64756, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 64883, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 63968, Bank: 6
+WARNING: Bank is not active!
+Command: 1, Timestamp: 76225, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 76328, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 76542, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 76644, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 76748, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 76857, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 77600, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 77896, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 78102, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 79368, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 79890, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 79156, Bank: 5
+WARNING: Bank is not active!
+Command: 1, Timestamp: 80102, Bank: 5
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+WARNING: Bank is not active!
+Command: 1, Timestamp: 82814, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 83524, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 83952, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 89268, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 96518, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 97005, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 97601, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 100402, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 101182, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 102516, Bank: 5
+WARNING: Bank is not active!
+Command: 1, Timestamp: 106868, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 111350, Bank: 6
+WARNING: Bank is not active!
+Command: 1, Timestamp: 115456, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 121613, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 122164, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 125364, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 126273, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 126945, Bank: 3
+WARNING: Bank is not active!
+Command: 2, Timestamp: 138846, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 140996, Bank: 6
+WARNING: Bank is not active!
+Command: 1, Timestamp: 141674, Bank: 5
+WARNING: Bank is not active!
+Command: 1, Timestamp: 142573, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 143007, Bank: 5
+WARNING: Bank is not active!
+Command: 1, Timestamp: 153197, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 159478, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 159666, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 159775, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 160586, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 160695, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 166832, Bank: 5
+WARNING: Bank is not active!
+Command: 1, Timestamp: 168176, Bank: 6
+WARNING: Bank is not active!
+Command: 1, Timestamp: 172878, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 173578, Bank: 3
+src/base/loader/symtab.cc:95: warn: Cannot insert a new symbol table due to name collisions. Adding prefix to each symbol's name can resolve this issue.
+src/base/loader/symtab.cc:95: warn: Cannot insert a new symbol table due to name collisions. Adding prefix to each symbol's name can resolve this issue.
+src/base/loader/symtab.cc:95: warn: Cannot insert a new symbol table due to name collisions. Adding prefix to each symbol's name can resolve this issue.
+WARNING: Bank is not active!
+Command: 1, Timestamp: 177778, Bank: 0
+WARNING: Bank is not active!
+Command: 2, Timestamp: 182796, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 192397, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 187236, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 187556, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 192195, Bank: 4
+src/base/loader/symtab.cc:95: warn: Cannot insert a new symbol table due to name collisions. Adding prefix to each symbol's name can resolve this issue.
+src/base/loader/symtab.cc:95: warn: Cannot insert a new symbol table due to name collisions. Adding prefix to each symbol's name can resolve this issue.
+src/base/loader/symtab.cc:95: warn: Cannot insert a new symbol table due to name collisions. Adding prefix to each symbol's name can resolve this issue.
+WARNING: Bank is not active!
+Command: 1, Timestamp: 196298, Bank: 3
+WARNING: Bank is not active!
+Command: 2, Timestamp: 200734, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 208310, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 216400, Bank: 6
+WARNING: Bank is not active!
+Command: 1, Timestamp: 218486, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 223660, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 223957, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 224761, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 226112, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 226407, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 227330, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 251924, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 266761, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 266198, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 266479, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 271313, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 282140, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 282961, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 300476, Bank: 4
+WARNING: Bank is not active!
+Command: 1, Timestamp: 303599, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 300883, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 301526, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 308997, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 323530, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 332807, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 368944, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 372749, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 373498, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 377004, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 377350, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 377828, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 377954, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 383500, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 385974, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 391876, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 400308, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 403119, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 413731, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 411777, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 413856, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 414453, Bank: 0
+WARNING: Bank is not active!
+Command: 1, Timestamp: 435403, Bank: 3
+WARNING: Bank is not active!
+Command: 1, Timestamp: 456929, Bank: 5
+WARNING: Bank is not active!
+Command: 1, Timestamp: 524508, Bank: 7
+WARNING: Bank is not active!
+Command: 1, Timestamp: 547637, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 548937, Bank: 2
+WARNING: Bank is not active!
+Command: 1, Timestamp: 552955, Bank: 0
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+/lib64/libc.so.6: CPU ISA level is lower than required
+WARNING: Bank is not active!
+Command: 1, Timestamp: 556972, Bank: 1
+WARNING: Bank is not active!
+Command: 1, Timestamp: 558764, Bank: 2
+breaking loop due to: exiting with last active thread context.
+Ticks: 698516500
+Exiting because  exiting with last active thread context

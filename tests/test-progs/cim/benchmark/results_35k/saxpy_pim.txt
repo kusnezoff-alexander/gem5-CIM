@@ -1,0 +1,59 @@
+Global frequency set at 1000000000000 ticks per second
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.0.0.1
+gem5 compiled Feb 26 2026 19:55:36
+gem5 started Feb 26 2026 22:04:47
+gem5 executing on fedora.fritz.box, pid 1007502
+command line: ./build/X86/gem5.opt --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_35k/saxpy_pim/gem5.opt.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_35k/saxpy_pim configs/cim/cim.py --cmd /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/build/bin/pim_axpy
+
+info: Standard input is not a terminal, disabling listeners.
+Beginning simulation!
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+Starting AXPY test with 35000 elements, 1 runs
+
+=== Run 1/1 ===
+
+Run 1: PIM memory allocated: x=0x101c0000, y=0x101d1180, temp=0x101e2300, scalar_alpha=0x10000000
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+Run 1: Data initialized. Running AXPY: y = 3 * x + y
+gem5.opt: src/mem/mem_ctrl.cc:346: void gem5::memory::MemCtrl::addToWriteQueue(gem5::PacketPtr, unsigned int, gem5::memory::MemInterface*): Assertion `mem_pkt->mat == mem_pkt2->mat' failed.
+Program aborted at tick 516611122250
+--- BEGIN LIBC BACKTRACE ---
+./build/X86/gem5.opt(_ZN4gem515print_backtraceEv+0x15) [0x1d5f255]
+./build/X86/gem5.opt(_ZN4gem512abortHandlerEi+0x39) [0x1d85049]
+/lib64/libc.so.6(+0x1a040) [0x7efc70429040]
+/lib64/libc.so.6(+0x73e5c) [0x7efc70482e5c]
+/lib64/libc.so.6(gsignal+0x1e) [0x7efc70428f0e]
+/lib64/libc.so.6(abort+0x26) [0x7efc704106d0]
+/lib64/libc.so.6(__assert_perror_fail+0x0) [0x7efc70410639]
+./build/X86/gem5.opt() [0x57301c]
+./build/X86/gem5.opt(_ZN4gem56memory7MemCtrl13recvTimingReqEPNS_6PacketE+0x4d5) [0x1637105]
+./build/X86/gem5.opt(_ZN4gem512CoherentXBar13recvTimingReqEPNS_6PacketEs+0xaf6) [0x16127e6]
+./build/X86/gem5.opt(_ZN4gem511RequestPort13sendTimingReqEPNS_6PacketE+0x2a) [0x11905ca]
+./build/X86/gem5.opt(_ZN4gem515TimingSimpleCPU17handleWritePacketEv+0x13c) [0x118818c]
+./build/X86/gem5.opt(_ZN4gem515TimingSimpleCPU8sendDataERKSt10shared_ptrINS_7RequestEEPhPmb+0x27a) [0x118c58a]
+./build/X86/gem5.opt(_ZN4gem515TimingSimpleCPU17finishTranslationEPNS_21WholeTranslationStateE+0x396) [0x118d7f6]
+./build/X86/gem5.opt(_ZN4gem515DataTranslationIPNS_15TimingSimpleCPUEE6finishERKSt10shared_ptrINS_9FaultBaseEERKS4_INS_7RequestEEPNS_13ThreadContextENS_7BaseMMU4ModeE+0x1d7) [0x1192127]
+./build/X86/gem5.opt(_ZN4gem56X86ISA3TLB15translateTimingERKSt10shared_ptrINS_7RequestEEPNS_13ThreadContextEPNS_7BaseMMU11TranslationENS9_4ModeE+0x6f) [0x799aef]
+./build/X86/gem5.opt(_ZN4gem515TimingSimpleCPU8writeMemEPhjmNS_5FlagsImEEPmRKSt6vectorIbSaIbEE+0x88e) [0x118efde]
+./build/X86/gem5.opt(_ZN4gem517SimpleExecContext8writeMemEPhjmNS_5FlagsImEEPmRKSt6vectorIbSaIbEE+0x3c) [0x1195b9c]
+./build/X86/gem5.opt(_ZNK4gem510X86ISAInst7ROWMULT11initiateAccEPNS_11ExecContextEPNS_5trace10InstRecordE+0x244) [0xbd3c64]
+./build/X86/gem5.opt(_ZN4gem515TimingSimpleCPU14completeIfetchEPNS_6PacketE+0x105) [0x118a435]
+./build/X86/gem5.opt(_ZN4gem510EventQueue10serviceOneEv+0x125) [0x1d75a15]
+./build/X86/gem5.opt(_ZN4gem59doSimLoopEPNS_10EventQueueE+0x58) [0x1da4ba8]
+./build/X86/gem5.opt(_ZN4gem58simulateEm+0x24e) [0x1da521e]
+./build/X86/gem5.opt() [0x1ce15e1]
+./build/X86/gem5.opt() [0x702be5]
+/lib64/libpython3.13.so.1.0(+0x17133c) [0x7efc7117133c]
+/lib64/libpython3.13.so.1.0(+0x232a92) [0x7efc71232a92]
+/lib64/libpython3.13.so.1.0(_PyEval_EvalFrameDefault+0x4738) [0x7efc71152468]
+/lib64/libpython3.13.so.1.0(PyEval_EvalCode+0x9f) [0x7efc7122511f]
+/lib64/libpython3.13.so.1.0(+0x2415a3) [0x7efc712415a3]
+/lib64/libpython3.13.so.1.0(+0x16876b) [0x7efc7116876b]
+/lib64/libpython3.13.so.1.0(PyObject_Vectorcall+0x37) [0x7efc7113ed77]
+--- END LIBC BACKTRACE ---
+For more info on how to address this issue, please visit https://www.gem5.org/documentation/general_docs/common-errors/ 
+
