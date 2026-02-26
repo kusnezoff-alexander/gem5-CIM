@@ -1,0 +1,51 @@
+# Makefile for NVIDIA CUDA benchmark tests
+#
+# This Makefile builds CUDA versions of the benchmarks that can run on
+# NVIDIA GPUs using the CUDA toolkit.
+
+NVCC := /usr/local/cuda-12.8/bin/nvcc
+
+NVCCFLAGS := -O2 -std=c++17
+NVCCFLAGS += -arch=sm_80
+
+BUILD_DIR := build_nvidia
+OBJ_DIR := $(BUILD_DIR)/obj
+
+GEM5_DIR := /net/home/kusnezoff/gem5-CIM
+SRC_DIR := $(GEM5_DIR)/tests/test-progs/cim/src
+M5_DIR := $(GEM5_DIR)/util/m5/build/x86/out
+M5_LIB := $(M5_DIR)/libm5.a
+
+SRCS_CU := gpu_kernels_cuda.cu saxpy_cuda.cu knn_cuda.cu
+OBJS_CU := $(SRCS_CU:.cu=.o)
+
+SRCS_CPP := pim_test_gpu_cuda.cpp
+OBJS_CPP := $(SRCS_CPP:.cpp=.o)
+
+BINS := pim_test_gpu_cuda saxpy_cuda knn_cuda
+
+.PHONY: all clean
+
+all: $(BINS)
+
+$(OBJ_DIR):
+	mkdir -p $@
+
+%.o: %.cu | $(OBJ_DIR)
+	$(NVCC) $(NVCCFLAGS) -c $< -o $@
+
+%.o: %.cpp | $(OBJ_DIR)
+	$(NVCC) $(NVCCFLAGS) -c $< -o $@
+
+pim_test_gpu_cuda: pim_test_gpu_cuda.o gpu_kernels_cuda.o
+	$(NVCC) $(NVCCFLAGS) $^ -o $@
+
+saxpy_cuda: saxpy_cuda.o
+	$(NVCC) $(NVCCFLAGS) $< -o $@
+
+knn_cuda: knn_cuda.o
+	$(NVCC) $(NVCCFLAGS) $< -o $@
+
+clean:
+	rm -f $(OBJS_CU) $(OBJS_CPP) $(BINS)
+	rm -rf $(BUILD_DIR)
