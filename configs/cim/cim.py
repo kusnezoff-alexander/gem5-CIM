@@ -4,62 +4,20 @@ Config based on MIMDRAM Paper, Table 2
 
 # import the m5 (gem5) library created when gem5 is built
 import m5
+import optparse
+import shlex
 
 # import all of the SimObjects
 from m5.objects import *
 
 
-# Define cache classes inline for self-contained configuration
-# Specs: L1 32KB 8-way 64B, L2 256KB 4-way 64B
-class L1ICache(Cache):
-    size = "32KiB"
-    assoc = 8
-    tag_latency = 2
-    data_latency = 2
-    response_latency = 2
-    mshrs = 16
-    tgts_per_mshr = 32
-    write_buffers = 16
-
-    def connectCPU(self, cpu):
-        self.cpu_side = cpu.icache_port
-
-    def connectBus(self, bus):
-        self.mem_side = bus.cpu_side_ports
-
-
-class L1DCache(Cache):
-    size = "32KiB"
-    assoc = 8
-    tag_latency = 2
-    data_latency = 2
-    response_latency = 2
-    mshrs = 16
-    tgts_per_mshr = 32
-    write_buffers = 16
-
-    def connectCPU(self, cpu):
-        self.cpu_side = cpu.dcache_port
-
-    def connectBus(self, bus):
-        self.mem_side = bus.cpu_side_ports
-
-
-class L2Cache(Cache):
-    size = "256KiB"
-    assoc = 4
-    tag_latency = 20
-    data_latency = 20
-    response_latency = 20
-    mshrs = 32
-    tgts_per_mshr = 24
-    write_buffers = 16
-
-    def connectCPUSideBus(self, bus):
-        self.cpu_side = bus.mem_side_ports
-
-    def connectMemSideBus(self, bus):
-        self.mem_side = bus.cpu_side_ports
+def addOptions(parser):
+    parser.add_option(
+        "--cmd",
+        type="string",
+        default="",
+        help="Command to execute (use quotes for args)",
+    )
 
 
 # create the system we are going to simulate
@@ -80,25 +38,8 @@ system.mem_ranges = [AddrRange("512MiB")]  # Create an address range
 system.cpu = X86TimingSimpleCPU()
 # system.cpu = X86O3CPU()           # Unfortunately this doesn't work yet
 
-# # Create an L1 cache
-# system.l1icache = L1ICache()
-# system.l1icache.connectCPU(system.cpu)
-#
-# system.l1dcache = L1DCache()
-# system.l1dcache.connectCPU(system.cpu)
-#
-# # Create a memory bus, a system crossbar, in this case
-# system.l2bus = SystemXBar()
-# system.l1icache.connectBus(system.l2bus)
-# system.l1dcache.connectBus(system.l2bus)
-#
-# # Create an L2 cache
-# system.l2cache = L2Cache()
-# system.l2cache.connectCPUSideBus(system.l2bus)
-#
-# # Create a memory bus for L2 to memory
+# Create a memory bus for L2 to memory
 system.membus = SystemXBar()
-# system.l2cache.connectMemSideBus(system.membus)
 
 # Hook the CPU ports up to the L1 caches (already connected above)
 system.cpu.icache_port = system.membus.cpu_side_ports
@@ -136,18 +77,27 @@ system.huge_page_size = "2MiB"
 # Here we set the X86 "hello world" binary. With other ISAs you must specify
 # workloads compiled to those ISAs. Other "hello world" binaries for other ISAs
 # can be found in "tests/test-progs/hello".
+parser = optparse.OptionParser()
+addOptions(parser)
+(options, args) = parser.parse_args()
+
 thispath = os.path.dirname(os.path.realpath(__file__))
-binary = os.path.join(
-    thispath,
-    "../../",
-    # "tests/cim/pim_malloc_syscall",
-    # "tests/cim/src/pim_full_program",
-    "tests/test-progs/cim/bin/pim_test_primitives",
-    # "tests/cim/bin/pim_workloads",
-    # "tests/cim/bin/pim_test_pimmalloc",
-    # "tests/cim/bin/combined_knn",
-    # "tests/test-progs/cim/bin/hello_world",
-)
+if options.cmd:
+    # Extract just the binary path (first element) for init_compatible
+    cmd_parts = shlex.split(options.cmd)
+    binary = cmd_parts[0]
+else:
+    binary = os.path.join(
+        thispath,
+        "../../",
+        # "tests/cim/pim_malloc_syscall",
+        # "tests/cim/src/pim_full_program",
+        "tests/test-progs/cim/bin/pim_test_primitives",
+        # "tests/cim/bin/pim_workloads",
+        # "tests/cim/bin/pim_test_pimmalloc",
+        # "tests/cim/bin/combined_knn",
+        # "tests/test-progs/cim/bin/hello_world",
+    )
 
 system.workload = SEWorkload.init_compatible(binary)
 
@@ -155,7 +105,10 @@ system.workload = SEWorkload.init_compatible(binary)
 process = Process()
 # Set the command
 # cmd is a list which begins with the executable (like argv)
-process.cmd = [binary]
+if options.cmd:
+    process.cmd = shlex.split(options.cmd)
+else:
+    process.cmd = [binary]
 
 # make vaddr=paddr (1:1 mapping)
 # m5.instantiate()

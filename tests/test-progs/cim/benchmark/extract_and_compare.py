@@ -201,11 +201,8 @@ def create_speedup_table(data):
 
 
 def plot_performance_comparison(data, output_file="performance_comparison.png"):
-    """Create bar chart comparing performance with logarithmic scale."""
+    """Create whisker (box) plot comparing performance with logarithmic scale."""
     fig, ax = plt.subplots(figsize=(16, 10))
-
-    x = np.arange(len(OPERATIONS))
-    width = 0.3
 
     # Color scheme from TU Dresden - Blues and Greys only
     colors = {
@@ -214,7 +211,12 @@ def plot_performance_comparison(data, output_file="performance_comparison.png"):
         "gpu_test": "#00008C",  # Brilliantblau (RGB 0, 0, 140)
     }
 
-    for i, (variant, variant_name) in enumerate(VARIANTS.items()):
+    # Prepare data for box plot
+    plot_data = []
+    labels = []
+    color_list = []
+
+    for variant, variant_name in VARIANTS.items():
         ticks = []
         for op in OPERATIONS:
             if op in data[variant] and data[variant][op]["simTicks"]:
@@ -224,7 +226,16 @@ def plot_performance_comparison(data, output_file="performance_comparison.png"):
             else:
                 ticks.append(1)  # Use 1 instead of 0 for log scale
 
-        ax.bar(x + i * width, ticks, width, label=variant_name, color=colors[variant])
+        if ticks:
+            plot_data.append(ticks)
+            labels.append(variant_name)
+            color_list.append(colors[variant])
+
+    bp = ax.boxplot(plot_data, patch_artist=True, widths=0.6)
+
+    for patch, color in zip(bp["boxes"], color_list):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.7)
 
     ax.set_xlabel("Operation", fontsize=12, fontweight="bold")
     ax.set_ylabel(
@@ -235,9 +246,8 @@ def plot_performance_comparison(data, output_file="performance_comparison.png"):
         fontsize=14,
         fontweight="bold",
     )
-    ax.set_xticks(x + width)
-    ax.set_xticklabels(OPERATIONS, rotation=45, ha="right")
-    ax.legend(loc="upper left", fontsize=10)
+    ax.set_xticklabels(labels)
+    ax.legend([bp["boxes"][0]], labels, loc="upper left", fontsize=10)
     ax.set_yscale("log")
 
     plt.tight_layout()
@@ -247,11 +257,8 @@ def plot_performance_comparison(data, output_file="performance_comparison.png"):
 
 
 def plot_speedup_comparison(data, output_file="speedup_comparison.png"):
-    """Create speedup comparison chart with logarithmic scale."""
+    """Create whisker (box) plot for speedup comparison with logarithmic scale."""
     fig, ax = plt.subplots(figsize=(16, 10))
-
-    x = np.arange(len(OPERATIONS))
-    width = 0.4
 
     # Color scheme from TU Dresden - Blues and Greys (excluding CPU SIMD as it's the baseline)
     colors = {
@@ -259,9 +266,12 @@ def plot_speedup_comparison(data, output_file="speedup_comparison.png"):
         "gpu_test": "#00008C",  # Brilliantblau (RGB 0, 0, 140)
     }
 
-    for i, (variant, variant_name) in enumerate(
-        list(VARIANTS.items())[1:]
-    ):  # Skip CPU SIMD (first variant)
+    # Prepare data for box plot
+    plot_data = []
+    labels = []
+    color_list = []
+
+    for variant, variant_name in list(VARIANTS.items())[1:]:  # Skip CPU SIMD
         speedups = []
         for op in OPERATIONS:
             baseline = data["cpu_simd"].get(op, {}).get("simTicks")
@@ -273,9 +283,16 @@ def plot_speedup_comparison(data, output_file="speedup_comparison.png"):
             else:
                 speedups.append(1)  # Use 1 instead of 0 for log scale
 
-        ax.bar(
-            x + i * width, speedups, width, label=variant_name, color=colors[variant]
-        )
+        if speedups:
+            plot_data.append(speedups)
+            labels.append(variant_name)
+            color_list.append(colors[variant])
+
+    bp = ax.boxplot(plot_data, patch_artist=True, widths=0.6)
+
+    for patch, color in zip(bp["boxes"], color_list):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.7)
 
     # Add reference line at 1.0x (no speedup)
     ax.axhline(
@@ -287,15 +304,14 @@ def plot_speedup_comparison(data, output_file="speedup_comparison.png"):
         label="Baseline (1.0x - CPU SIMD)",
     )
 
-    ax.set_xlabel("Operation", fontsize=12, fontweight="bold")
+    ax.set_xlabel("Variant", fontsize=12, fontweight="bold")
     ax.set_ylabel("Speedup vs CPU SIMD - LOG SCALE", fontsize=12, fontweight="bold")
     ax.set_title(
         "Speedup Comparison (Relative to CPU SIMD)\n(Logarithmic Scale)",
         fontsize=14,
         fontweight="bold",
     )
-    ax.set_xticks(x + width)
-    ax.set_xticklabels(OPERATIONS, rotation=45, ha="right")
+    ax.set_xticklabels(labels)
     ax.legend(loc="upper left", fontsize=10)
     ax.set_yscale("log")
 
@@ -306,11 +322,8 @@ def plot_speedup_comparison(data, output_file="speedup_comparison.png"):
 
 
 def plot_instruction_comparison(data, output_file="instruction_comparison.png"):
-    """Create instruction count comparison chart with logarithmic scale."""
+    """Create whisker (box) plot for instruction count comparison with logarithmic scale."""
     fig, ax = plt.subplots(figsize=(16, 10))
-
-    x = np.arange(len(OPERATIONS))
-    width = 0.3
 
     # Color scheme from TU Dresden - Blues and Greys only
     colors = {
@@ -319,7 +332,12 @@ def plot_instruction_comparison(data, output_file="instruction_comparison.png"):
         "gpu_test": "#00008C",  # Brilliantblau (RGB 0, 0, 140)
     }
 
-    for i, (variant, variant_name) in enumerate(VARIANTS.items()):
+    # Prepare data for box plot
+    plot_data = []
+    labels = []
+    color_list = []
+
+    for variant, variant_name in VARIANTS.items():
         insts = []
         for op in OPERATIONS:
             if op in data[variant] and data[variant][op]["simInsts"]:
@@ -329,9 +347,18 @@ def plot_instruction_comparison(data, output_file="instruction_comparison.png"):
             else:
                 insts.append(0.001)  # Use small value instead of 0 for log scale
 
-        ax.bar(x + i * width, insts, width, label=variant_name, color=colors[variant])
+        if insts:
+            plot_data.append(insts)
+            labels.append(variant_name)
+            color_list.append(colors[variant])
 
-    ax.set_xlabel("Operation", fontsize=12, fontweight="bold")
+    bp = ax.boxplot(plot_data, patch_artist=True, widths=0.6)
+
+    for patch, color in zip(bp["boxes"], color_list):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.7)
+
+    ax.set_xlabel("Variant", fontsize=12, fontweight="bold")
     ax.set_ylabel(
         "Instructions (Thousands) - LOG SCALE", fontsize=12, fontweight="bold"
     )
@@ -340,9 +367,8 @@ def plot_instruction_comparison(data, output_file="instruction_comparison.png"):
         fontsize=14,
         fontweight="bold",
     )
-    ax.set_xticks(x + width)
-    ax.set_xticklabels(OPERATIONS, rotation=45, ha="right")
-    ax.legend(loc="upper left", fontsize=10)
+    ax.set_xticklabels(labels)
+    ax.legend([bp["boxes"][0]], labels, loc="upper left", fontsize=10)
     ax.set_yscale("log")
 
     plt.tight_layout()

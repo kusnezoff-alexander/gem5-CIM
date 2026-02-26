@@ -693,7 +693,7 @@ class Request : public Extensible<Request>
 
 
 	static bool is_unary_rowop(Request::RowOp op) {
-		return op == Request::ROWNOT || op == Request::ROWABS;
+		return op == Request::ROWNOT || op == Request::ROWABS || op == Request::ROWTRSP_INIT;
 	}
 
     /**

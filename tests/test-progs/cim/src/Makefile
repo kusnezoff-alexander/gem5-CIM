@@ -30,6 +30,9 @@ WORKLOADS_OBJ  := $(OBJ_DIR)/pim_workloads.o
 KNN_OBJ        := $(OBJ_DIR)/combined_knn.o
 KNN_CPU_OBJ    := $(OBJ_DIR)/combined_knn_cpu.o
 KNN_GPU_OBJ    := $(OBJ_DIR)/combined_knn_gpu.o
+AXPY_OBJ       := $(OBJ_DIR)/pim_axpy.o
+AXPY_CPU_OBJ   := $(OBJ_DIR)/pim_axpy_cpu.o
+AXPY_GPU_OBJ   := $(OBJ_DIR)/pim_axpy_gpu.o
 
 # Binaries
 HELLO_WORLD_PROG:= $(BIN_DIR)/hello_world
@@ -40,8 +43,11 @@ WORKLOADS_PROG  := $(BIN_DIR)/pim_workloads
 KNN_PROG        := $(BIN_DIR)/combined_knn
 KNN_CPU_PROG    := $(BIN_DIR)/combined_knn_cpu
 KNN_GPU_PROG    := $(BIN_DIR)/combined_knn_gpu
+AXPY_PROG       := $(BIN_DIR)/pim_axpy
+AXPY_CPU_PROG   := $(BIN_DIR)/pim_axpy_cpu
+AXPY_GPU_PROG   := $(BIN_DIR)/pim_axpy_gpu
 
-# Selectable test (TEST=primitives | pimmalloc | workloads | knn)
+# Selectable test (TEST=primitives | pimmalloc | workloads | knn | axpy)
 TEST ?= all
 
 TEST_helloworld := $(HELLO_WORLD_PROG)
@@ -49,9 +55,10 @@ TEST_primitives := $(TEST_PROG)
 TEST_pimmalloc  := $(PIMMALLOC_PROG)
 TEST_workloads  := $(WORKLOADS_PROG)
 TEST_knn        := $(KNN_PROG)
-TEST_all        := $(HELLO_WORLD_PROG) $(TEST_PROG) $(PIMMALLOC_PROG) $(WORKLOADS_PROG) $(KNN_PROG)
+TEST_axpy       := $(AXPY_PROG)
+TEST_all        := $(HELLO_WORLD_PROG) $(TEST_PROG) $(PIMMALLOC_PROG) $(WORKLOADS_PROG) $(KNN_PROG) $(AXPY_PROG)
 
-VALID_TESTS := all primitives pimmalloc workloads knn
+VALID_TESTS := all primitives pimmalloc workloads knn axpy
 ifeq ($(filter $(TEST),$(VALID_TESTS)),)
 $(error Invalid TEST='$(TEST)'. Valid values: $(VALID_TESTS))
 endif
@@ -96,6 +103,15 @@ $(OBJ_DIR)/combined_knn_cpu.o: combined_knn_cpu.cpp | $(OBJ_DIR)
 $(OBJ_DIR)/combined_knn_gpu.o: combined_knn_gpu.cpp | $(OBJ_DIR)
 	hipcc $(TESTFLAGS) -c $< -o $@
 
+$(OBJ_DIR)/pim_axpy.o: pim_axpy.cpp pim_core.h | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) $(TESTFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/pim_axpy_cpu.o: pim_axpy_cpu.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) $(TESTFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/pim_axpy_gpu.o: pim_axpy_gpu.cpp | $(OBJ_DIR)
+	hipcc $(TESTFLAGS) -c $< -o $@
+
 # Static library
 $(LIB): $(CORE_OBJ) | $(LIB_DIR)
 	$(AR) $(ARFLAGS) $@ $^
@@ -123,6 +139,15 @@ $(KNN_CPU_PROG): $(KNN_CPU_OBJ) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 $(KNN_GPU_PROG): $(KNN_GPU_OBJ) | $(BIN_DIR)
+	hipcc $< -o $@
+
+$(AXPY_PROG): $(AXPY_OBJ) $(LIB) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -L/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/util/m5/build/x86/out -lm5 -o $@
+
+$(AXPY_CPU_PROG): $(AXPY_CPU_OBJ) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $< -L/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/util/m5/build/x86/out -lm5 -o $@
+
+$(AXPY_GPU_PROG): $(AXPY_GPU_OBJ) | $(BIN_DIR)
 	hipcc $< -o $@
 
 # Cleanup

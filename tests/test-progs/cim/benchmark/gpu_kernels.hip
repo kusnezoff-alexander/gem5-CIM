@@ -1,5 +1,5 @@
 // HIP GPU Kernels for Row Operations
-// Implements all 12 row operations for gem5 GPU simulation
+// Implements all 13 row operations for gem5 GPU simulation
 
 #include <hip/hip_runtime.h>
 #include <cstdint>
@@ -38,7 +38,15 @@ __global__ void gpu_rowmult_kernel(dtype* dst, const dtype* src1, const dtype* s
     }
 }
 
-// 5. Row MIN operation
+// 5. Row DIV operation
+__global__ void gpu_rowdiv_kernel(dtype* dst, const dtype* src1, const dtype* src2, size_t size) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < size) {
+        dst[idx] = src2[idx] != 0 ? src1[idx] / src2[idx] : 0;
+    }
+}
+
+// 6. Row MIN operation
 __global__ void gpu_rowmin_kernel(dtype* dst, const dtype* src1, const dtype* src2, size_t size) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < size) {
@@ -46,7 +54,7 @@ __global__ void gpu_rowmin_kernel(dtype* dst, const dtype* src1, const dtype* sr
     }
 }
 
-// 6. Row MAX operation
+// 7. Row MAX operation
 __global__ void gpu_rowmax_kernel(dtype* dst, const dtype* src1, const dtype* src2, size_t size) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < size) {
@@ -54,7 +62,7 @@ __global__ void gpu_rowmax_kernel(dtype* dst, const dtype* src1, const dtype* sr
     }
 }
 
-// 7. Row EQUAL operation
+// 8. Row EQUAL operation
 __global__ void gpu_rowequal_kernel(dtype* dst, const dtype* src1, const dtype* src2, size_t size) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < size) {
@@ -62,7 +70,7 @@ __global__ void gpu_rowequal_kernel(dtype* dst, const dtype* src1, const dtype* 
     }
 }
 
-// 8. Row GREATER operation
+// 9. Row GREATER operation
 __global__ void gpu_rowgreater_kernel(dtype* dst, const dtype* src1, const dtype* src2, size_t size) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < size) {
@@ -70,7 +78,7 @@ __global__ void gpu_rowgreater_kernel(dtype* dst, const dtype* src1, const dtype
     }
 }
 
-// 9. Row GREATER_EQUAL operation
+// 10. Row GREATER_EQUAL operation
 __global__ void gpu_rowgreater_equal_kernel(dtype* dst, const dtype* src1, const dtype* src2, size_t size) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < size) {
@@ -78,7 +86,7 @@ __global__ void gpu_rowgreater_equal_kernel(dtype* dst, const dtype* src1, const
     }
 }
 
-// 10. Row IF_ELSE operation (ternary select)
+// 11. Row IF_ELSE operation (ternary select)
 __global__ void gpu_rowif_else_kernel(dtype* dst, const dtype* src1, const dtype* src2, const dtype* mask, size_t size) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < size) {
@@ -86,7 +94,7 @@ __global__ void gpu_rowif_else_kernel(dtype* dst, const dtype* src1, const dtype
     }
 }
 
-// 11. Row ABS operation (unary)
+// 12. Row ABS operation (unary)
 __global__ void gpu_rowabs_kernel(dtype* dst, const dtype* src, size_t size) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < size) {
@@ -95,7 +103,7 @@ __global__ void gpu_rowabs_kernel(dtype* dst, const dtype* src, size_t size) {
     }
 }
 
-// 12. Row BITCOUNT operation (population count)
+// 13. Row BITCOUNT operation (population count)
 __global__ void gpu_rowbitcount_kernel(dtype* dst, const dtype* src, size_t size) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < size) {
@@ -137,6 +145,13 @@ void gpu_rowmult(dtype* dst, const dtype* src1, const dtype* src2, size_t size) 
     int threadsPerBlock = 256;
     int blocksPerGrid = (size + threadsPerBlock - 1) / threadsPerBlock;
     hipLaunchKernelGGL(gpu_rowmult_kernel, dim3(blocksPerGrid), dim3(threadsPerBlock), 
+                       0, 0, dst, src1, src2, size);
+}
+
+void gpu_rowdiv(dtype* dst, const dtype* src1, const dtype* src2, size_t size) {
+    int threadsPerBlock = 256;
+    int blocksPerGrid = (size + threadsPerBlock - 1) / threadsPerBlock;
+    hipLaunchKernelGGL(gpu_rowdiv_kernel, dim3(blocksPerGrid), dim3(threadsPerBlock), 
                        0, 0, dst, src1, src2, size);
 }
 

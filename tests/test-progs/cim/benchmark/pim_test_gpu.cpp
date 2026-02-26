@@ -14,8 +14,6 @@
 using namespace std;
 using namespace std::chrono;
 
-const size_t N_ELEMS = 30000;
-
 using dtype = int16_t;
 
 // Kernel wrapper function declarations (defined in gpu_kernels.hip)
@@ -68,7 +66,7 @@ bool check_result(dtype* res, dtype* array1_initial_val, dtype* array2_initial_v
 
 // Check results for 3-operand operations
 template<typename Op>
-bool check_result(dtype* res, dtype* array1_initial_val, dtype* array2_initial_val, 
+bool check_result(dtype* res, dtype* array1_initial_val, dtype* array2_initial_val,
                   dtype* mask_initial_val, Op op) {
     bool is_correct = true;
     for(size_t i=0; i<N_ELEMS; ++i) {

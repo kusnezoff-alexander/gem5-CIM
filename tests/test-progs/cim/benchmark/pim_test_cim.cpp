@@ -63,7 +63,7 @@ check_result(T* res, T* array1_initial_val, T* array2_initial_val, T* mask_initi
 using dtype = int16_t;
 
 const char* op_names[] = {
-    "rowand", "rowadd", "rowsub", "rowmult", "rowdiv",
+    "rowand", "rowadd", "rowsub", "rowmult", // "rowdiv",
     "rowmin", "rowmax", "rowequal", "rowgreater", "rowgreater_equal",
     "rowif_else", "rowabs", "bitcount"
 };
@@ -118,13 +118,13 @@ int main(int argc, char* argv[])
 
     init_data(array1, array2, array1_initial_val, array2_initial_val);
 
-    m5_reset_stats(0, 0);
+    // m5_reset_stats(0, 0);
 
     bool passed = false;
 
     switch(op_id) {
         case 1: {
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(1, 0);
             rowand(array1, array2, array1, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(1, 0);
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
             break;
         }
         case 2: {
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(2, 0);
             rowadd(array1, array2, array1, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(2, 0);
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
             break;
         }
         case 3: {
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(3, 0);
             rowsub(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(3, 0);
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
             break;
         }
         case 4: {
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(4, 0);
             rowmult(array1, array2, array1, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(4, 0);
@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
             break;
         }
         case 5: {
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(5, 0);
             rowdiv(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(5, 0);
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
         }
         case 6: {
             auto min_op = [](dtype a, dtype b) { return a < b ? a : b; };
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(6, 0);
             rowmin(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(6, 0);
@@ -174,7 +174,7 @@ int main(int argc, char* argv[])
         }
         case 7: {
             auto max_op = [](dtype a, dtype b) { return a > b ? a : b; };
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(7, 0);
             rowmax(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(7, 0);
@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
             auto row_equal = [](dtype a, dtype b) -> dtype {
                 return (a == b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(8, 0);
             rowequal(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(8, 0);
@@ -196,7 +196,7 @@ int main(int argc, char* argv[])
             auto row_greater = [](dtype a, dtype b) -> dtype {
                 return (a > b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(9, 0);
             rowgreater(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(9, 0);
@@ -207,7 +207,7 @@ int main(int argc, char* argv[])
             auto row_greater_equal = [](dtype a, dtype b) -> dtype {
                 return (a >= b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(10, 0);
             rowgreater_equal(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(10, 0);
@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
             auto row_ifelse = [](dtype mask_val, dtype a, dtype b) -> dtype {
                 return (mask_val != 0) ? a : b;
             };
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(11, 0);
             rowif_else(array1, array1, array2, array1_initial_val, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(11, 0);
@@ -234,7 +234,7 @@ int main(int argc, char* argv[])
             auto row_abs = [](dtype a, dtype) -> dtype {
                 return (a < 0) ? static_cast<dtype>(-a) : a;
             };
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(12, 0);
             rowabs(array1, array1, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(12, 0);
@@ -251,7 +251,7 @@ int main(int argc, char* argv[])
                 }
                 return static_cast<dtype>(count);
             };
-            m5_dump_reset_stats(0, 0);
+            m5_reset_stats(0, 0);
             m5_work_begin(13, 0);
             rowbitcount(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(13, 0);
