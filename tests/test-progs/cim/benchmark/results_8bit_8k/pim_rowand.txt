@@ -1,0 +1,54 @@
+Global frequency set at 1000000000000 ticks per second
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.0.0.1
+gem5 compiled Feb 27 2026 14:08:37
+gem5 started Feb 27 2026 18:04:41
+gem5 executing on fedora.fritz.box, pid 1258521
+command line: ./build/X86/gem5.opt --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_8bit_8k/pim_rowand/gem5.opt.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_8bit_8k/pim_rowand /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/configs/cim/cim.py --cmd '/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/src/build/bin/pim_test_cim 1'
+
+Beginning simulation!
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+CIM: Running rowand (op_id=1)
+src/arch/x86/faults.cc:166: panic: Tried to read unmapped address 0xffffffffffffffe8.
+PC: (0x401620=>0x401624).(0=>1), Instr:   MOV_R_M : ld   rcx, DS:[rax + 0x8]
+Memory Usage: 916156 KBytes
+Program aborted at tick 175573081500
+--- BEGIN LIBC BACKTRACE ---
+./build/X86/gem5.opt(_ZN4gem515print_backtraceEv+0x15) [0x1d5e815]
+./build/X86/gem5.opt(_ZN4gem512abortHandlerEi+0x39) [0x1d84609]
+/lib64/libc.so.6(+0x1a040) [0x7f1c09229040]
+/lib64/libc.so.6(+0x73e5c) [0x7f1c09282e5c]
+/lib64/libc.so.6(gsignal+0x1e) [0x7f1c09228f0e]
+/lib64/libc.so.6(abort+0x26) [0x7f1c092106d0]
+./build/X86/gem5.opt() [0x6f0cbf]
+./build/X86/gem5.opt(_ZN4gem56X86ISA9PageFault6invokeEPNS_13ThreadContextERKNS_14RefCountingPtrINS_10StaticInstEEE+0x15e) [0x7435de]
+./build/X86/gem5.opt(_ZN4gem513BaseSimpleCPU9advancePCERKSt10shared_ptrINS_9FaultBaseEE+0x9c) [0x11943fc]
+./build/X86/gem5.opt(_ZN4gem515TimingSimpleCPU11advanceInstERKSt10shared_ptrINS_9FaultBaseEE+0xa3) [0x118abe3]
+./build/X86/gem5.opt(_ZN4gem515TimingSimpleCPU17finishTranslationEPNS_21WholeTranslationStateE+0x162) [0x118d282]
+./build/X86/gem5.opt(_ZN4gem515DataTranslationIPNS_15TimingSimpleCPUEE6finishERKSt10shared_ptrINS_9FaultBaseEERKS4_INS_7RequestEEPNS_13ThreadContextENS_7BaseMMU4ModeE+0x1d7) [0x1191de7]
+./build/X86/gem5.opt(_ZN4gem56X86ISA3TLB15translateTimingERKSt10shared_ptrINS_7RequestEEPNS_13ThreadContextEPNS_7BaseMMU11TranslationENS9_4ModeE+0x6f) [0x799d0f]
+./build/X86/gem5.opt(_ZN4gem515TimingSimpleCPU15initiateMemReadEmjNS_5FlagsImEERKSt6vectorIbSaIbEE+0x378) [0x118e118]
+./build/X86/gem5.opt(_ZN4gem517SimpleExecContext15initiateMemReadEmjNS_5FlagsImEERKSt6vectorIbSaIbEE+0x2a) [0x11958aa]
+./build/X86/gem5.opt() [0xb9dfd1]
+./build/X86/gem5.opt(_ZNK4gem510X86ISAInst5LdBig11initiateAccEPNS_11ExecContextEPNS_5trace10InstRecordE+0xbf) [0xbc8bff]
+./build/X86/gem5.opt(_ZN4gem515TimingSimpleCPU14completeIfetchEPNS_6PacketE+0x105) [0x118a0f5]
+./build/X86/gem5.opt(_ZN4gem510EventQueue10serviceOneEv+0x125) [0x1d74fd5]
+./build/X86/gem5.opt(_ZN4gem59doSimLoopEPNS_10EventQueueE+0x58) [0x1da4168]
+./build/X86/gem5.opt(_ZN4gem58simulateEm+0x24e) [0x1da47de]
+./build/X86/gem5.opt() [0x1ce0ba1]
+./build/X86/gem5.opt() [0x702b65]
+/lib64/libpython3.13.so.1.0(+0x17133c) [0x7f1c09f7133c]
+/lib64/libpython3.13.so.1.0(+0x232a92) [0x7f1c0a032a92]
+/lib64/libpython3.13.so.1.0(_PyEval_EvalFrameDefault+0x4738) [0x7f1c09f52468]
+/lib64/libpython3.13.so.1.0(PyEval_EvalCode+0x9f) [0x7f1c0a02511f]
+/lib64/libpython3.13.so.1.0(+0x2415a3) [0x7f1c0a0415a3]
+/lib64/libpython3.13.so.1.0(+0x16876b) [0x7f1c09f6876b]
+/lib64/libpython3.13.so.1.0(PyObject_Vectorcall+0x37) [0x7f1c09f3ed77]
+/lib64/libpython3.13.so.1.0(_PyEval_EvalFrameDefault+0x3ce1) [0x7f1c09f51a11]
+./build/X86/gem5.opt() [0x1cc8bcc]
+--- END LIBC BACKTRACE ---
+For more info on how to address this issue, please visit https://www.gem5.org/documentation/general_docs/common-errors/ 
+

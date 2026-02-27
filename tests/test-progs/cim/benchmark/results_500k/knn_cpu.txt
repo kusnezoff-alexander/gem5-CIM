@@ -1,0 +1,20 @@
+Global frequency set at 1000000000000 ticks per second
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.0.0.1
+gem5 compiled Feb 27 2026 00:49:47
+gem5 started Feb 27 2026 12:49:54
+gem5 executing on fedora.fritz.box, pid 1133435
+command line: ./build/X86/gem5.opt --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_1M/knn_cpu/gem5.opt.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_1M/knn_cpu /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/configs/cim/cim_cpu.py --cmd=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/build/bin/combined_knn_cpu
+
+Beginning simulation!
+src/sim/mem_state.cc:479: info: Increasing stack size by one page.
+Running CPU-only KNN on Iris dataset
+Loaded dataset with 120 samples (CPU layout)
+Loaded dataset with 30 samples (CPU layout)
+Loaded training set: 120 samples
+Loaded test set:     30 samples
+Accuracy: 100% (30/30)
+Exiting @ tick 4113996250 because exiting with last active thread context

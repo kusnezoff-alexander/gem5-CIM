@@ -4,13 +4,13 @@ gem5 Simulator System.  https://www.gem5.org
 gem5 is copyrighted software; use the --copyright option for details.
 
 gem5 version 25.0.0.1
-gem5 compiled Feb 26 2026 22:53:09
-gem5 started Feb 26 2026 23:01:28
-gem5 executing on fedora.fritz.box, pid 1024813
+gem5 compiled Feb 27 2026 00:49:47
+gem5 started Feb 27 2026 11:27:14
+gem5 executing on fedora.fritz.box, pid 1118939
 command line: ./build/X86/gem5.opt --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_40k/pim_rowif_else/gem5.opt.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_40k/pim_rowif_else /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/configs/cim/cim.py --cmd '/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/build/bin/pim_test_cim 10'
 
 Beginning simulation!
 src/sim/mem_state.cc:479: info: Increasing stack size by one page.
-CIM: Running rowif_else (op_id=10, n_elems=40000)
-Ran pim_malloc and got ptr array1=0x101c0000, array2=0x101d3880
-Exiting @ tick 211028694000 because exiting with last active thread context
+CIM: Running rowif_else (op_id=10)
+Ran pim_malloc and got ptr array1=0x10000000, array2=0x10013c00
+Exiting @ tick 210088694750 because exiting with last active thread context

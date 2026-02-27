@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Visualization script for benchmark metrics.
-Creates throughput and energy efficiency charts from extracted_metrics.csv.
+Creates throughput and energy efficiency charts with 3 subplots (int8, int16, int32).
 """
 
 import csv
@@ -13,9 +13,11 @@ OUTPUT_DIR = "results"
 
 COLORS = {
     "pim_8k": "#1E3A8A",  # Dark blue
-    "pim_40k": "#3B82F6",  # Light blue
-    "cpu_8k": "#581C87",  # Dark violet
+    "cpu_8k": "#7C3AED",  # Violet
+    "pim_40k": "#2563EB",  # Blue
     "cpu_40k": "#A855F7",  # Light violet
+    "pim_500k": "#60A5FA",  # Light blue
+    "cpu_500k": "#C084FC",  # Lighter violet
 }
 
 
@@ -24,24 +26,22 @@ def load_data():
     with open(CSV_FILE, "r") as f:
         reader = csv.DictReader(f)
         for row in reader:
+            if not row["Throughput_GOps_s"] or not row.get("Bitwidth"):
+                continue
             size = int(row["Size"])
+            bitwidth = int(row["Bitwidth"])
             kernel = row["Kernel"]
 
-            if kernel not in data:
-                data[kernel] = {}
+            key = (bitwidth, kernel)
+            if key not in data:
+                data[key] = {}
 
-            if row["Throughput_GOps_s"]:
-                throughput = float(row["Throughput_GOps_s"])
-                power = float(row["Power_W"])
-                energy_nj = float(row["Energy_nJ"])
-                energy_efficiency = throughput / power if power > 0 else 0
-            else:
-                throughput = 0
-                power = 0
-                energy_nj = 0
-                energy_efficiency = 0
+            throughput = float(row["Throughput_GOps_s"])
+            power = float(row["Power_W"])
+            energy_nj = float(row["Energy_nJ"])
+            energy_efficiency = throughput / power if power > 0 else 0
 
-            data[kernel][size] = {
+            data[key][size] = {
                 "throughput": throughput,
                 "power": power,
                 "energy_nj": energy_nj,
@@ -52,7 +52,7 @@ def load_data():
 
 def get_workloads(data):
     workloads = []
-    for kernel in data.keys():
+    for bitwidth, kernel in data.keys():
         if "_" in kernel:
             parts = kernel.split("_", 1)
             if len(parts) == 2:
@@ -62,174 +62,238 @@ def get_workloads(data):
     return sorted(workloads)
 
 
-def has_knn(data):
-    return "CPU_knn" in data and "PIM_knn" in data
+def plot_all_three(data, output_file):
+    workloads = get_workloads(data)
 
+    fig, axes = plt.subplots(1, 3, figsize=(30, 8))
 
-def plot_throughput(data, workloads, output_file):
-    fig, ax = plt.subplots(figsize=(18, 8))
+    for idx, bitwidth in enumerate([8, 16, 32]):
+        ax = axes[idx]
+        n_workloads = len(workloads)
+        x = np.arange(n_workloads)
+        width = 0.14
 
-    n_workloads = len(workloads)
-    has_knn_data = has_knn(data)
-    n_total = n_workloads + (1 if has_knn_data else 0)
+        pim_8k_vals = []
+        cpu_8k_vals = []
+        pim_40k_vals = []
+        cpu_40k_vals = []
+        pim_500k_vals = []
+        cpu_500k_vals = []
 
-    x = np.arange(n_total)
-    width = 0.18
+        for w in workloads:
+            pim_8k = (
+                data.get((bitwidth, f"PIM_{w}"), {}).get(8000, {}).get("throughput", 0)
+            )
+            cpu_8k = (
+                data.get((bitwidth, f"CPU_{w}"), {}).get(8000, {}).get("throughput", 0)
+            )
+            pim_40k = (
+                data.get((bitwidth, f"PIM_{w}"), {}).get(40000, {}).get("throughput", 0)
+            )
+            cpu_40k = (
+                data.get((bitwidth, f"CPU_{w}"), {}).get(40000, {}).get("throughput", 0)
+            )
+            pim_500k = (
+                data.get((bitwidth, f"PIM_{w}"), {})
+                .get(500000, {})
+                .get("throughput", 0)
+            )
+            cpu_500k = (
+                data.get((bitwidth, f"CPU_{w}"), {})
+                .get(500000, {})
+                .get("throughput", 0)
+            )
 
-    pim_8k_vals = []
-    cpu_8k_vals = []
-    pim_40k_vals = []
-    cpu_40k_vals = []
+            pim_8k_vals.append(pim_8k)
+            cpu_8k_vals.append(cpu_8k)
+            pim_40k_vals.append(pim_40k)
+            cpu_40k_vals.append(cpu_40k)
+            pim_500k_vals.append(pim_500k)
+            cpu_500k_vals.append(cpu_500k)
 
-    for w in workloads:
-        pim_8k = data.get(f"PIM_{w}", {}).get(8000, {}).get("throughput", 0)
-        cpu_8k = data.get(f"CPU_{w}", {}).get(8000, {}).get("throughput", 0)
-        pim_40k = data.get(f"PIM_{w}", {}).get(40000, {}).get("throughput", 0)
-        cpu_40k = data.get(f"CPU_{w}", {}).get(40000, {}).get("throughput", 0)
+        ax.bar(
+            x - 2.5 * width,
+            pim_8k_vals,
+            width,
+            label="PIM 8k",
+            color=COLORS["pim_8k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x - 1.5 * width,
+            cpu_8k_vals,
+            width,
+            label="CPU 8k",
+            color=COLORS["cpu_8k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x - 0.5 * width,
+            pim_40k_vals,
+            width,
+            label="PIM 40k",
+            color=COLORS["pim_40k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x + 0.5 * width,
+            cpu_40k_vals,
+            width,
+            label="CPU 40k",
+            color=COLORS["cpu_40k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x + 1.5 * width,
+            pim_500k_vals,
+            width,
+            label="PIM 500k",
+            color=COLORS["pim_500k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x + 2.5 * width,
+            cpu_500k_vals,
+            width,
+            label="CPU 500k",
+            color=COLORS["cpu_500k"],
+            alpha=0.8,
+        )
 
-        pim_8k_vals.append(pim_8k)
-        cpu_8k_vals.append(cpu_8k)
-        pim_40k_vals.append(pim_40k)
-        cpu_40k_vals.append(cpu_40k)
+        ax.set_xlabel("Workload", fontsize=10, fontweight="bold")
+        ax.set_ylabel("Throughput (GOps/s)", fontsize=10, fontweight="bold")
+        ax.set_title(f"int{bitwidth}", fontsize=12, fontweight="bold")
+        ax.set_xticks(x)
+        ax.set_xticklabels(workloads, rotation=45, ha="right", fontsize=8)
+        ax.legend(loc="upper right", fontsize=7, ncol=2)
+        ax.set_yscale("log")
+        ax.grid(axis="y", alpha=0.3)
 
-    if has_knn_data:
-        cpu_knn = data.get("CPU_knn", {}).get(150, {}).get("throughput", 0)
-        pim_knn = data.get("PIM_knn", {}).get(150, {}).get("throughput", 0)
-
-        cpu_8k_vals.append(cpu_knn)
-        pim_8k_vals.append(pim_knn)
-        pim_40k_vals.append(0)
-        cpu_40k_vals.append(0)
-
-    ax.bar(
-        x - 1.5 * width,
-        pim_8k_vals,
-        width,
-        label="PIM 8k",
-        color=COLORS["pim_8k"],
-        alpha=0.8,
-    )
-    ax.bar(
-        x - 0.5 * width,
-        cpu_8k_vals,
-        width,
-        label="CPU 8k",
-        color=COLORS["cpu_8k"],
-        alpha=0.8,
-    )
-    ax.bar(
-        x + 0.5 * width,
-        pim_40k_vals,
-        width,
-        label="PIM 40k",
-        color=COLORS["pim_40k"],
-        alpha=0.8,
-    )
-    ax.bar(
-        x + 1.5 * width,
-        cpu_40k_vals,
-        width,
-        label="CPU 40k",
-        color=COLORS["cpu_40k"],
-        alpha=0.8,
-    )
-
-    all_labels = workloads + (["knn"] if has_knn_data else [])
-
-    ax.set_xlabel("Workload", fontsize=12, fontweight="bold")
-    ax.set_ylabel("Throughput (GOps/s)", fontsize=12, fontweight="bold")
-    ax.set_title("Throughput Comparison", fontsize=14, fontweight="bold")
-    ax.set_xticks(x)
-    ax.set_xticklabels(all_labels, rotation=45, ha="right")
-    ax.legend(loc="upper right")
-    ax.set_yscale("log")
-    ax.grid(axis="y", alpha=0.3)
-
+    plt.suptitle("Throughput Comparison", fontsize=14, fontweight="bold", y=1.02)
     plt.tight_layout()
     plt.savefig(output_file, dpi=300, bbox_inches="tight")
     print(f"Saved: {output_file}")
     plt.close()
 
 
-def plot_energy_efficiency(data, workloads, output_file):
-    fig, ax = plt.subplots(figsize=(18, 8))
+def plot_all_three_energy(data, output_file):
+    workloads = get_workloads(data)
 
-    n_workloads = len(workloads)
-    has_knn_data = has_knn(data)
-    n_total = n_workloads + (1 if has_knn_data else 0)
+    fig, axes = plt.subplots(1, 3, figsize=(30, 8))
 
-    x = np.arange(n_total)
-    width = 0.18
+    for idx, bitwidth in enumerate([8, 16, 32]):
+        ax = axes[idx]
+        n_workloads = len(workloads)
+        x = np.arange(n_workloads)
+        width = 0.14
 
-    pim_8k_vals = []
-    cpu_8k_vals = []
-    pim_40k_vals = []
-    cpu_40k_vals = []
+        pim_8k_vals = []
+        cpu_8k_vals = []
+        pim_40k_vals = []
+        cpu_40k_vals = []
+        pim_500k_vals = []
+        cpu_500k_vals = []
 
-    for w in workloads:
-        pim_8k = data.get(f"PIM_{w}", {}).get(8000, {}).get("energy_efficiency", 0)
-        cpu_8k = data.get(f"CPU_{w}", {}).get(8000, {}).get("energy_efficiency", 0)
-        pim_40k = data.get(f"PIM_{w}", {}).get(40000, {}).get("energy_efficiency", 0)
-        cpu_40k = data.get(f"CPU_{w}", {}).get(40000, {}).get("energy_efficiency", 0)
+        for w in workloads:
+            pim_8k = (
+                data.get((bitwidth, f"PIM_{w}"), {})
+                .get(8000, {})
+                .get("energy_efficiency", 0)
+            )
+            cpu_8k = (
+                data.get((bitwidth, f"CPU_{w}"), {})
+                .get(8000, {})
+                .get("energy_efficiency", 0)
+            )
+            pim_40k = (
+                data.get((bitwidth, f"PIM_{w}"), {})
+                .get(40000, {})
+                .get("energy_efficiency", 0)
+            )
+            cpu_40k = (
+                data.get((bitwidth, f"CPU_{w}"), {})
+                .get(40000, {})
+                .get("energy_efficiency", 0)
+            )
+            pim_500k = (
+                data.get((bitwidth, f"PIM_{w}"), {})
+                .get(500000, {})
+                .get("energy_efficiency", 0)
+            )
+            cpu_500k = (
+                data.get((bitwidth, f"CPU_{w}"), {})
+                .get(500000, {})
+                .get("energy_efficiency", 0)
+            )
 
-        pim_8k_vals.append(pim_8k)
-        cpu_8k_vals.append(cpu_8k)
-        pim_40k_vals.append(pim_40k)
-        cpu_40k_vals.append(cpu_40k)
+            pim_8k_vals.append(pim_8k)
+            cpu_8k_vals.append(cpu_8k)
+            pim_40k_vals.append(pim_40k)
+            cpu_40k_vals.append(cpu_40k)
+            pim_500k_vals.append(pim_500k)
+            cpu_500k_vals.append(cpu_500k)
 
-    if has_knn_data:
-        cpu_knn = data.get("CPU_knn", {}).get(150, {}).get("energy_efficiency", 0)
-        pim_knn = data.get("PIM_knn", {}).get(150, {}).get("energy_efficiency", 0)
+        ax.bar(
+            x - 2.5 * width,
+            pim_8k_vals,
+            width,
+            label="PIM 8k",
+            color=COLORS["pim_8k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x - 1.5 * width,
+            cpu_8k_vals,
+            width,
+            label="CPU 8k",
+            color=COLORS["cpu_8k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x - 0.5 * width,
+            pim_40k_vals,
+            width,
+            label="PIM 40k",
+            color=COLORS["pim_40k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x + 0.5 * width,
+            cpu_40k_vals,
+            width,
+            label="CPU 40k",
+            color=COLORS["cpu_40k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x + 1.5 * width,
+            pim_500k_vals,
+            width,
+            label="PIM 500k",
+            color=COLORS["pim_500k"],
+            alpha=0.8,
+        )
+        ax.bar(
+            x + 2.5 * width,
+            cpu_500k_vals,
+            width,
+            label="CPU 500k",
+            color=COLORS["cpu_500k"],
+            alpha=0.8,
+        )
 
-        cpu_8k_vals.append(cpu_knn)
-        pim_8k_vals.append(pim_knn)
-        pim_40k_vals.append(0)
-        cpu_40k_vals.append(0)
+        ax.set_xlabel("Workload", fontsize=10, fontweight="bold")
+        ax.set_ylabel(
+            "Energy Efficiency (GOps/s per Watt)", fontsize=10, fontweight="bold"
+        )
+        ax.set_title(f"int{bitwidth}", fontsize=12, fontweight="bold")
+        ax.set_xticks(x)
+        ax.set_xticklabels(workloads, rotation=45, ha="right", fontsize=8)
+        ax.legend(loc="upper right", fontsize=7, ncol=2)
+        ax.set_yscale("log")
+        ax.grid(axis="y", alpha=0.3)
 
-    ax.bar(
-        x - 1.5 * width,
-        pim_8k_vals,
-        width,
-        label="PIM 8k",
-        color=COLORS["pim_8k"],
-        alpha=0.8,
-    )
-    ax.bar(
-        x - 0.5 * width,
-        cpu_8k_vals,
-        width,
-        label="CPU 8k",
-        color=COLORS["cpu_8k"],
-        alpha=0.8,
-    )
-    ax.bar(
-        x + 0.5 * width,
-        pim_40k_vals,
-        width,
-        label="PIM 40k",
-        color=COLORS["pim_40k"],
-        alpha=0.8,
-    )
-    ax.bar(
-        x + 1.5 * width,
-        cpu_40k_vals,
-        width,
-        label="CPU 40k",
-        color=COLORS["cpu_40k"],
-        alpha=0.8,
-    )
-
-    all_labels = workloads + (["knn"] if has_knn_data else [])
-
-    ax.set_xlabel("Workload", fontsize=12, fontweight="bold")
-    ax.set_ylabel("Energy Efficiency (GOps/s per Watt)", fontsize=12, fontweight="bold")
-    ax.set_title("Energy Efficiency", fontsize=14, fontweight="bold")
-    ax.set_xticks(x)
-    ax.set_xticklabels(all_labels, rotation=45, ha="right")
-    ax.legend(loc="upper right")
-    ax.set_yscale("log")
-    ax.grid(axis="y", alpha=0.3)
-
+    plt.suptitle("Energy Efficiency Comparison", fontsize=14, fontweight="bold", y=1.02)
     plt.tight_layout()
     plt.savefig(output_file, dpi=300, bbox_inches="tight")
     print(f"Saved: {output_file}")
@@ -242,12 +306,10 @@ def main():
 
     workloads = get_workloads(data)
     print(f"Found workloads: {workloads}")
-    print(f"Has KNN data: {has_knn(data)}")
 
     print("\nGenerating charts...")
-
-    plot_throughput(data, workloads, f"{OUTPUT_DIR}/throughput_chart.png")
-    plot_energy_efficiency(data, workloads, f"{OUTPUT_DIR}/energy_efficiency_chart.png")
+    plot_all_three(data, f"{OUTPUT_DIR}/throughput_chart.png")
+    plot_all_three_energy(data, f"{OUTPUT_DIR}/energy_efficiency_chart.png")
 
     print("\nDone!")
 

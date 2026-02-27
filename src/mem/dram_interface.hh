@@ -517,9 +517,9 @@ class DRAMInterface : public MemInterface
     const uint32_t bankGroupsPerRank;
     const bool bankGroupArch;
 
-    uint32_t rowsPerMat;
-    uint32_t colsPerMat;
-	uint32_t matsPerBank;
+    uint32_t rowsPerSubarray;
+    uint32_t colsPerSubarray;
+	uint32_t subarraysPerBank;
 
     /**
      * DRAM specific timing requirements

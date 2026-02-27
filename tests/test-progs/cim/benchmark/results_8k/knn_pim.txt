@@ -4,9 +4,9 @@ gem5 Simulator System.  https://www.gem5.org
 gem5 is copyrighted software; use the --copyright option for details.
 
 gem5 version 25.0.0.1
-gem5 compiled Feb 26 2026 22:53:09
-gem5 started Feb 26 2026 22:58:55
-gem5 executing on fedora.fritz.box, pid 1024655
+gem5 compiled Feb 27 2026 00:49:47
+gem5 started Feb 27 2026 11:24:20
+gem5 executing on fedora.fritz.box, pid 1118342
 command line: ./build/X86/gem5.opt --debug-flags=RowOp --debug-start=0 --debug-file=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_8k/knn_pim/gem5.opt.log --outdir=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/results_8k/knn_pim /home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/configs/cim/cim.py --cmd=/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/tests/test-progs/cim/benchmark/build/bin/combined_knn
 
 Beginning simulation!
@@ -21,4 +21,4 @@ Loaded test set:     30 samples
 Run 1 Accuracy: 100% (30/30)
 
 === Summary: 1/1 runs passed ===
-Exiting @ tick 245061687000 because exiting with last active thread context
+Exiting @ tick 369090540500 because exiting with last active thread context

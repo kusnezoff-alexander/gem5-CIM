@@ -684,14 +684,26 @@ AbstractMemory::perform_rowop(uint64_t* dst, const uint64_t* src1, const uint64_
 
             switch(op) {
                 case Request::ROWADD:
-                    r = (va + vb) & elem_mask;
-                    break;
+                    {
+                        int64_t sa = to_signed(va);
+                        int64_t sb = to_signed(vb);
+                        r = (sa + sb) & elem_mask;
+                        break;
+                    }
                 case Request::ROWSUB:
-                    r = (va - vb) & elem_mask;
-                    break;
+                    {
+                        int64_t sa = to_signed(va);
+                        int64_t sb = to_signed(vb);
+                        r = (sa - sb) & elem_mask;
+                        break;
+                    }
                 case Request::ROWMULT:
-                    r = (va * vb) & elem_mask;
-                    break;
+                    {
+                        int64_t sa = to_signed(va);
+                        int64_t sb = to_signed(vb);
+                        r = (sa * sb) & elem_mask;
+                        break;
+                    }
                 case Request::ROWDIV:
                     {
                         if (vb == 0) {

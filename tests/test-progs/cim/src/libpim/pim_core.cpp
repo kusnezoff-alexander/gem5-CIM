@@ -20,10 +20,10 @@ static void *PIM_BASE_ADDR = (void*) 0x10000000;
 static const size_t HUGE_PAGE_SIZE = 2 * 1024 * 1024; 	// 2 MiB
 static size_t pim_pages_allocated = 0;
 
-static const size_t BYTES_PER_MAT_ROW = 8192; // 8KiB
-static const size_t NR_ROWS_IN_MAT = 2048;
-static const size_t MAT_SIZE_BYTES = BYTES_PER_MAT_ROW * NR_ROWS_IN_MAT; // mat size in bytes, 2MiB in our case (1 subarray per huge page)
-static const size_t MATS_PER_HUGE_PAGE = HUGE_PAGE_SIZE / MAT_SIZE_BYTES;
+static const size_t BYTES_PER_SUBARRAY_ROW = 8192; // 8KiB
+static const size_t NR_ROWS_IN_SUBARRAY = 2048;
+static const size_t SUBARRAY_SIZE_BYTES = BYTES_PER_SUBARRAY_ROW * NR_ROWS_IN_SUBARRAY; // mat size in bytes, 2MiB in our case (1 subarray per huge page)
+static const size_t SUBARRAYS_PER_HUGE_PAGE = HUGE_PAGE_SIZE / SUBARRAY_SIZE_BYTES;
 
 /** Tracks <u>contiguous</u> free space inside a mat */
 struct FreeMatBlock {
@@ -44,7 +44,7 @@ class MatMeta {
 
 	// newly created mats are considered to be fully free
 	MatMeta(void *virt_addr):
-		virt_addr(virt_addr), free_blocks_head( FreeMatBlock{ virt_addr, NR_ROWS_IN_MAT, nullptr, nullptr})
+		virt_addr(virt_addr), free_blocks_head( FreeMatBlock{ virt_addr, NR_ROWS_IN_SUBARRAY, nullptr, nullptr})
 	{};
 };
 
@@ -70,8 +70,8 @@ void* mmapPim(void* addr,
         perror("mmapPim syscall failed");
     } else {
 		// store newly available mats and remember the virtual address they are mapped to (`ret`=start address of newly allocated huge page)
-		for(int i=0; i<MATS_PER_HUGE_PAGE; ++i) {
-			auto vaddr_of_mat = (char*) ret + MAT_SIZE_BYTES*i;
+		for(int i=0; i<SUBARRAYS_PER_HUGE_PAGE; ++i) {
+			auto vaddr_of_mat = (char*) ret + SUBARRAY_SIZE_BYTES*i;
 			mats.push_back(MatMeta(vaddr_of_mat));
 		}
 	}
@@ -80,14 +80,17 @@ void* mmapPim(void* addr,
 
 void *find_free_space_in_mat(MatMeta* mat, const size_t size, const size_t mat_label)
 {
-	const size_t num_rows = ((size + BYTES_PER_MAT_ROW -1 ) / BYTES_PER_MAT_ROW) * BYTES_PER_MAT_ROW;
+	const size_t num_rows = (size + BYTES_PER_SUBARRAY_ROW - 1) / BYTES_PER_SUBARRAY_ROW;
 	auto block = &(mat->free_blocks_head);
 	while(block!=nullptr) {
-		size_t free_size_bytes = block->nr_free_rows_in_block * BYTES_PER_MAT_ROW;
+		size_t free_size_bytes = block->nr_free_rows_in_block * BYTES_PER_SUBARRAY_ROW;
 		if (free_size_bytes >= size) {
+			// save address to return before advancing the block pointer
+			void* alloc_addr = block->virt_addr;
+
 			// always choose the first `num_rows` inside this contiguous block
 			block->nr_free_rows_in_block -= num_rows;
-			block->virt_addr = ((char*) block->virt_addr) + num_rows * BYTES_PER_MAT_ROW;
+			block->virt_addr = ((char*) block->virt_addr) + num_rows * BYTES_PER_SUBARRAY_ROW;
 			if (block->nr_free_rows_in_block==0) {
 				// delete block from list of free blocks
 				if (block->prev_free_mat_block)
@@ -98,8 +101,9 @@ void *find_free_space_in_mat(MatMeta* mat, const size_t size, const size_t mat_l
 			}
 
 			mat_label_to_mat[mat_label] = mat;
-			return block->virt_addr;
+			return alloc_addr;
 		}
+		block = block->next_free_mat_block;
 	}
 	return nullptr;
 }
@@ -108,7 +112,7 @@ void *find_free_space_in_mat(MatMeta* mat, const size_t size, const size_t mat_l
 void* pim_malloc(const size_t size, const size_t mat_label) {
 
 	// sanity check
-	if (size > MAT_SIZE_BYTES) {
+	if (size > SUBARRAY_SIZE_BYTES) {
 		// Operand needs to fit into a single mat. Else ask the user to split `size` into multiple requests
 		return nullptr;
 	}
@@ -139,11 +143,7 @@ void* pim_malloc(const size_t size, const size_t mat_label) {
 	}
 	pim_pages_allocated++;
 
-	for(int i=0; i<MATS_PER_HUGE_PAGE; ++i){
-		auto virt_addr = (char*) next_hugepage_start + MAT_SIZE_BYTES * i;
-		mats.push_back(MatMeta(virt_addr));
-	}
-
+	// mats were already registered by mmapPim() above
 	// now the lastly added mat is guaranteed to be completely free
 	return find_free_space_in_mat(&mats.back(), size, mat_label);
 }

@@ -8,8 +8,15 @@ BENCHMARK_DIR = "/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-
 OUTPUT_FILE = f"{BENCHMARK_DIR}/results/extracted_metrics.csv"
 
 RESULTS_DIRS = {
-    "results_8k": 8000,
-    "results_40k": 40000,
+    "results_8bit_8k": (8000, 8),
+    "results_8bit_40k": (40000, 8),
+    "results_8bit_500k": (500000, 8),
+    "results_16bit_8k": (8000, 16),
+    "results_16bit_40k": (40000, 16),
+    "results_16bit_500k": (500000, 16),
+    "results_32bit_8k": (8000, 32),
+    "results_32bit_40k": (40000, 32),
+    "results_32bit_500k": (500000, 32),
 }
 
 OP_NAMES = [
@@ -41,12 +48,21 @@ def parse_gem5_stats(stats_dir, total_ops):
     if len(parts) < 2:
         return None
 
+    # Use first simSeconds (after m5_dump_stats) for PIM benchmarks
+    # This captures just the PIM operation, not the verification
+    first_part = parts[1]
     last_part = parts[-1]
 
-    tick_match = re.search(r"simTicks\s+(\d+)", last_part)
     runtime_ns = 0
-    if tick_match:
-        runtime_ns = int(tick_match.group(1)) / 1000
+    # Try first part first (for PIM with m5_dump_stats)
+    sec_match = re.search(r"simSeconds\s+([\d.]+)", first_part)
+    if sec_match:
+        runtime_ns = float(sec_match.group(1)) * 1e9
+    else:
+        # Fall back to last part for CPU benchmarks
+        sec_match = re.search(r"simSeconds\s+([\d.]+)", last_part)
+        if sec_match:
+            runtime_ns = float(sec_match.group(1)) * 1e9
 
     rank0_energy = 0
     rank1_energy = 0
@@ -80,7 +96,7 @@ def parse_gem5_stats(stats_dir, total_ops):
 def main():
     results = []
 
-    for dir_name, n_elems in RESULTS_DIRS.items():
+    for dir_name, (n_elems, bitwidth) in RESULTS_DIRS.items():
         results_dir = f"{BENCHMARK_DIR}/{dir_name}"
 
         for op_name in OP_NAMES:
@@ -96,6 +112,7 @@ def main():
                     results.append(
                         {
                             "Size": n_elems,
+                            "Bitwidth": bitwidth,
                             "Kernel": f"{variant.upper()}_{op_name}",
                             "Runtime_ns": data["runtime_ns"],
                             "Throughput_GOps_s": data["throughput_gops_s"],
@@ -107,6 +124,7 @@ def main():
                     results.append(
                         {
                             "Size": n_elems,
+                            "Bitwidth": bitwidth,
                             "Kernel": f"{variant.upper()}_{op_name}",
                             "Runtime_ns": "",
                             "Throughput_GOps_s": "",
@@ -147,6 +165,7 @@ def main():
     with open(OUTPUT_FILE, "w", newline="") as f:
         fieldnames = [
             "Size",
+            "Bitwidth",
             "Kernel",
             "Runtime_ns",
             "Throughput_GOps_s",

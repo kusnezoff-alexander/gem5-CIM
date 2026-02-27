@@ -335,7 +335,6 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
 			assert(mem_pkt->rank == mem_pkt1->rank);
 			assert(mem_pkt->bank == mem_pkt1->bank);
 			assert(mem_pkt->subarray== mem_pkt1->subarray);
-			assert(mem_pkt->mat == mem_pkt1->mat);
 		}
         // Make sure `dest`&`src2` address the same bank&rank
         // Only care about dram_pkt2 if it's a binary (=not a unary) op
@@ -343,7 +342,6 @@ MemCtrl::addToWriteQueue(PacketPtr pkt, unsigned int pkt_count,
           assert(mem_pkt->rank == mem_pkt2->rank);
           assert(mem_pkt->bank == mem_pkt2->bank);
 		  assert(mem_pkt->subarray== mem_pkt2->subarray);
-		  assert(mem_pkt->mat == mem_pkt2->mat);
         }
         mem_pkt->src1_row = mem_pkt1->row;
         mem_pkt->src2_row = mem_pkt2->row;
