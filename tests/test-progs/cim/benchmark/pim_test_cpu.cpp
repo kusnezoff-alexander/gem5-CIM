@@ -13,7 +13,23 @@
 using namespace std;
 using namespace std::chrono;
 
-const size_t N_ELEMS = 3000;
+#ifndef N_ELEMS
+#define N_ELEMS 3000
+#endif
+
+#ifndef BITWIDTH
+#define BITWIDTH 16
+#endif
+
+#if BITWIDTH == 8
+using dtype = int8_t;
+#elif BITWIDTH == 16
+using dtype = int16_t;
+#elif BITWIDTH == 32
+using dtype = int32_t;
+#else
+using dtype = int16_t;
+#endif
 
 template<typename T>
 typename enable_if<is_integral<T>::value>::type
@@ -58,8 +74,6 @@ check_result(T* res, T* array1_initial_val, T* array2_initial_val, T* mask_initi
     }
     return is_correct;
 }
-
-using dtype = int16_t;
 
 const char* op_names[] = {
     "rowand", "rowadd", "rowsub", "rowmult",
@@ -159,13 +173,7 @@ template<typename T>
 typename enable_if<is_integral<T>::value>::type
 cpu_rowbitcount(T* dst, const T* src, size_t size) {
     for (size_t i = 0; i < size; ++i) {
-        unsigned int count = 0;
-        unsigned int val = static_cast<unsigned int>(src[i]);
-        while (val) {
-            count += val & 1;
-            val >>= 1;
-        }
-        dst[i] = static_cast<T>(count);
+        dst[i] = static_cast<T>(__builtin_popcount(static_cast<unsigned int>(src[i])));
     }
 }
 
@@ -208,50 +216,64 @@ int main(int argc, char* argv[])
 
     init_data(array1, array2, array1_initial_val, array2_initial_val);
 
-    m5_reset_stats(0, 0);
-
     auto start = high_resolution_clock::now();
 
     bool passed = false;
 
     switch(op_id) {
         case 1: {
+            m5_reset_stats(0, 0);
+            m5_work_begin(1, 0);
             cpu_rowand(array1, array2, array1, N_ELEMS);
+            m5_work_end(1, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, bit_and<dtype>{});
             break;
         }
         case 2: {
+            m5_reset_stats(0, 0);
+            m5_work_begin(2, 0);
             cpu_rowadd(array1, array2, array1, N_ELEMS);
+            m5_work_end(2, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, plus<dtype>{});
             break;
         }
         case 3: {
+            m5_reset_stats(0, 0);
+            m5_work_begin(3, 0);
             cpu_rowsub(array1, array1, array2, N_ELEMS);
+            m5_work_end(3, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, minus<dtype>{});
             break;
         }
         case 4: {
+            m5_reset_stats(0, 0);
+            m5_work_begin(4, 0);
             cpu_rowmult(array1, array2, array1, N_ELEMS);
+            m5_work_end(4, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, multiplies<dtype>{});
             break;
         }
         case 5: {
             auto min_op = [](auto a, auto b) { return a < b ? a : b; };
-
             m5_reset_stats(0, 0);
-            m5_work_begin(11, 0);
+            m5_work_begin(5, 0);
             cpu_rowmin(array1, array1, array2, N_ELEMS);
-            m5_work_end(11, 0);
+            m5_work_end(5, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, min_op);
             break;
         }
         case 6: {
             auto max_op = [](auto a, auto b) { return a > b ? a : b; };
-
             m5_reset_stats(0, 0);
-            m5_work_begin(11, 0);
+            m5_work_begin(6, 0);
             cpu_rowmax(array1, array1, array2, N_ELEMS);
-            m5_work_end(11, 0);
+            m5_work_end(6, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, max_op);
             break;
         }
@@ -259,11 +281,11 @@ int main(int argc, char* argv[])
             auto row_equal = [](dtype a, dtype b) -> dtype {
                 return (a == b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
-
             m5_reset_stats(0, 0);
-            m5_work_begin(11, 0);
+            m5_work_begin(7, 0);
             cpu_rowequal(array1, array1, array2, N_ELEMS);
-            m5_work_end(11, 0);
+            m5_work_end(7, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_equal);
             break;
         }
@@ -272,9 +294,10 @@ int main(int argc, char* argv[])
                 return (a > b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
             m5_reset_stats(0, 0);
-            m5_work_begin(11, 0);
+            m5_work_begin(8, 0);
             cpu_rowgreater(array1, array1, array2, N_ELEMS);
-            m5_work_end(11, 0);
+            m5_work_end(8, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_greater);
             break;
         }
@@ -283,9 +306,10 @@ int main(int argc, char* argv[])
                 return (a >= b) ? static_cast<dtype>(0xFFFF) : static_cast<dtype>(0);
             };
             m5_reset_stats(0, 0);
-            m5_work_begin(11, 0);
+            m5_work_begin(9, 0);
             cpu_rowgreater_equal(array1, array1, array2, N_ELEMS);
-            m5_work_end(11, 0);
+            m5_work_end(9, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_greater_equal);
             break;
         }
@@ -298,9 +322,10 @@ int main(int argc, char* argv[])
                 return (mask_val != 0) ? a : b;
             };
             m5_reset_stats(0, 0);
-            m5_work_begin(11, 0);
+            m5_work_begin(10, 0);
             cpu_rowif_else(array1, array1, array2, array1_initial_val, N_ELEMS);
-            m5_work_end(11, 0);
+            m5_work_end(10, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, mask_initial_val, row_ifelse);
             delete[] mask_initial_val;
             break;
@@ -313,6 +338,7 @@ int main(int argc, char* argv[])
             m5_work_begin(11, 0);
             cpu_rowabs(array1, array1, N_ELEMS);
             m5_work_end(11, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_abs);
             break;
         }
@@ -327,9 +353,10 @@ int main(int argc, char* argv[])
                 return static_cast<dtype>(count);
             };
             m5_reset_stats(0, 0);
-            m5_work_begin(11, 0);
+            m5_work_begin(12, 0);
             cpu_rowbitcount(array1, array1, N_ELEMS);
-            m5_work_end(11, 0);
+            m5_work_end(12, 0);
+            m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_bitcount);
             break;
         }

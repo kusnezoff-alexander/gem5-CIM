@@ -69,8 +69,8 @@ class DRAMInterface(MemInterface):
     # Subarray/Mat Level. These are used to compute `subarraysPerBank`
     # see MIMDRAM paper for common parameters (mats_per_subarray \in [32,128],
     # rows_per_mat \in [512,1024], cols_per_mat \in [512,1024]\)
-    rows_per_mat = Param.Unsigned(1024, "Number of columns inside a DRAM mat")
-    cols_per_mat = Param.Unsigned(2048, "Number of columns inside a DRAM mat")
+    rows_per_subarray = Param.Unsigned(1024, "Number of columns inside a DRAM mat")
+    cols_per_subarray = Param.Unsigned(65535, "Number of columns inside a DRAM mat")
     # mats_per_bank = Param.Unsigned(512, "Number of mats inside a DRAM bank") # determined by total capacity / capacity per mat
 
     # Enable DRAM powerdown states if True. This is False by default due to

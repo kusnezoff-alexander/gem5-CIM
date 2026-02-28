@@ -6,6 +6,10 @@
 #define N_RUNS 10
 #endif
 
+#ifndef BITWIDTH
+#define BITWIDTH 16
+#endif
+
 #include "pim_core.h"
 #include <cstdint>
 #include <cstdio>
@@ -22,7 +26,15 @@ using namespace std;
 
 size_t next_mat = 0;
 
+#if BITWIDTH == 8
+using dtype = int8_t;
+#elif BITWIDTH == 16
 using dtype = int16_t;
+#elif BITWIDTH == 32
+using dtype = int32_t;
+#else
+using dtype = int16_t;
+#endif
 
 template<std::integral T>
 T* pim_alloc_safe(size_t size_bytes, size_t& next_mat) {
@@ -69,7 +81,7 @@ bool check_axpy_result(T* y, T* y_initial, T* x_initial, dtype alpha)
 {
     bool is_correct = true;
     for(size_t i = 0; i < N_ELEMS; ++i) {
-        auto expected = static_cast<T>(alpha) * x_initial[i] + y_initial[i];
+        T expected = static_cast<T>(alpha) * x_initial[i] + y_initial[i];
         if(y[i] != expected) {
             std::printf("WRONG: y[%zu]=%d but should be %d (alpha=%d, x=%d, y_initial=%d)\n",
                     i, y[i], expected, alpha, x_initial[i], y_initial[i]);
@@ -88,15 +100,13 @@ bool test_axpy(int run_id)
 
     auto x = pim_alloc_safe<dtype>(N_ELEMS * sizeof(dtype), next_mat);
     auto y = pim_alloc_safe<dtype>(N_ELEMS * sizeof(dtype), next_mat);
-    auto temp = pim_alloc_safe<dtype>(N_ELEMS * sizeof(dtype), next_mat);
     auto scalar_alpha = pim_alloc_safe<dtype>(N_ELEMS * sizeof(dtype), next_mat);
 
-    printf("Run %d: PIM memory allocated: x=%p, y=%p, temp=%p, scalar_alpha=%p\n",
-           run_id, x, y, temp, scalar_alpha);
+    printf("Run %d: PIM memory allocated: x=%p, y=%p, scalar_alpha=%p\n",
+           run_id, x, y, scalar_alpha);
 
     rowtrsp_init(x, N_ELEMS, sizeof(dtype));
     rowtrsp_init(y, N_ELEMS, sizeof(dtype));
-    rowtrsp_init(temp, N_ELEMS, sizeof(dtype));
     rowtrsp_init(scalar_alpha, N_ELEMS, sizeof(dtype));
 
     init_data(x, y, x_initial, y_initial);
@@ -109,15 +119,11 @@ bool test_axpy(int run_id)
 
     m5_reset_stats(0, 0);
 
-    m5_work_begin(1, 0);
-    rowmult(temp, x, scalar_alpha, N_ELEMS, sizeof(dtype) * 8);
-    m5_work_end(1, 0);
+    rowmult(x, x, scalar_alpha, N_ELEMS, sizeof(dtype) * 8);
 
-    m5_work_begin(2, 0);
-    rowadd(y, y, temp, N_ELEMS, sizeof(dtype) * 8);
-    m5_work_end(2, 0);
+    rowadd(y, y, x, N_ELEMS, sizeof(dtype) * 8);
 
-    m5_dump_reset_stats(0, 0);
+	m5_dump_stats(0, 0);
 
     bool correct = check_axpy_result(y, y_initial, x_initial, alpha);
 
@@ -140,7 +146,7 @@ int main()
     int passed_runs = 0;
     for (int run = 0; run < N_RUNS; run++) {
         printf("\n=== Run %d/%d ===\n", run + 1, N_RUNS);
-        
+
         bool result = false;
         while(next_mat < NR_MATS && !result) {
             result = test_axpy(run + 1);

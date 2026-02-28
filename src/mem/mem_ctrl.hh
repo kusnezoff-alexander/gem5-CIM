@@ -126,7 +126,6 @@ class MemPacket
     const uint8_t rank;
     const uint8_t bank;
     const uint8_t subarray;	// a bank typically has 16-64 subarrays
-    const uint8_t mat;		// mat inside subarray
 	uint64_t num_elements; 	// addrs->size
 	uint64_t elem_bitwidth; 	// addrs->n
     const uint32_t row;
@@ -233,7 +232,7 @@ class MemPacket
         : entryTime(curTick()), readyTime(curTick()), pkt(_pkt),
           _requestorId(pkt->requestorId()),
           read(is_read), dram(is_dram), pseudoChannel(_channel), rank(_rank),
-          bank(_bank), subarray(0), mat(0),
+          bank(_bank), subarray(0),
           // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
           // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
           // dram_ctrl.hh#L502)
@@ -245,13 +244,13 @@ class MemPacket
     { }
 
     MemPacket(PacketPtr _pkt, bool is_read, bool is_dram, uint8_t _channel,
-               uint8_t _rank, uint8_t _bank, uint8_t _subarray, uint8_t _mat,
+               uint8_t _rank, uint8_t _bank, uint8_t _subarray,
 			   uint32_t _row, uint16_t bank_id,
                Addr _addr, unsigned int _size)
         : entryTime(curTick()), readyTime(curTick()), pkt(_pkt),
           _requestorId(pkt->requestorId()),
           read(is_read), dram(is_dram), pseudoChannel(_channel), rank(_rank),
-          bank(_bank), subarray(_subarray), mat(_mat),  num_elements(0),
+          bank(_bank), subarray(_subarray), num_elements(0),
           // taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
           // 23495f10950d891a95a0b8a05d0a6a88e92de154/gem5/src/mem/
           // dram_ctrl.hh#L502)

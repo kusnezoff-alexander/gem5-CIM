@@ -17,6 +17,7 @@
 #include <map>
 #include <algorithm>
 #include <cmath>
+#include <gem5/m5ops.h>
 
 using namespace std;
 
@@ -139,10 +140,12 @@ int main() {
     cout << "Loaded test set:     " << test.n_samples << " samples\n";
 
     size_t correct = 0;
+    m5_reset_stats(0, 0);
     for (size_t i = 0; i < test.n_samples; ++i) {
         int pred = knn_predict(train, test.features[i]);
         if (pred == test.labels[i]) correct++;
     }
+    m5_dump_stats(0, 0);
 
     float accuracy = 100.0f * correct / test.n_samples;
     cout << "Accuracy: " << accuracy << "% ("

@@ -12,10 +12,10 @@ static const void *PIM_BASE_ADDR = (void*) 0x10000000;
 static const size_t HUGE_PAGE_SIZE = 2 * 1024 * 1024; 	// 2 MiB
 static size_t pim_pages_allocated = 0;
 
-// see /gem5-CIM-fix/src/mem/DRAMInterface.py for config
-static const size_t NR_COLS_IN_MAT = 1024;
+// see /gem5-CIM/src/mem/DRAMInterface.py for config
+static const size_t NR_COLS_IN_MAT = 65'535;
 static const size_t BYTES_PER_MAT_ROW = NR_COLS_IN_MAT / 8;
-static const size_t NR_ROWS_IN_MAT = 2048;
+static const size_t NR_ROWS_IN_MAT = 256;
 static const size_t MAT_SIZE_BYTES = NR_COLS_IN_MAT * NR_ROWS_IN_MAT / 8; // mat size in bytes
 static const size_t MATS_PER_HUGE_PAGE = HUGE_PAGE_SIZE / MAT_SIZE_BYTES;
 static const size_t NR_HUGEPAGES = 20;

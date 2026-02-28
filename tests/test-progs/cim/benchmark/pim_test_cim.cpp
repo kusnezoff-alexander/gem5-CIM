@@ -13,8 +13,45 @@
 using namespace pim_core;
 using namespace std;
 
-const size_t N_ELEMS = 3000;
+#ifndef N_ELEMS
+#define N_ELEMS 3000
+#endif
+
+#ifndef BITWIDTH
+#define BITWIDTH 16
+#endif
+
+#if BITWIDTH == 8
+using dtype = int8_t;
+#elif BITWIDTH == 16
+using dtype = int16_t;
+#elif BITWIDTH == 32
+using dtype = int32_t;
+#else
+using dtype = int16_t;
+#endif
+
 size_t next_mat = 0;
+
+template<typename T>
+typename enable_if<is_integral<T>::value, T*>::type
+pim_alloc_safe(size_t size_bytes, size_t& next_mat) {
+    T* ptr = nullptr;
+
+    do {
+        ptr = static_cast<T*>(pim_malloc(size_bytes, next_mat));
+        if (ptr != nullptr) break;
+        next_mat++;
+    } while (next_mat < NR_MATS);
+
+    if (ptr == nullptr) {
+        cerr << "ERROR: not enough PIM space for "
+             << size_bytes << " bytes\n";
+        exit(1);
+    }
+
+    return ptr;
+}
 
 template<typename T>
 typename enable_if<is_integral<T>::value>::type
@@ -60,8 +97,6 @@ check_result(T* res, T* array1_initial_val, T* array2_initial_val, T* mask_initi
     return is_correct;
 }
 
-using dtype = int16_t;
-
 const char* op_names[] = {
     "rowand", "rowadd", "rowsub", "rowmult", // "rowdiv",
     "rowmin", "rowmax", "rowequal", "rowgreater", "rowgreater_equal",
@@ -73,17 +108,18 @@ int main(int argc, char* argv[])
     bool run_checks = false;
     int op_id = 1;
 
-    if (argc == 2) {
-        if (string(argv[1]) == "--check") {
-            run_checks = true;
-            op_id = 1;  // default to first operation
-        } else {
-            op_id = atoi(argv[1]);
-        }
-    } else if (argc == 3 && string(argv[2]) == "--check") {
+    if (argc >= 2 && string(argv[1]) == "--check") {
         run_checks = true;
+        op_id = 1;
+    } else if (argc >= 2) {
         op_id = atoi(argv[1]);
-    } else if (argc != 1) {
+    }
+
+    if (argc >= 3 && string(argv[2]) == "--check") {
+        run_checks = true;
+    }
+
+    if (argc > 3) {
         cerr << "Usage: " << argv[0] << " [op_id] [--check]" << endl;
         cerr << "op_id: 1=rowand, 2=rowadd, 3=rowsub, 4=rowmult, 5=rowdiv, ";
         cerr << "6=rowmin, 7=rowmax, 8=rowequal, 9=rowgreater, 10=rowgreater_equal, ";
@@ -97,24 +133,14 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    cout << "CIM: Running " << op_names[op_id-1] << " (op_id=" << op_id << ")" << endl;
+    cout << "CIM: Running " << op_names[op_id-1] << " (op_id=" << op_id << ", n_elems=" << N_ELEMS << ")" << endl;
 
     auto array1_initial_val = static_cast<dtype*>(malloc(N_ELEMS*sizeof(dtype)));
     auto array2_initial_val = static_cast<dtype*>(malloc(N_ELEMS*sizeof(dtype)));
-    auto array1 = static_cast<dtype*>(pim_malloc(N_ELEMS*sizeof(dtype), next_mat));
-    if (!array1) {
-        printf("ERROR: pim_malloc failed for array1\n");
-        return 1;
-    }
+    auto array1 = pim_alloc_safe<dtype>(N_ELEMS*sizeof(dtype), next_mat);
+    auto array2 = pim_alloc_safe<dtype>(N_ELEMS*sizeof(dtype), next_mat);
 
-    auto array2 = static_cast<dtype*>(pim_malloc(N_ELEMS*sizeof(dtype), next_mat));
-    if (!array2) {
-        printf("ERROR: pim_malloc failed for array2\n");
-        pim_free(array1);
-        return 1;
-    }
-
-    std::printf("Ran pim_malloc and got ptr array1=%p, array2=%p\n", array1, array2);
+    std::printf("Ran pim_alloc_safe and got ptr array1=%p, array2=%p\n", array1, array2);
 
     init_data(array1, array2, array1_initial_val, array2_initial_val);
 
@@ -128,6 +154,7 @@ int main(int argc, char* argv[])
             m5_work_begin(1, 0);
             rowand(array1, array2, array1, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(1, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) { passed = check_result(array1, array1_initial_val, array2_initial_val, bit_and<dtype>{}); }
             break;
         }
@@ -136,6 +163,7 @@ int main(int argc, char* argv[])
             m5_work_begin(2, 0);
             rowadd(array1, array2, array1, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(2, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, plus<dtype>{});
             break;
         }
@@ -144,6 +172,7 @@ int main(int argc, char* argv[])
             m5_work_begin(3, 0);
             rowsub(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(3, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, minus<dtype>{});
             break;
         }
@@ -152,6 +181,7 @@ int main(int argc, char* argv[])
             m5_work_begin(4, 0);
             rowmult(array1, array2, array1, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(4, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, multiplies<dtype>{});
             break;
         }
@@ -160,6 +190,7 @@ int main(int argc, char* argv[])
             m5_work_begin(5, 0);
             rowdiv(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(5, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, divides<dtype>{});
             break;
         }
@@ -169,6 +200,7 @@ int main(int argc, char* argv[])
             m5_work_begin(6, 0);
             rowmin(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(6, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, min_op);
             break;
         }
@@ -178,6 +210,7 @@ int main(int argc, char* argv[])
             m5_work_begin(7, 0);
             rowmax(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(7, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, max_op);
             break;
         }
@@ -189,6 +222,7 @@ int main(int argc, char* argv[])
             m5_work_begin(8, 0);
             rowequal(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(8, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_equal);
             break;
         }
@@ -200,6 +234,7 @@ int main(int argc, char* argv[])
             m5_work_begin(9, 0);
             rowgreater(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(9, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_greater);
             break;
         }
@@ -211,6 +246,7 @@ int main(int argc, char* argv[])
             m5_work_begin(10, 0);
             rowgreater_equal(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(10, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_greater_equal);
             break;
         }
@@ -226,6 +262,7 @@ int main(int argc, char* argv[])
             m5_work_begin(11, 0);
             rowif_else(array1, array1, array2, array1_initial_val, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(11, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, mask_initial_val, row_ifelse);
             delete[] mask_initial_val;
             break;
@@ -238,6 +275,7 @@ int main(int argc, char* argv[])
             m5_work_begin(12, 0);
             rowabs(array1, array1, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(12, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_abs);
             break;
         }
@@ -255,6 +293,7 @@ int main(int argc, char* argv[])
             m5_work_begin(13, 0);
             rowbitcount(array1, array1, array2, N_ELEMS, sizeof(dtype) * 8);
             m5_work_end(13, 0);
+			m5_dump_stats(0, 0);
             if (run_checks) passed = check_result(array1, array1_initial_val, array2_initial_val, row_bitcount);
             break;
         }

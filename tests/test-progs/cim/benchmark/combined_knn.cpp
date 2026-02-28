@@ -14,6 +14,7 @@
 #include <map>
 #include <algorithm>
 #include <random>
+#include <gem5/m5ops.h>
 
 using namespace pim_core;
 using namespace std;
@@ -189,6 +190,7 @@ bool test_knn_run(int run_id)
     KNNWorkspace workspace(train.n_samples);
 
     size_t correct = 0;
+    m5_reset_stats(0, 0);
     for (size_t i = 0; i < test.n_samples; ++i) {
         int32_t query[N_FEATURES];
         for (size_t f = 0; f < N_FEATURES; ++f) {
@@ -198,6 +200,7 @@ bool test_knn_run(int run_id)
         int pred = knn_predict(train, query, workspace);
         if (pred == test.labels[i]) correct++;
     }
+    m5_dump_stats(0, 0);
 
     float accuracy = 100.0f * correct / test.n_samples;
     cout << "Run " << run_id << " Accuracy: " << accuracy << "% ("

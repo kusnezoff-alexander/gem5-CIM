@@ -14,7 +14,7 @@ LIB_DIR   := $(BUILD_DIR)/lib
 
 # Flags
 CXXFLAGS  := -Wall -Wextra -O2 -std=c++20
-CXXFLAGS  += -I/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/include
+CXXFLAGS  += -I/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM/include
 TESTFLAGS := -std=c++20
 
 # Library
@@ -124,7 +124,7 @@ $(FULL_PROG): $(FULL_OBJ) $(LIB) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -o $@
 
 $(TEST_PROG): $(TEST_OBJ) $(LIB) | $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -L/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/util/m5/build/x86/out -lm5 -o $@
+	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -L/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM/util/m5/build/x86/out -lm5 -o $@
 
 $(PIMMALLOC_PROG): $(PIMMALLOC_OBJ) $(LIB) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -o $@
@@ -142,10 +142,10 @@ $(KNN_GPU_PROG): $(KNN_GPU_OBJ) | $(BIN_DIR)
 	hipcc $< -o $@
 
 $(AXPY_PROG): $(AXPY_OBJ) $(LIB) | $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -L/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/util/m5/build/x86/out -lm5 -o $@
+	$(CXX) $(CXXFLAGS) $< -L$(LIB_DIR) -lpim -L/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM/util/m5/build/x86/out -lm5 -o $@
 
 $(AXPY_CPU_PROG): $(AXPY_CPU_OBJ) | $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $< -L/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM-fix/util/m5/build/x86/out -lm5 -o $@
+	$(CXX) $(CXXFLAGS) $< -L/home/alex/Documents/Studium/Sem7/Grosser_Beleg_inf_d_950/gem5-CIM/util/m5/build/x86/out -lm5 -o $@
 
 $(AXPY_GPU_PROG): $(AXPY_GPU_OBJ) | $(BIN_DIR)
 	hipcc $< -o $@

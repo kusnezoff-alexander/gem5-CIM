@@ -14,7 +14,19 @@
 using namespace std;
 using namespace std::chrono;
 
+#ifndef BITWIDTH
+#define BITWIDTH 16
+#endif
+
+#if BITWIDTH == 8
+using dtype = int8_t;
+#elif BITWIDTH == 16
 using dtype = int16_t;
+#elif BITWIDTH == 32
+using dtype = int32_t;
+#else
+using dtype = int16_t;
+#endif
 
 // Kernel wrapper function declarations (defined in gpu_kernels.hip)
 extern "C" {

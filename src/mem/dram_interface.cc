@@ -410,80 +410,20 @@ DRAMInterface::doBurstAccess(MemPacket* mem_pkt, Tick next_burst_at,
         // Do sequence of activate-activate-precharge operations
 		// - this code corresponds to the translation into μPrograms
 		// (done by a *Control Unit*) described in Chap4.1 of the MIMDRAM Paper
-        DPRINTF(RowOp, "DRAMCtrl recieved RowOp=%d Packet to rank=%d, bank=%d, size=%lu, n=%lu \n",
-                *mem_pkt->row_op, mem_pkt->rank, mem_pkt->bank, size, n);
 
-		int nr_spanned_rows = (size*n) / (colsPerMat*1.0f);
+		int nr_spanned_rows = size/colsPerSubarray; //
+        DPRINTF(RowOp, "DRAMCtrl recieved RowOp=%d Packet to rank=%d, bank=%d, size=%lu, n=%lu (spanning %d rows) \n",
+                *mem_pkt->row_op, mem_pkt->rank, mem_pkt->bank, size, n, nr_spanned_rows);
 		while(nr_spanned_rows--) {
 			switch (*mem_pkt->row_op) {
 				// TODO: Control Unit should take over here (see [#Issue 7](https://github.com/kusnezoff-alexander/gem5-CIM/issues/7))
 				// - issue AP&AAPs for every row which is spanned by the operand
 				// TODO: extract into new function ("PIMDRAMInterface"-function or sth like that)
+				//
 				case Request::ROWAND:
-					// 1) Copy src1 to `T0`
-					aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
-							Bank::B_T0,    true);
-					cmd_at = bank_ref.actAllowedAt;
-					// 2) Copy src2 to `T1`
-					aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
-							Bank::B_T1,    true);
-					// 3) Copy C0 to `T2`
-					cmd_at = bank_ref.actAllowedAt;
-					aapBank(rank_ref, bank_ref, cmd_at, Bank::C_0,
-							Bank::B_T2,    true);
-					cmd_at = bank_ref.actAllowedAt;
-					// TRA (due to `ACT` to `B_T0_T1_T2`) & copy result to dst-row (`mem_pkt->row`)
-					aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
-							mem_pkt->row, true);
-					cmd_at = bank_ref.actAllowedAt;
-					break;
 				case Request::ROWOR:
-					// clone input1
-					aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
-							Bank::B_T0,    true);
-					cmd_at = bank_ref.actAllowedAt;
-					// clone input2
-					aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
-							Bank::B_T1,    true);
-					cmd_at = bank_ref.actAllowedAt;
-					// clone constant 1s
-					aapBank(rank_ref, bank_ref, cmd_at, Bank::C_1,
-							Bank::B_T2,    true);
-					cmd_at = bank_ref.actAllowedAt;
-					// TRA & copy result back into result row
-					aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
-							mem_pkt->row, true);
-					cmd_at = bank_ref.actAllowedAt;
-					break;
 				case Request::ROWNOT:
-					aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
-							Bank::B_DCC0N, true);
-					cmd_at = bank_ref.actAllowedAt;
-					aapBank(rank_ref, bank_ref, cmd_at, Bank::B_DCC0,
-							mem_pkt->row, true);
-					cmd_at = bank_ref.actAllowedAt;
-					break;
 				case Request::ROWXOR:
-					aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src1_row,
-							Bank::B_DCC0N_T0, true);
-					cmd_at = bank_ref.actAllowedAt;
-					aapBank(rank_ref, bank_ref, cmd_at, mem_pkt->src2_row,
-							Bank::B_DCC1N_T1, true);
-					cmd_at = bank_ref.actAllowedAt;
-					aapBank(rank_ref, bank_ref, cmd_at, Bank::C_0,
-							Bank::B_T2_T3,    true);
-					cmd_at = bank_ref.actAllowedAt;
-					apBank (rank_ref, bank_ref, cmd_at, Bank::B_DCC0_T1_T2);
-					cmd_at = bank_ref.actAllowedAt;
-					apBank (rank_ref, bank_ref, cmd_at, Bank::B_DCC1_T0_T3);
-					cmd_at = bank_ref.actAllowedAt;
-					aapBank(rank_ref, bank_ref, cmd_at, Bank::C_1,
-							Bank::B_T2,       true);
-					cmd_at = bank_ref.actAllowedAt;
-					aapBank(rank_ref, bank_ref, cmd_at, Bank::B_T0_T1_T2,
-							mem_pkt->row,    true);
-					cmd_at = bank_ref.actAllowedAt;
-					break;
 				case Request::ROWSUB:
 				case Request::ROWADD:
 				case Request::ROWMULT:
@@ -787,7 +727,7 @@ DRAMInterface::DRAMInterface(const DRAMInterfaceParams &_p)
     : MemInterface(_p),
       bankGroupsPerRank(_p.bank_groups_per_rank),
       bankGroupArch(_p.bank_groups_per_rank > 0),
-	  rowsPerMat(_p.rows_per_mat), colsPerMat(_p.cols_per_mat), matsPerBank(0),
+	  rowsPerSubarray(_p.rows_per_subarray), colsPerSubarray(_p.cols_per_subarray), subarraysPerBank(0),
       tRL(_p.tCL),
       tWL(_p.tCWL),
       tBURST_MIN(_p.tBURST_MIN),
@@ -849,7 +789,7 @@ DRAMInterface::DRAMInterface(const DRAMInterfaceParams &_p)
             rowBufferSize, burstsPerRowBuffer);
 
     rowsPerBank = capacity / (rowBufferSize * banksPerRank * ranksPerChannel);
-	matsPerBank = capacity / (rowsPerMat*colsPerMat/8);
+	subarraysPerBank = capacity / (rowsPerSubarray*colsPerSubarray/8);
 
     // some basic sanity checks
     if (tREFI <= tRP || tREFI <= tRFC) {
@@ -1000,7 +940,7 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
     // always the top bits, and check before creating the packet
     uint64_t row;
 
-	uint64_t mat = 0;
+	uint64_t subarray = 0;
 
     // Get packed address, starting at 0
     Addr addr = getCtrlAddr(pkt_addr);
@@ -1075,18 +1015,18 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
 		// Skip channel extraction
 
 		Addr addr = getCtrlAddr(pkt_addr); // our address allocation doesn't work with bursts
-		const int BYTES_PER_MAT_ROW = colsPerMat / 8;
+		const int BYTES_PER_MAT_ROW = colsPerSubarray / 8;
 		// Extract byte/column offset within row (LSB after channel)
 		Addr _ = addr % BYTES_PER_MAT_ROW;  // byteoffset
 		addr = addr / BYTES_PER_MAT_ROW;
 
 		// Extract Row bits (which row within the mat)
-		row = addr % rowsPerMat;
-		addr = addr / rowsPerMat;
+		row = addr % rowsPerSubarray;
+		addr = addr / rowsPerSubarray;
 
 		// Extract Mat bits
-		mat = addr % matsPerBank;
-		addr = addr / matsPerBank;
+		subarray = addr % subarraysPerBank;
+		addr = addr / subarraysPerBank;
 
 		// Extract Bank bits
 		bank = addr % banksPerRank;
@@ -1100,7 +1040,7 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
 
     if(pkt->isRowOp())
         DPRINTF(RowOp, "Address: %#x Rank %d Bank %d Row %d Mat %d\n",
-                pkt_addr, rank, bank, row, mat);
+                pkt_addr, rank, bank, row, subarray);
 
     assert(rank < ranksPerChannel);
     assert(bank < banksPerRank);
@@ -1116,7 +1056,7 @@ DRAMInterface::decodePacket(const PacketPtr pkt, Addr pkt_addr,
     uint16_t bank_id = banksPerRank * rank + bank;
 
     return new MemPacket(pkt, is_read, true, pseudo_channel, rank, bank,
-			0, mat, row, bank_id, pkt_addr, size); // do we even need subarray-level ??
+			subarray, row, bank_id, pkt_addr, size); // do we even need subarray-level ??
 }
 
 void DRAMInterface::setupRank(const uint8_t rank, const bool is_read)
@@ -1516,6 +1456,7 @@ rowOpToFilePrefix(Request::RowOp op)
     switch (op) {
         case Request::ROWAND:            return "and";
         case Request::ROWOR:             return "or";
+        case Request::ROWNOT:            return "not";
         case Request::ROWXOR:            return "xor";
         case Request::ROWSUB:            return "sub";
         case Request::ROWADD:            return "add";

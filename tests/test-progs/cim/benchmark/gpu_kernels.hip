@@ -4,7 +4,19 @@
 #include <hip/hip_runtime.h>
 #include <cstdint>
 
+#ifndef BITWIDTH
+#define BITWIDTH 16
+#endif
+
+#if BITWIDTH == 8
+using dtype = int8_t;
+#elif BITWIDTH == 16
 using dtype = int16_t;
+#elif BITWIDTH == 32
+using dtype = int32_t;
+#else
+using dtype = int16_t;
+#endif
 
 // 1. Row AND operation
 __global__ void gpu_rowand_kernel(dtype* dst, const dtype* src1, const dtype* src2, size_t size) {

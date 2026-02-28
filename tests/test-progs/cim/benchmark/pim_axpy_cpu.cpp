@@ -12,7 +12,19 @@
 #define N_RUNS 10
 #endif
 
+#ifndef BITWIDTH
+#define BITWIDTH 16
+#endif
+
+#if BITWIDTH == 8
+using dtype = int8_t;
+#elif BITWIDTH == 16
 using dtype = int16_t;
+#elif BITWIDTH == 32
+using dtype = int32_t;
+#else
+using dtype = int16_t;
+#endif
 
 void init_data(dtype* x, dtype* y, dtype* x_initial, dtype* y_initial)
 {
@@ -32,7 +44,7 @@ bool check_axpy_result(dtype* y, dtype* y_initial, dtype* x_initial, dtype alpha
 {
     bool is_correct = true;
     for(size_t i = 0; i < N_ELEMS; ++i) {
-        auto expected = static_cast<dtype>(alpha) * x_initial[i] + y_initial[i];
+        dtype expected = static_cast<dtype>(alpha) * x_initial[i] + y_initial[i];
         if(y[i] != expected) {
             std::printf("WRONG: y[%zu]=%d but should be %d (alpha=%d, x=%d, y_initial=%d)\n",
                     i, y[i], expected, alpha, x_initial[i], y_initial[i]);
@@ -67,17 +79,14 @@ bool test_axpy()
 
     m5_reset_stats(0, 0);
 
-    m5_work_begin(1, 0);
     for (int r = 0; r < N_RUNS; ++r) {
         for (size_t i = 0; i < N_ELEMS; ++i) {
             y[i] = y_initial[i];
         }
         axpy_loop(y, x, alpha, N_ELEMS);
     }
-    m5_work_end(1, 0);
 
-    m5_dump_reset_stats(0, 0);
-
+	m5_dump_stats(0, 0);
     bool correct = check_axpy_result(y, y_initial, x_initial, alpha);
 
     if (correct) {
