@@ -24,7 +24,7 @@ T* pim_alloc_safe(size_t size_bytes, size_t& next_mat) {
         ptr = static_cast<T*>(pim_malloc(size_bytes, next_mat));
         if (ptr != nullptr) break;
         next_mat++;
-    } while (next_mat < NR_MATS);
+    } while (next_mat < NR_SUBARRAYS);
 
     if (ptr == nullptr) {
         cerr << "ERROR: not enough PIM space for "
@@ -401,12 +401,12 @@ size_t fuzzy_testing()
 
 int main()
 {
-	while(next_mat < NR_MATS && !test_every_rowop()) ;
+	while(next_mat < NR_SUBARRAYS && !test_every_rowop()) ;
 
 	// also try with random data
 	int nr_fuzzy_tests = 5;
 	size_t nr_correct = 0;
-	for (int i=0; i<nr_fuzzy_tests && next_mat < NR_MATS; ++i) {
+	for (int i=0; i<nr_fuzzy_tests && next_mat < NR_SUBARRAYS; ++i) {
 		auto c =  fuzzy_testing();
 		if (c==0) {
 			next_mat++;

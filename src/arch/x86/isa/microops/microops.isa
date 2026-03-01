@@ -61,5 +61,4 @@
 ##include "debug.isa"
 
 //Microops for bulk bitwise in-DRAM operations
-//##include "rowbit.isa"
-##include "rowbit_FIXED.isa"
+##include "rowbit.isa"

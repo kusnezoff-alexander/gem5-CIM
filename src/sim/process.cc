@@ -317,7 +317,7 @@ Process::drain()
 }
 
 void
-Process::allocatePimMem(Addr vaddr, int64_t size, uint32_t mat_label)
+Process::allocatePimMem(Addr vaddr, int64_t size)
 {
 	assert(system->hugePagePoolrange().contains(vaddr));
 

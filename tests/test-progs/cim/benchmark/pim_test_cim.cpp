@@ -42,7 +42,7 @@ pim_alloc_safe(size_t size_bytes, size_t& next_mat) {
         ptr = static_cast<T*>(pim_malloc(size_bytes, next_mat));
         if (ptr != nullptr) break;
         next_mat++;
-    } while (next_mat < NR_MATS);
+    } while (next_mat < NR_SUBARRAYS);
 
     if (ptr == nullptr) {
         cerr << "ERROR: not enough PIM space for "

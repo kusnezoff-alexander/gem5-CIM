@@ -195,12 +195,12 @@ size_t fuzzy_testing()
 int main()
 {
 	cout << "Running pim_test_pimmalloc.cpp" << endl;
-	while(next_mat < NR_MATS && !test_every_rowop()) ;
+	while(next_mat < NR_SUBARRAYS && !test_every_rowop()) ;
 
 	// also try with random data
 	int nr_fuzzy_tests = 5;
 	size_t nr_correct = 0;
-	for (int i=0; i<nr_fuzzy_tests && next_mat < NR_MATS; ++i) {
+	for (int i=0; i<nr_fuzzy_tests && next_mat < NR_SUBARRAYS; ++i) {
 		auto c =  fuzzy_testing();
 		if (c==0) {
 			next_mat++;

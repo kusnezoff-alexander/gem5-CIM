@@ -13,20 +13,20 @@ static const size_t HUGE_PAGE_SIZE = 2 * 1024 * 1024; 	// 2 MiB
 static size_t pim_pages_allocated = 0;
 
 // see /gem5-CIM/src/mem/DRAMInterface.py for config
-static const size_t NR_COLS_IN_MAT = 65'535;
-static const size_t BYTES_PER_MAT_ROW = NR_COLS_IN_MAT / 8;
-static const size_t NR_ROWS_IN_MAT = 256;
-static const size_t MAT_SIZE_BYTES = NR_COLS_IN_MAT * NR_ROWS_IN_MAT / 8; // mat size in bytes
-static const size_t MATS_PER_HUGE_PAGE = HUGE_PAGE_SIZE / MAT_SIZE_BYTES;
+static const size_t NR_COLS_IN_SUBARRAY = 65'535;
+static const size_t BYTES_PER_SUBARRAY_ROW = NR_COLS_IN_SUBARRAY / 8;
+static const size_t NR_ROWS_IN_SUBARRAY = 256;
+static const size_t SUBARRAY_SIZE_BYTES = NR_COLS_IN_SUBARRAY * NR_ROWS_IN_SUBARRAY / 8; // subarray size in bytes
+static const size_t SUBARRAYS_PER_HUGE_PAGE = HUGE_PAGE_SIZE / SUBARRAY_SIZE_BYTES;
 static const size_t NR_HUGEPAGES = 20;
-static const size_t NR_MATS = NR_HUGEPAGES * MATS_PER_HUGE_PAGE;
+static const size_t NR_SUBARRAYS = NR_HUGEPAGES * SUBARRAYS_PER_HUGE_PAGE;
 
 /** Allocates a new huge page if current huge page pool is not enough to fulfill request */
-void* mmapPim(void* addr, size_t length, size_t mat_label);
+void* mmapPim(void* addr, size_t length);
 /**
  * @param size in BYTES !!
  */
-void* pim_malloc(size_t size, size_t mat_label);
+void* pim_malloc(size_t size, size_t subarray_label);
 void pim_free(void* ptr);
 
 /**

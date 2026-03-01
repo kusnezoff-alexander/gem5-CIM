@@ -1,68 +1,123 @@
-// taken from [MIMDRAM](https://github.com/CMU-SAFARI/MIMDRAM/blob/
-// main/gem5/src/arch/x86/isa/microops/rowbit.isa)
 def template RowOpDeclare {{
     class %(class_name)s : public %(base_class)s
     {
+
+    private:
+        %(reg_idx_arr_decl)s;
+
     public:
-        %(class_name)s(ExtMachInst _machInst);
+        // TODO: Constructor
+        %(class_name)s(const char *_mnemonic, ExtMachInst _machInst)
+            : %(base_class)s(_mnemonic, _machInst, RowOpClass){
 
-        // %(BasicExecDeclare)s
-
-        // %(InitiateAccDeclare)s
-
-        // %(CompleteAccDeclare)s
+            this->flags[IsRowOp] = true;
+            this->flags[IsStore] = true;
+        }
 
         Fault execute(ExecContext *, trace::InstRecord *) const override;
-        Fault initiateAcc(ExecContext *, trace::InstRecord *) const override;
-        Fault completeAcc(PacketPtr, ExecContext *,
+        Fault initiateAcc(ExecContext *, trace::InstRecord *)
+                const override;
+        Fault completeAcc(Packet *, ExecContext *,
                           trace::InstRecord *) const override;
 
+        std::string
+        generateDisassembly(Addr pc,
+                            const loader::SymbolTable *symtab) const override;
     };
 }};
 
-def template RowOpConstructor {{
-    %(class_name)s::%(class_name)s(ExtMachInst _machInst) :
-        %(base_class)s("%(mnemonic)s", _machInst, %(op_class)s)
+def template RowOpDecoder {{
+    std::string
+    %(class_name)s::generateDisassembly(
+            Addr pc, const loader::SymbolTable *symtab) const
     {
-        %(constructor)s
+        return csprintf("%(mnemonic)s: (unimplemented: %(op)s)");
     }
 }};
 
+// NOTE: `%(classname)s` is filled in with `ROWAND`/`ROWOR`/...
 def template RowOpExecute {{
-    // Fault %(class_name)s::execute(CPU_EXEC_CONTEXT * xc,
     Fault %(class_name)s::execute(ExecContext * xc,
-            Trace::InstRecord *traceData) const
+            trace::InstRecord * traceData) const
     {
         Fault fault = NoFault;
 
-        %(op_decl)s;
-        %(op_rd)s;
-        %(rowop_data)s;
+        std::cout << "Performing %(op)s..." << std::endl;
+        %(op_decl)s; // has no effect
+        // stop
+        // <PERCENT>(op_rd)s; // has no effect
 
-        DPRINTF(X86, "%s: %x <- %x %(op)s %x executing\n", mnemonic, %(dst)s,
-            %(src1)s, %(src2)s);
+        uint64_t dst = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
+        DPRINTF(RowOp, "Value of Rdi (dst): %d\n", dst);
+        uint64_t src1 = xc->tcBase()->getReg(X86ISA::int_reg::Rsi);
+        DPRINTF(RowOp, "Value of Rsi (src1): %d\n", src1);
+        uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
+        DPRINTF(RowOp, "Value of Rdx (src2): %d\n", src2);
+        uint64_t mask = xc->tcBase()->getReg(X86ISA::int_reg::R9);
+        DPRINTF(RowOp, "Value of R9 (mask): %d\n", mask);
+		uint64_t size = xc->tcBase()->getReg(X86ISA::int_reg::Rcx);
+		DPRINTF(RowOp, "Value of Rcx (size): %lu\n", size);
+		uint64_t n = xc->tcBase()->getReg(X86ISA::int_reg::R8);
+		DPRINTF(RowOp, "Value of R8 (n): %lu\n", n);
 
-        fault = %(rowop_write)s;
+		// store operands inside the Request
+		// previously `<PERCENT>(rowop_data)s;`
+        Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2, mask, size, n};
+        DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated (with mask=%x, size=%lu, n=%lu)\n", mnemonic, dst,
+            src1, src2, mask, size, n);
+        DPRINTF(RowOp, "%s: %x <- %x %(op)s %x initiated (with mask=%x, size=%lu, n=%lu)\n", mnemonic, dst,
+            src1, src2, mask, size, n);
+
+        // NOTE: `byte_enable` is a mask indicating which
+        // of the bytes in `data` are valid (for *partial writes*)
+        // TODO: check `byteEnable`, sth seems to be wrong here
+        std::vector<bool> byteEnable(sizeof(data));
+        std::fill(byteEnable.begin(), byteEnable.end(), true);
+        // perform actual memory operation
+        // NOTE: addr=0 (as placeholder) since for Row-Op extract addr
+        // from `data`
+        fault = xc->writeMem((uint8_t *)&data, sizeof(data), 0,
+                Request::UNCACHEABLE | Request::ROWOP, nullptr, byteEnable);
 
         return fault;
     }
 }};
 
+
 def template RowOpInitiateAcc {{
-    // Fault %(class_name)s::initiateAcc(CPU_EXEC_CONTEXT * xc,
     Fault %(class_name)s::initiateAcc(ExecContext * xc,
-            Trace::InstRecord * traceData) const
+            trace::InstRecord * traceData) const
     {
         Fault fault = NoFault;
 
-        %(op_decl)s;
-        %(op_rd)s;
-        %(rowop_data)s;
+        %(op_decl)s; // has no effect
+        // <PERCENT>(op_rd)s; // has no effect
 
-        DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated\n", mnemonic, %(dst)s,
-            %(src1)s, %(src2)s);
+        uint64_t dst = xc->tcBase()->getReg(X86ISA::int_reg::Rdi);
+        DPRINTF(RowOp, "Value of Rdi (dst): %d\n", dst);
+        uint64_t src1 = xc->tcBase()->getReg(X86ISA::int_reg::Rsi);
+        DPRINTF(RowOp, "Value of Rsi (src1): %d\n", src1);
+        uint64_t src2 = xc->tcBase()->getReg(X86ISA::int_reg::Rdx);
+        DPRINTF(RowOp, "Value of Rdx (src2): %d\n", src2);
+        uint64_t mask = xc->tcBase()->getReg(X86ISA::int_reg::R9);
+        DPRINTF(RowOp, "Value of R9 (mask): %d\n", mask);
+		uint64_t size = xc->tcBase()->getReg(X86ISA::int_reg::Rcx);
+		DPRINTF(RowOp, "Value of Rcx (size): %lu\n", size);
+		uint64_t n = xc->tcBase()->getReg(X86ISA::int_reg::R8);
+		DPRINTF(RowOp, "Value of R8 (n): %lu\n", n);
 
-        fault = %(rowop_write)s;
+        Request::RowOpPayload data = {Request::%(op)s, dst, src1, src2, mask, size, n};
+        DPRINTF(X86, "%s: %x <- %x %(op)s %x initiated (with mask=%x, size=%lu, n=%lu)\n", mnemonic, dst,
+            src1, src2, mask, size, n);
+        DPRINTF(RowOp, "%s: %x <- %x %(op)s %x initiated (with mask=%x, size=%lu, n=%lu)\n", mnemonic, dst,
+            src1, src2, mask, size, n);
+
+        // TODO: check `byteEnable`, sth seems to be wrong here
+        std::vector<bool> byteEnable(sizeof(data));
+        std::fill(byteEnable.begin(), byteEnable.end(), true);
+        // previously `<PERCENT>(rowop_write)s;`
+        fault = xc->writeMem((uint8_t*)&data, sizeof(data), 0,
+                Request::UNCACHEABLE | Request::ROWOP, nullptr, byteEnable);
 
         return fault;
     }
@@ -70,52 +125,44 @@ def template RowOpInitiateAcc {{
 
 def template RowOpCompleteAcc {{
     Fault %(class_name)s::completeAcc(PacketPtr pkt,
-            // CPU_EXEC_CONTEXT * xc, Trace::InstRecord * traceData) const
-            ExecContext * xc, Trace::InstRecord * traceData) const
+            ExecContext * xc, trace::InstRecord * traceData) const
     {
         Fault fault = NoFault;
 
         %(op_decl)s;
-        %(op_rd)s;
-
-        DPRINTF(X86, "%s: %x <- %x %(op)s %x complete\n", mnemonic, %(dst)s,
-            %(src1)s, %(src2)s);
+        // DPRINTF(X86, "%s: %x <- %x %(op)s %x complete\n", mnemonic, dst,
+        //     src1, src2);
 
         return fault;
     }
 }};
 
-def template RowOpDecode {{
-    return new %(class_name)s(machInst);
+// Basic decode template, passing mnemonic in as string arg to constructor.
+def template RowOpDecodeWithMnemonic {{
+    return new %(class_name)s("%(mnemonic)s with op=%(op)s", machInst);
 }};
 
-// !! TODO: see `limmop.isa` for reference
+    // iop = InstObjParams(name, Name,
+    //     'X86ISA::RegOpT<X86ISA::FoldedDestOp,X86ISA::FoldedSrc1Op, \
+    //     X86ISA::FoldedSrc2Op>',
+    //      params, ['IsRowOp'])
 def format RowOp() {{
 
     params = {
         'dst': 'Rdi',
-        'src1': '0' if Name == 'ROWAP' else 'Rsi',
-        'src2': '0' if Name in {'ROWNOT', 'ROWAP', 'ROWAAP'} else 'Rdx',
-        'mem_flags': 'Request::UNCACHEABLE | Request::ROWOP',
+        'src1': 'Rsi',
+        'src2': '0' if Name in {'ROWNOT', 'ROWABS'} else 'Rdx',
         'op': Name,
         'unused': 'Mem = 0'
     }
 
-    // params['rowop_data'] = 'Request::RowOpPayload data =
-    // {Request::%(op)s, %(dst)s, %(src1)s, %(src2)s}'%params
-    // params['rowop_write'] = 'xc->writeMem((uint8_t*)&data,
-    // sizeof(data), 0, %(mem_flags)s, NULL)'%params
-
-    // iop = InstObjParams(name, Name, 'X86ISA::X86StaticInst', params)
-    // iop = InstObjParams(name, Name, 'X86ISA::X86MicroInst', params)
-    // base = 'X86ISA::RegOpT<X86ISA::FoldedDestOp, X86ISA::FoldedSrc1Op,
-    // X86ISA::FoldedSrc2Op>'
-    iop = InstObjParams(name, Name, base)
+    iop = InstObjParams(name, Name, 'X86ISA::X86StaticInst', params,
+        ['IsRowOp','IsStore'])
     header_output = RowOpDeclare.subst(iop)
-    decoder_output = RowOpConstructor.subst(iop)
-    decode_block = RowOpDecode.subst(iop)
-    exec_output = RowOpExecute.subst(iop)     \
+    exec_output = RowOpExecute.subst(iop) \
                 + RowOpInitiateAcc.subst(iop) \
                 + RowOpCompleteAcc.subst(iop)
 
+    decoder_output = RowOpDecoder.subst(iop)
+    decode_block = RowOpDecodeWithMnemonic.subst(iop)
 }};

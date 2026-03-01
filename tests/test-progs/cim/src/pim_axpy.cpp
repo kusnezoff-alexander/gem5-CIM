@@ -25,7 +25,7 @@ T* pim_alloc_safe(size_t size_bytes, size_t& next_mat) {
         ptr = static_cast<T*>(pim_malloc(size_bytes, next_mat));
         if (ptr != nullptr) break;
         next_mat++;
-    } while (next_mat < NR_MATS);
+    } while (next_mat < NR_SUBARRAYS);
 
     if (ptr == nullptr) {
         cerr << "ERROR: not enough PIM space for "
@@ -131,7 +131,7 @@ int main()
     printf("Starting AXPY test with %zu elements\n", N_ELEMS);
 
     bool result = false;
-    while(next_mat < NR_MATS && !result) {
+    while(next_mat < NR_SUBARRAYS && !result) {
         result = test_axpy();
         if (!result) {
             next_mat++;

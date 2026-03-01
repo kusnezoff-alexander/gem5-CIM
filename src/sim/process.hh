@@ -109,7 +109,7 @@ class Process : public SimObject
     loader::ObjectFile *getInterpreter();
 
 	// Allocates memory for pim operations in the reserved huge page pool
-	void allocatePimMem(Addr vaddr, int64_t size, uint32_t mat_label);
+	void allocatePimMem(Addr vaddr, int64_t size);
 
     // This function allocates physical memory as backing store, and then maps
     // it into the virtual address space of the process. The range of virtual

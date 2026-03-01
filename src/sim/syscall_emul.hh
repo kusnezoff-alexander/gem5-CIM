@@ -3249,17 +3249,16 @@ getrandomFunc(SyscallDesc *desc, ThreadContext *tc,
 }
 /**
  * @brief Maps virtual address `start` to a physical memory region / huge page
- * of size `length` in a mat-range specified by logical `mat_label` by allocating a new huge page.
+ * of size `length`
  *
  * @param size Size in bytes to allocate
- * @param mat_label Logical label of mat(-range) in which to allocate the memory
  */
 template <class OS>
 SyscallReturn
 mmapPimFunc(SyscallDesc *desc, ThreadContext *tc,
-         VPtr<> start, typename OS::size_t size, typename OS::size_t mat_label)
+         VPtr<> start, typename OS::size_t size)
 {
-    DPRINTF(RowOp, "mmapPimFunc: Mapping region starting at vaddr=0x%X of %d bytes to a paddr in mat %d\n", start, size, mat_label);
+    DPRINTF(RowOp, "mmapPimFunc: Mapping region starting at vaddr=0x%X of %d bytes to a paddr", start, size);
 
 	// TODO: use *huge page pool* (allocated at bootup time)
     auto p = tc->getProcessPtr();
@@ -3275,7 +3274,7 @@ mmapPimFunc(SyscallDesc *desc, ThreadContext *tc,
 	// - `mapHugePageRegion()` is already called on `X86Process::argsInit()`
 	//
 	// we'll allocate it directly for PIM... should be equivalent
-	p->allocatePimMem(start, size, mat_label);
+	p->allocatePimMem(start, size);
     return (Addr)start;
 }
 
